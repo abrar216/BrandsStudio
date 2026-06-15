@@ -1,0 +1,129 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap");
+@import "./glassmorphism.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply bg-brand-bg text-gray-900 font-sans antialiased;
+    }
+}
+
+@layer utilities {
+    .glass {
+        @apply bg-white/70 backdrop-filter backdrop-blur-lg border border-white/20 shadow-xl shadow-slate-200/50;
+    }
+    .glass-light {
+        @apply bg-white/80 backdrop-filter backdrop-blur-xl border border-brand-border shadow-soft;
+    }
+    .shadow-soft {
+        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.04);
+    }
+    .shadow-premium {
+        box-shadow: 0 20px 50px -12px rgba(99, 102, 241, 0.1);
+    }
+    .text-glow-accent {
+        text-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+    }
+}
+
+/* ==========================================
+   POS System Sizing & Zoom Scaling Enhancements
+   ========================================== */
+
+.pos-system {
+    font-size: 14px !important;
+}
+
+.pos-sidebar .menu-icon {
+    font-size: 20px !important;
+    width: 20px !important;
+    height: 20px !important;
+}
+
+.pos-sidebar .menu-text {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+}
+
+.pos-card {
+    padding: 16px !important;
+}
+
+.pos-card h3 {
+    font-size: 16px !important;
+}
+
+.pos-card .amount,
+.pos-card .count {
+    font-size: 24px !important;
+    font-weight: 700 !important;
+}
+
+.pos-card i,
+.pos-card svg {
+    font-size: 24px !important;
+    width: 24px !important;
+    height: 24px !important;
+}
+
+.pos-btn,
+.pos-system button:not(.pos-btn-small) {
+    font-size: 14px !important;
+    padding: 10px 14px !important;
+}
+
+.pos-system input:not(.pos-btn-small),
+.pos-system select:not(.pos-btn-small),
+.pos-system textarea:not(.pos-btn-small) {
+    font-size: 14px !important;
+    padding: 10px 12px !important;
+    height: auto !important;
+}
+
+/* Specific overrides for inputs with absolute icons to prevent overlaps */
+.pos-system input.barcode-input-field {
+    padding-left: 2.8rem !important;
+}
+
+.pos-system input.catalog-search-input {
+    padding-left: 2.8rem !important;
+}
+
+.pos-system input.ledger-search-input {
+    padding-left: 2.5rem !important;
+}
+
+.pos-system table th {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    padding: 10px 12px !important;
+}
+
+.pos-system table td {
+    font-size: 13px !important;
+    padding: 10px 12px !important;
+}
+
+.pos-product-card {
+    padding: 12px !important;
+    min-height: 170px !important;
+    height: auto !important;
+}
+
+.pos-product-card img {
+    height: 140px !important;
+}
+
+.pos-product-card .product-name {
+    font-size: 15px !important;
+    font-weight: 600 !important;
+}
+
+.pos-product-card .product-price {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+}
+
