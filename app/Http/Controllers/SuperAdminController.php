@@ -111,7 +111,7 @@ class SuperAdminController extends Controller
                         if ($category->image && Storage::disk('public')->exists($category->image)) {
                             Storage::disk('public')->delete($category->image);
                         }
-                        $updateData['image'] = $request->file($fileKey)->store('categories', 'public');
+                        $updateData['image'] = $this->imageToBase64($request->file($fileKey));
                     }
 
                     $category->update($updateData);
@@ -168,13 +168,13 @@ class SuperAdminController extends Controller
 
         $mainImagePath = null;
         if ($request->hasFile('main_image_file')) {
-            $mainImagePath = $request->file('main_image_file')->store('products', 'public');
+            $mainImagePath = $this->imageToBase64($request->file('main_image_file'));
         }
 
         $galleryImages = [];
         if ($request->hasFile('gallery_image_files')) {
             foreach ($request->file('gallery_image_files') as $file) {
-                $galleryImages[] = $file->store('products', 'public');
+                $galleryImages[] = $this->imageToBase64($file);
             }
         }
 
@@ -283,7 +283,7 @@ class SuperAdminController extends Controller
             if ($product->image && Storage::disk('public')->exists($product->image)) {
                 Storage::disk('public')->delete($product->image);
             }
-            $storedPath = $request->file('main_image_file')->store('products', 'public');
+            $storedPath = $this->imageToBase64($request->file('main_image_file'));
             $updateData['main_image'] = $storedPath;
             $updateData['image'] = $storedPath;
         }
@@ -292,7 +292,7 @@ class SuperAdminController extends Controller
         if ($request->hasFile('gallery_image_files')) {
             $existingGallery = json_decode($product->gallery_images, true) ?: [];
             foreach ($request->file('gallery_image_files') as $file) {
-                $existingGallery[] = $file->store('products', 'public');
+                $existingGallery[] = $this->imageToBase64($file);
             }
             $updateData['gallery_images'] = json_encode($existingGallery);
         }

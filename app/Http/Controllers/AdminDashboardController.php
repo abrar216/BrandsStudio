@@ -150,7 +150,7 @@ class AdminDashboardController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
+            $imagePath = $this->imageToBase64($request->file('image'));
         }
 
         DB::transaction(function() use ($request, $imagePath) {
@@ -195,7 +195,7 @@ class AdminDashboardController extends Controller
             // Save multiple images
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $file) {
-                    $path = $file->store('products', 'public');
+                    $path = $this->imageToBase64($file);
                     $product->images()->create([
                         'image_path' => $path,
                     ]);
@@ -236,7 +236,7 @@ class AdminDashboardController extends Controller
             if ($product->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($product->image)) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);
             }
-            $data['image'] = $request->file('image')->store('products', 'public');
+            $data['image'] = $this->imageToBase64($request->file('image'));
         }
 
         $product->update($data);
@@ -244,7 +244,7 @@ class AdminDashboardController extends Controller
         // Save multiple images
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $file) {
-                $path = $file->store('products', 'public');
+                $path = $this->imageToBase64($file);
                 $product->images()->create([
                     'image_path' => $path,
                 ]);
@@ -277,7 +277,7 @@ class AdminDashboardController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('categories', 'public');
+            $imagePath = $this->imageToBase64($request->file('image'));
         }
 
         Category::create([
@@ -310,7 +310,7 @@ class AdminDashboardController extends Controller
             if ($category->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($category->image)) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($category->image);
             }
-            $data['image'] = $request->file('image')->store('categories', 'public');
+            $data['image'] = $this->imageToBase64($request->file('image'));
         }
 
         $category->update($data);

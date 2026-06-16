@@ -5,9 +5,21 @@
 export const getAssetUrl = (path) => {
     if (!path || typeof path !== 'string') return '';
     
-    // Return immediately if it's already a full URL or data URI
+    // Return immediately if it is already a full URL or data URI
     if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
         return path;
+    }
+
+    // Extract raw base64 or external URLs if they got prepended (e.g. storage/data:image...)
+    if (path.includes('data:') || path.includes('http://') || path.includes('https://')) {
+        const dataIndex = path.indexOf('data:');
+        if (dataIndex !== -1) return path.slice(dataIndex);
+        
+        const httpIndex = path.indexOf('http://');
+        if (httpIndex !== -1) return path.slice(httpIndex);
+        
+        const httpsIndex = path.indexOf('https://');
+        if (httpsIndex !== -1) return path.slice(httpsIndex);
     }
     
     // Retrieve base asset URL from global window object or fallback to root domain slash
