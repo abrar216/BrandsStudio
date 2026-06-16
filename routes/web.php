@@ -30,17 +30,34 @@ Route::get('/admin-setup', function (\Illuminate\Http\Request $request) {
         );
 
         $users = \App\Models\User::select('id', 'name', 'email', 'role', 'created_at')->get();
+        $products = \App\Models\Product::select('id', 'name', 'slug', 'image', 'main_image', 'gallery_images')->get();
+
+        // Optional: Auto-repair any products where image is "0" to null or a valid placeholder/default if needed
+        if ($request->query('repair') === '1') {
+            foreach ($products as $p) {
+                if ($p->image === '0' || $p->image === 0 || $p->image === '') {
+                    // Let's set it to null or a default demo image
+                    $p->update([
+                        'image' => 'products/Ja15EgnfKfz7rbiwiy0TTlHQ1GgyhJAKT3RdGnUy.png',
+                        'main_image' => 'products/Ja15EgnfKfz7rbiwiy0TTlHQ1GgyhJAKT3RdGnUy.png'
+                    ]);
+                }
+            }
+            // Refetch
+            $products = \App\Models\Product::select('id', 'name', 'slug', 'image', 'main_image', 'gallery_images')->get();
+        }
 
         return response()->json([
             'status' => 'success',
-            'message' => 'User account created or updated successfully!',
+            'message' => 'User account and products checked/updated!',
             'user' => [
                 'name' => $user->name,
                 'email' => $user->email,
                 'role' => $user->role,
                 'password' => $password
             ],
-            'all_users' => $users
+            'all_users' => $users,
+            'all_products' => $products
         ]);
     } catch (\Exception $e) {
         return response()->json([
