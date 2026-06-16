@@ -3,7 +3,7 @@
  * Auto-prepends the appropriate XAMPP base URL context from Laravel's config or global window scope.
  */
 export const getAssetUrl = (path) => {
-    if (!path) return '';
+    if (!path || typeof path !== 'string') return '';
     
     // Return immediately if it's already a full URL or data URI
     if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
@@ -29,8 +29,10 @@ export const getProductImageUrl = (product) => {
     const candidates = [product.image, product.main_image];
     for (const img of candidates) {
         if (img && img !== '0' && img !== 0 && img !== 'null' && img !== 'undefined') {
-            // Remove leading slash if any
-            return img.startsWith('/') ? img.slice(1) : img;
+            if (typeof img === 'string') {
+                return img.startsWith('/') ? img.slice(1) : img;
+            }
+            return String(img);
         }
     }
     
@@ -46,8 +48,10 @@ export const getCategoryImageUrl = (category) => {
     
     const img = category.image;
     if (img && img !== '0' && img !== 0 && img !== 'null' && img !== 'undefined') {
-        // Remove leading slash if any
-        return img.startsWith('/') ? img.slice(1) : img;
+        if (typeof img === 'string') {
+            return img.startsWith('/') ? img.slice(1) : img;
+        }
+        return String(img);
     }
     
     return '';
