@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', env('POSTGRES_URL') ? 'pgsql' : 'sqlite'),
 
     /*
     |--------------------------------------------------------------------------
@@ -85,12 +85,12 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'url' => env('DB_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '5432'),
-            'database' => env('DB_DATABASE', 'laravel'),
-            'username' => env('DB_USERNAME', 'root'),
-            'password' => env('DB_PASSWORD', ''),
+            'url' => env('POSTGRES_URL') ?? env('DB_URL'),
+            'host' => env('POSTGRES_HOST') ?? env('DB_HOST', '127.0.0.1'),
+            'port' => env('POSTGRES_PORT') ?? env('DB_PORT', '5432'),
+            'database' => env('POSTGRES_DATABASE') ?? env('DB_DATABASE', 'laravel'),
+            'username' => env('POSTGRES_USER') ?? env('DB_USERNAME', 'root'),
+            'password' => env('POSTGRES_PASSWORD') ?? env('DB_PASSWORD', ''),
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,
