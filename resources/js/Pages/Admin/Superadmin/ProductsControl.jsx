@@ -19,7 +19,7 @@ import {
     SlidersHorizontal,
     Coins
 } from 'lucide-react';
-import { getAssetUrl } from '../../../Utils/asset';
+import { getAssetUrl, getProductImageUrl } from '../../../Utils/asset';
 
 export default function ProductsControl({ products = [], categories = [] }) {
     const { props } = usePage();
@@ -88,7 +88,7 @@ export default function ProductsControl({ products = [], categories = [] }) {
 
     const handleOpenEditModal = (product) => {
         setEditProduct(product);
-        setMainImagePreview(product.main_image ? getAssetUrl(`storage/${product.main_image}`) : null);
+        setMainImagePreview(getProductImageUrl(product) ? getAssetUrl(`storage/${getProductImageUrl(product)}`) : null);
         
         let existingGallery = [];
         try {
@@ -250,7 +250,7 @@ export default function ProductsControl({ products = [], categories = [] }) {
                                             <div className="flex items-center space-x-3">
                                                 <div className="h-12 w-10 bg-slate-50 border border-slate-200 rounded-lg overflow-hidden flex-shrink-0">
                                                     <img 
-                                                        src={p.main_image ? getAssetUrl(`storage/${p.main_image}`) : p.image ? getAssetUrl(`storage/${p.image}`) : getAssetUrl('images/placeholder.png')} 
+                                                        src={getProductImageUrl(p) ? getAssetUrl(`storage/${getProductImageUrl(p)}`) : getAssetUrl('images/placeholder.png')} 
                                                         className="w-full h-full object-cover" 
                                                         alt={p.name}
                                                     />

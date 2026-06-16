@@ -3,7 +3,7 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import StoreLayout from '../Layouts/StoreLayout';
 import ProductCard from '../Components/ProductCard';
 import { ArrowRight, Shirt, Compass, ShieldCheck, Truck, RefreshCw, TrendingUp } from 'lucide-react';
-import { getAssetUrl } from '../Utils/asset';
+import { getAssetUrl, getCategoryImageUrl } from '../Utils/asset';
 
 export default function Welcome({ categories, featuredProducts, trendingProducts, bestSellers, newArrivals, settings = {} }) {
     const { props } = usePage();
@@ -134,7 +134,7 @@ export default function Welcome({ categories, featuredProducts, trendingProducts
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {categories.map((category) => {
-                        const hasImage = !!category.image;
+                        const hasImage = !!getCategoryImageUrl(category);
                         return (
                             <Link 
                                 key={category.id}
@@ -148,7 +148,7 @@ export default function Welcome({ categories, featuredProducts, trendingProducts
                                 {hasImage ? (
                                     <>
                                         <img 
-                                            src={getAssetUrl(`storage/${category.image}`)} 
+                                            src={getAssetUrl(`storage/${getCategoryImageUrl(category)}`)} 
                                             alt={category.name} 
                                             className="absolute inset-0 w-full h-full object-cover opacity-75 group-hover:opacity-90 group-hover:scale-105 transition-all duration-700 z-0" 
                                         />

@@ -4,7 +4,7 @@ import StoreLayout from '../Layouts/StoreLayout';
 import ProductCard from '../Components/ProductCard';
 import { ShoppingCart, Star, Heart, Check, Minus, Plus, MessageSquare } from 'lucide-react';
 import { addToCart } from '../Utils/cart';
-import { getAssetUrl } from '../Utils/asset';
+import { getAssetUrl, getProductImageUrl } from '../Utils/asset';
 
 export default function ProductDetail({ product, relatedProducts = [], inWishlist }) {
     const { props } = usePage();
@@ -121,10 +121,10 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
                     
                     {/* Left: Premium Image visual mockup */}
-                    {product.image || product.main_image ? (
+                    {getProductImageUrl(product) ? (
                         <div className="bg-slate-100/60 border border-slate-100 rounded-3xl overflow-hidden aspect-[3/4] relative">
                             <img 
-                                src={getAssetUrl(`storage/${product.image || product.main_image}`)} 
+                                src={getAssetUrl(`storage/${getProductImageUrl(product)}`)} 
                                 alt={product.name} 
                                 className="w-full h-full object-cover"
                             />

@@ -14,7 +14,7 @@ import {
     Trash2,
     X
 } from 'lucide-react';
-import { getAssetUrl } from '../../Utils/asset';
+import { getAssetUrl, getCategoryImageUrl } from '../../Utils/asset';
 
 export default function Categories({ categories }) {
     
@@ -193,9 +193,9 @@ export default function Categories({ categories }) {
                                     </p>
 
                                     {/* Cover Image Preview */}
-                                    {c.image && (
+                                    {getCategoryImageUrl(c) && (
                                         <div className="mt-3 relative h-28 w-full rounded-xl overflow-hidden border border-slate-100 bg-slate-50">
-                                            <img src={getAssetUrl(`storage/${c.image}`)} className="w-full h-full object-cover" alt={c.name} />
+                                            <img src={getAssetUrl(`storage/${getCategoryImageUrl(c)}`)} className="w-full h-full object-cover" alt={c.name} />
                                         </div>
                                     )}
                                 </div>

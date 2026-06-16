@@ -83,9 +83,9 @@ export default function ProductCard({ product, currency, inWishlist = false }) {
             {/* Image Section */}
             <div className="relative aspect-[3/4] bg-slate-100 overflow-hidden">
                 <Link href={product.slug ? route('product.show', { slug: product.slug }) : '#'} className="block h-full font-sans">
-                    {product.image || product.main_image ? (
+                    {getProductImageUrl(product) ? (
                         <img 
-                            src={getAssetUrl(`storage/${product.image || product.main_image}`)} 
+                            src={getAssetUrl(`storage/${getProductImageUrl(product)}`)} 
                             alt={product.name} 
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />

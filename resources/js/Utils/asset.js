@@ -18,3 +18,37 @@ export const getAssetUrl = (path) => {
     
     return `${base}${cleanPath}`;
 };
+
+/**
+ * Robust helper to retrieve a valid image path from a product object.
+ * Filters out invalid/placeholder values like null, "0", "null", "undefined".
+ */
+export const getProductImageUrl = (product) => {
+    if (!product) return '';
+    
+    const candidates = [product.image, product.main_image];
+    for (const img of candidates) {
+        if (img && img !== '0' && img !== 0 && img !== 'null' && img !== 'undefined') {
+            // Remove leading slash if any
+            return img.startsWith('/') ? img.slice(1) : img;
+        }
+    }
+    
+    return '';
+};
+
+/**
+ * Robust helper to retrieve a valid image path from a category object.
+ * Filters out invalid/placeholder values like null, "0", "null", "undefined".
+ */
+export const getCategoryImageUrl = (category) => {
+    if (!category) return '';
+    
+    const img = category.image;
+    if (img && img !== '0' && img !== 0 && img !== 'null' && img !== 'undefined') {
+        // Remove leading slash if any
+        return img.startsWith('/') ? img.slice(1) : img;
+    }
+    
+    return '';
+};

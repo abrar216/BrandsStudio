@@ -17,7 +17,7 @@ import {
     Info,
     RotateCcw
 } from 'lucide-react';
-import { getAssetUrl } from '../../Utils/asset';
+import { getAssetUrl, getProductImageUrl } from '../../Utils/asset';
 
 export default function Products({ products, categories }) {
     const [searchQuery, setSearchQuery] = useState('');
@@ -293,9 +293,9 @@ export default function Products({ products, categories }) {
                                                 {/* Name */}
                                                 <td className="py-4 px-4 font-bold text-slate-800">
                                                     <div className="flex items-center space-x-3">
-                                                        {product.image ? (
+                                                        {getProductImageUrl(product) ? (
                                                             <div className="h-10 w-10 rounded-lg overflow-hidden border border-slate-250 flex-shrink-0 bg-slate-50">
-                                                                <img src={getAssetUrl(`storage/${product.image}`)} className="h-full w-full object-cover" alt="" />
+                                                                <img src={getAssetUrl(`storage/${getProductImageUrl(product)}`)} className="h-full w-full object-cover" alt="" />
                                                             </div>
                                                         ) : (
                                                             <div className="h-10 w-10 rounded-lg border border-slate-200 flex-shrink-0 bg-slate-100 flex items-center justify-center text-xs font-black text-slate-400 select-none">

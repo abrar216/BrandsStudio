@@ -11,6 +11,14 @@ use Illuminate\Support\Facades\Route;
 
 // Temporary utility route to initialize migrations, create/update admin accounts, and check users.
 Route::get('/admin-setup', function (\Illuminate\Http\Request $request) {
+    // Security check for production environment
+    if (!app()->environment('local') && $request->query('key') !== 'brands_studio_secure_setup_9912') {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized access to setup route.',
+        ], 403);
+    }
+
     try {
         \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
 

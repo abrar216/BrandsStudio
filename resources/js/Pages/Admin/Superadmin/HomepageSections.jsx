@@ -13,7 +13,7 @@ import {
     FolderKanban,
     Tag
 } from 'lucide-react';
-import { getAssetUrl } from '../../../Utils/asset';
+import { getAssetUrl, getCategoryImageUrl } from '../../../Utils/asset';
 
 export default function HomepageSections({ categories }) {
     const { 
@@ -113,7 +113,7 @@ export default function HomepageSections({ categories }) {
             {/* Categories deck grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {data.categories.map((cat, index) => {
-                    const previewSrc = previews[index] || (cat.image ? getAssetUrl(`storage/${cat.image}`) : null);
+                    const previewSrc = previews[index] || (getCategoryImageUrl(cat) ? getAssetUrl(`storage/${getCategoryImageUrl(cat)}`) : null);
                     
                     return (
                         <div 

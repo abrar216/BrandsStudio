@@ -13,7 +13,7 @@ import {
     Check,
     HelpCircle
 } from 'lucide-react';
-import { getAssetUrl } from '../../../Utils/asset';
+import { getAssetUrl, getProductImageUrl } from '../../../Utils/asset';
 
 export default function CollectionsControl({ products = [] }) {
     const { props } = usePage();
@@ -164,7 +164,7 @@ export default function CollectionsControl({ products = [] }) {
                                     {/* Cover Shot Preview */}
                                     <div className="relative h-48 w-full rounded-2xl overflow-hidden border border-slate-200 bg-white">
                                         <img 
-                                            src={p.main_image ? getAssetUrl(`storage/${p.main_image}`) : p.image ? getAssetUrl(`storage/${p.image}`) : getAssetUrl('images/placeholder.png')} 
+                                            src={getProductImageUrl(p) ? getAssetUrl(`storage/${getProductImageUrl(p)}`) : getAssetUrl('images/placeholder.png')} 
                                             className="w-full h-full object-cover" 
                                             alt={p.name} 
                                         />
