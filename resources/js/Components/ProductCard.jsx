@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
 import { ShoppingCart, Star, Heart } from 'lucide-react';
 import { addToCart } from '../Utils/cart';
-import { getAssetUrl } from '../Utils/asset';
+import { getAssetUrl, getProductImageUrl } from '../Utils/asset';
 
 export default function ProductCard({ product, currency, inWishlist = false }) {
     if (!product) return null;
