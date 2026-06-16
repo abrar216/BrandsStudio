@@ -79,23 +79,32 @@ class POSController extends Controller
             $reports['daily_sales'] = Order::where('payment_status', 'paid')
                 ->where('created_at', '>=', now()->subDays(30))
                 ->select(
-                    DB::raw('DATE(created_at) as date'),
+                    DB::raw('CAST(created_at AS DATE) as date'),
                     DB::raw('SUM(total) as revenue'),
                     DB::raw('COUNT(id) as count')
                 )
-                ->groupBy('date')
-                ->orderBy('date', 'desc')
+                ->groupBy(DB::raw('CAST(created_at AS DATE)'))
+                ->orderBy(DB::raw('CAST(created_at AS DATE)'), 'desc')
                 ->get();
 
             // C. Monthly Sales
+            $driver = DB::connection()->getDriverName();
+            if ($driver === 'pgsql') {
+                $monthFormatted = "TO_CHAR(created_at, 'Mon YYYY')";
+            } elseif ($driver === 'sqlite') {
+                $monthFormatted = "case strftime('%m', created_at) when '01' then 'Jan' when '02' then 'Feb' when '03' then 'Mar' when '04' then 'Apr' when '05' then 'May' when '06' then 'Jun' when '07' then 'Jul' when '08' then 'Aug' when '09' then 'Sep' when '10' then 'Oct' when '11' then 'Nov' when '12' then 'Dec' end || ' ' || strftime('%Y', created_at)";
+            } else {
+                $monthFormatted = "DATE_FORMAT(created_at, '%b %Y')";
+            }
+
             $reports['monthly_sales'] = Order::where('payment_status', 'paid')
                 ->select(
-                    DB::raw("DATE_FORMAT(created_at, '%b %Y') as month"),
+                    DB::raw("$monthFormatted as month"),
                     DB::raw('SUM(total) as revenue'),
                     DB::raw('COUNT(id) as count')
                 )
-                ->groupBy('month')
-                ->orderBy('created_at', 'desc')
+                ->groupBy(DB::raw($monthFormatted))
+                ->orderBy(DB::raw('MIN(created_at)'), 'desc')
                 ->get();
 
             // D. Cashier-wise Sales

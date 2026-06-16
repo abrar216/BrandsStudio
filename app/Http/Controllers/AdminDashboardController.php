@@ -50,13 +50,22 @@ class AdminDashboardController extends Controller
             });
 
         // 2. Monthly sales data for chart
+        $driver = DB::connection()->getDriverName();
+        if ($driver === 'pgsql') {
+            $monthFormatted = "TO_CHAR(created_at, 'Mon YYYY')";
+        } elseif ($driver === 'sqlite') {
+            $monthFormatted = "case strftime('%m', created_at) when '01' then 'Jan' when '02' then 'Feb' when '03' then 'Mar' when '04' then 'Apr' when '05' then 'May' when '06' then 'Jun' when '07' then 'Jul' when '08' then 'Aug' when '09' then 'Sep' when '10' then 'Oct' when '11' then 'Nov' when '12' then 'Dec' end || ' ' || strftime('%Y', created_at)";
+        } else {
+            $monthFormatted = "DATE_FORMAT(created_at, '%b %Y')";
+        }
+
         $monthlySales = Order::where('payment_status', 'paid')
             ->select(
                 DB::raw('SUM(total) as sales'),
-                DB::raw("DATE_FORMAT(created_at, '%b %Y') as month")
+                DB::raw("$monthFormatted as month")
             )
-            ->groupBy('month')
-            ->orderBy('created_at', 'asc')
+            ->groupBy(DB::raw($monthFormatted))
+            ->orderBy(DB::raw('MIN(created_at)'), 'asc')
             ->get();
 
         // 3. Low stock alerts (stock < 10)

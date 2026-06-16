@@ -8,6 +8,48 @@ use App\Http\Controllers\ProfileController;
 
 use Illuminate\Support\Facades\Route;
 
+
+// Temporary utility route to initialize migrations, create/update admin accounts, and check users.
+Route::get('/admin-setup', function (\Illuminate\Http\Request $request) {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+
+        $email = $request->query('email', 'admin@brandsstudio.com');
+        $password = $request->query('password', 'password');
+        $name = $request->query('name', 'Super Admin');
+        $role = $request->query('role', 'super_admin');
+
+        $user = \App\Models\User::updateOrCreate(
+            ['email' => $email],
+            [
+                'name' => $name,
+                'password' => \Illuminate\Support\Facades\Hash::make($password),
+                'role' => $role,
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $users = \App\Models\User::select('id', 'name', 'email', 'role', 'created_at')->get();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User account created or updated successfully!',
+            'user' => [
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'password' => $password
+            ],
+            'all_users' => $users
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+});
+
 // 1. General E-Commerce Storefront Routes (Guest/Customer)
 Route::get('/', [ProductController::class, 'welcome'])->name('welcome');
 Route::get('/shop', [ProductController::class, 'shop'])->name('shop');
