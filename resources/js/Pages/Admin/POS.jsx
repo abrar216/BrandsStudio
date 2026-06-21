@@ -625,20 +625,20 @@ export default function POS({ products, categories, customers, recentOrders, rep
                         <div className="lg:col-span-3 bg-slate-50 border border-slate-250 rounded-2xl shadow-md flex flex-col justify-between lg:h-[calc(100vh-230px)] min-h-[620px] overflow-hidden">
                             
                             {/* Upper Cart & Settings */}
-                            <div className="flex-grow flex flex-col overflow-hidden p-5 space-y-4">
+                            <div className="flex-grow flex flex-col overflow-hidden p-3.5 space-y-2.5">
                                 
                                 {/* Top Scanner & Customer Row */}
-                                <div className="grid grid-cols-2 gap-3 flex-shrink-0 border-b border-slate-100 pb-4">
+                                <div className="grid grid-cols-2 gap-2 flex-shrink-0 border-b border-slate-100 pb-2.5">
                                     {/* A. SKU Scanner */}
                                     <form onSubmit={handleBarcodeSubmit} className="relative flex items-center w-full">
-                                        <Barcode size={16} className="absolute left-3 text-slate-400 z-10" />
+                                        <Barcode size={13} className="absolute left-2.5 text-slate-400 z-10" />
                                         <input
                                             ref={barcodeRef}
                                             type="text"
                                             placeholder="Scan barcode/SKU..."
                                             value={barcodeInput}
                                             onChange={(e) => setBarcodeInput(e.target.value)}
-                                            className="bg-white border border-slate-200 rounded-xl barcode-input-field !py-2.5 !pl-9 !pr-3 !text-xs w-full text-slate-800 placeholder-slate-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                            className="bg-white border border-slate-200 rounded-xl barcode-input-field !py-1.5 !pl-8 !pr-2.5 !text-[11px] w-full text-slate-800 placeholder-slate-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                                         />
                                         <button type="submit" className="hidden">Scan</button>
                                     </form>
@@ -649,7 +649,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                             <select
                                                 value={selectedCustomerId}
                                                 onChange={(e) => handleCustomerChange(e.target.value)}
-                                                className="bg-white border border-slate-200 rounded-xl !text-xs font-bold !py-2.5 !px-3 w-full text-slate-700 focus:ring-1 focus:ring-blue-500/20 focus:border-blue-500"
+                                                className="bg-white border border-slate-200 rounded-xl !text-[11px] font-bold !py-1.5 !pl-2.5 !pr-7 w-full text-slate-700 focus:ring-1 focus:ring-blue-500/20 focus:border-blue-500"
                                             >
                                                 <option value="">WALK-IN (GUEST)</option>
                                                 {customers.map(c => (
@@ -662,10 +662,10 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                         <button
                                             type="button"
                                             onClick={() => setAddCustomerModalOpen(true)}
-                                            className="p-2.5 bg-slate-100 hover:bg-slate-200 text-blue-600 border border-slate-200 rounded-xl transition-all shadow-sm shrink-0"
+                                            className="p-1.5 bg-slate-100 hover:bg-slate-200 text-blue-600 border border-slate-200 rounded-xl transition-all shadow-sm shrink-0 flex items-center justify-center h-[28px] w-[28px]"
                                             title="Register New Customer"
                                         >
-                                            <User size={14} />
+                                            <User size={12} />
                                         </button>
                                     </div>
                                 </div>
@@ -673,14 +673,14 @@ export default function POS({ products, categories, customers, recentOrders, rep
 
                                 {/* Customer manual info (rendered if guest or selected customer details need validation) */}
                                 {!selectedCustomerId && (
-                                    <div className="grid grid-cols-2 gap-2.5 flex-shrink-0 bg-slate-100/50 border border-slate-200/50 p-2.5 rounded-xl">
+                                    <div className="grid grid-cols-2 gap-2 flex-shrink-0 bg-slate-100/30 border border-slate-200/40 p-1.5 rounded-xl">
                                         <div>
                                             <input
                                                 type="text"
                                                 placeholder="Guest Customer Name"
                                                 value={customerName}
                                                 onChange={(e) => setCustomerName(e.target.value)}
-                                                className="bg-white border border-slate-200 rounded-lg !py-2 !px-2.5 !text-sm text-slate-800 w-full placeholder-slate-400 focus:border-slate-350"
+                                                className="bg-white border border-slate-200 rounded-lg !py-1 !px-2 !text-[11px] text-slate-800 w-full placeholder-slate-400 focus:border-slate-350"
                                             />
                                         </div>
                                         <div>
@@ -689,28 +689,28 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                                 placeholder="Guest Phone Number"
                                                 value={customerPhone}
                                                 onChange={(e) => setCustomerPhone(e.target.value)}
-                                                className="bg-white border border-slate-200 rounded-lg !py-2 !px-2.5 !text-sm text-slate-800 w-full placeholder-slate-400 focus:border-slate-350"
+                                                className="bg-white border border-slate-200 rounded-lg !py-1 !px-2 !text-[11px] text-slate-800 w-full placeholder-slate-400 focus:border-slate-350"
                                             />
                                         </div>
                                     </div>
                                 )}
 
                                 {/* C. Basket cart items list */}
-                                <div className="flex justify-between items-center flex-shrink-0 border-b border-slate-200 pb-2.5">
-                                    <span className="text-sm font-black uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                                        <ShoppingCart size={16} className="text-blue-600 stroke-[2.5]" />
+                                <div className="flex justify-between items-center flex-shrink-0 border-b border-slate-200 pb-1.5">
+                                    <span className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                                        <ShoppingCart size={14} className="text-blue-600 stroke-[2.5]" />
                                         Cart Items List
                                     </span>
-                                    <span className="bg-blue-50 text-blue-600 text-xs font-black px-3 py-1.5 rounded-xl border border-blue-100/60 shadow-sm">
+                                    <span className="bg-blue-50 text-blue-600 text-[10px] font-black px-2.5 py-1 rounded-xl border border-blue-100/60 shadow-sm">
                                         {cart.reduce((sum, item) => sum + (item.quantity || 0), 0)} Units ({cart.length} Products)
                                     </span>
                                 </div>
-                                <div ref={cartItemsRef} className="border border-slate-200 bg-slate-100/40 p-3 space-y-2.5 rounded-2xl flex-grow overflow-y-auto min-h-[200px]">
+                                <div ref={cartItemsRef} className="border border-slate-200 bg-slate-100/40 p-2 space-y-2 rounded-2xl overflow-y-auto max-h-[145px] min-h-[64px] flex flex-col justify-start">
                                     {cart.length > 0 ? (
                                         cart.filter(Boolean).map((item) => (
-                                            <div key={item.key} className="flex justify-between items-center bg-white border border-slate-200 p-2.5 rounded-xl shadow-sm hover:border-slate-300 transition-all gap-3">
+                                            <div key={item.key} className="flex justify-between items-center bg-white border border-slate-200 p-2 rounded-xl shadow-sm hover:border-slate-300 transition-all gap-2 flex-shrink-0">
                                                 <div className="space-y-0.5 min-w-0 flex-grow">
-                                                    <h5 className="text-xs md:text-sm font-black text-slate-900 truncate leading-snug" title={item.name}>{item.name}</h5>
+                                                    <h5 className="text-xs font-black text-slate-900 truncate leading-tight" title={item.name}>{item.name}</h5>
                                                     <div className="flex flex-wrap gap-1.5 items-center">
                                                         {item.size && (
                                                             <span className="bg-slate-100 text-slate-700 text-[8px] font-black uppercase px-1.5 py-0.5 rounded border border-slate-200/50">Size: {item.size}</span>
@@ -722,7 +722,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                                     </div>
                                                 </div>
 
-                                                <div className="flex items-center gap-2.5 flex-shrink-0">
+                                                <div className="flex items-center gap-2 flex-shrink-0">
                                                     {/* Qty count control */}
                                                     <div className="flex items-center border border-slate-200 bg-slate-50 rounded-xl px-1 py-0.5 scale-90 text-slate-500 shadow-sm">
                                                         <button 
@@ -751,7 +751,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                                     <button 
                                                         type="button"
                                                         onClick={() => handleRemoveItem(item.key)}
-                                                        className="px-2 py-1 bg-red-50 hover:bg-red-100 text-red-655 text-red-600 rounded-xl transition-all border border-red-200/30 flex items-center gap-1 shrink-0 text-[8px] font-black uppercase tracking-wider"
+                                                        className="px-1.5 py-0.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl transition-all border border-red-200/30 flex items-center gap-1 shrink-0 text-[8px] font-black uppercase tracking-wider"
                                                         title="Remove item from cart"
                                                     >
                                                         <Trash2 size={9} className="stroke-[3]" />
@@ -761,10 +761,10 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                             </div>
                                         ))
                                     ) : (
-                                        <div className="h-full flex flex-col justify-center items-center text-center p-12 text-slate-400 space-y-3">
-                                            <ShoppingCart size={40} className="opacity-30 animate-pulse text-blue-600" />
-                                            <p className="text-sm md:text-base font-black uppercase tracking-wider text-slate-500">No items added to cart yet.</p>
-                                            <p className="text-xs md:text-sm text-slate-400 leading-snug">Scan barcode SKU or add variants from the grids.</p>
+                                        <div className="flex flex-col justify-center items-center text-center p-4 text-slate-400 space-y-1.5 my-auto flex-grow">
+                                            <ShoppingCart size={24} className="opacity-30 animate-pulse text-blue-600" />
+                                            <p className="text-[10px] font-black uppercase tracking-wider text-slate-500">No items added to cart yet.</p>
+                                            <p className="text-[9px] text-slate-400 leading-snug">Scan barcode SKU or add variants from the grids.</p>
                                         </div>
                                     )}
                                 </div>
