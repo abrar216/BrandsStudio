@@ -207,7 +207,7 @@ export default function Products({ products, categories }) {
                             onChange={(e) => setSelectedCategory(e.target.value)}
                             className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl py-2.5 px-4 text-sm text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500/20 focus:border-blue-500 appearance-none cursor-pointer"
                         >
-                            <option value="">All Collections</option>
+                            <option value="">All Categories</option>
                             {categories.map((c) => (
                                 <option key={c.id} value={c.id}>{c.name}</option>
                             ))}
@@ -251,7 +251,7 @@ export default function Products({ products, categories }) {
                                 <th className="py-4 px-6 font-bold w-12 text-center">Details</th>
                                 <th className="py-4 px-4 font-bold">Product Model</th>
                                 <th className="py-4 px-4 font-bold">SKU</th>
-                                <th className="py-4 px-4 font-bold">Collection</th>
+                                <th className="py-4 px-4 font-bold">Category</th>
                                 <th className="py-4 px-4 font-bold text-right">MSRP Price</th>
                                 <th className="py-4 px-4 font-bold text-center">Net Inventory</th>
                                 <th className="py-4 px-4 font-bold text-center">Badges</th>
@@ -575,7 +575,7 @@ export default function Products({ products, categories }) {
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                    <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1.5 font-sans">Collection Category *</label>
+                                    <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1.5 font-sans">Product Category *</label>
                                     <select
                                         value={addData.category_id}
                                         onChange={(e) => setAddData('category_id', e.target.value)}
@@ -931,7 +931,7 @@ export default function Products({ products, categories }) {
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                    <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1.5 font-sans">Collection Category *</label>
+                                    <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1.5 font-sans">Product Category *</label>
                                     <select
                                         value={editData.category_id}
                                         onChange={(e) => setEditData('category_id', e.target.value)}

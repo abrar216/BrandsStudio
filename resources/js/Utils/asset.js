@@ -42,7 +42,11 @@ export const getProductImageUrl = (product) => {
     for (const img of candidates) {
         if (img && img !== '0' && img !== 0 && img !== 'null' && img !== 'undefined') {
             if (typeof img === 'string') {
-                return img.startsWith('/') ? img.slice(1) : img;
+                let cleanImg = img.startsWith('/') ? img.slice(1) : img;
+                if (cleanImg.startsWith('storage/')) {
+                    cleanImg = cleanImg.slice(8);
+                }
+                return cleanImg;
             }
             return String(img);
         }
@@ -61,7 +65,11 @@ export const getCategoryImageUrl = (category) => {
     const img = category.image;
     if (img && img !== '0' && img !== 0 && img !== 'null' && img !== 'undefined') {
         if (typeof img === 'string') {
-            return img.startsWith('/') ? img.slice(1) : img;
+            let cleanImg = img.startsWith('/') ? img.slice(1) : img;
+            if (cleanImg.startsWith('storage/')) {
+                cleanImg = cleanImg.slice(8);
+            }
+            return cleanImg;
         }
         return String(img);
     }

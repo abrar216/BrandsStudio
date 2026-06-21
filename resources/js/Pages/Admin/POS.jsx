@@ -117,6 +117,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
     // Barcode query state
     const [barcodeInput, setBarcodeInput] = useState('');
     const barcodeRef = useRef(null);
+    const cartItemsRef = useRef(null);
 
     // Customer search / add modal
     const [addCustomerModalOpen, setAddCustomerModalOpen] = useState(false);
@@ -187,6 +188,13 @@ export default function POS({ products, categories, customers, recentOrders, rep
         });
 
         triggerAlert('success', `Added ${product.name} to cart.`);
+
+        // Scroll cart list to top so newly added products are visible immediately
+        setTimeout(() => {
+            if (cartItemsRef.current) {
+                cartItemsRef.current.scrollTop = 0;
+            }
+        }, 50);
 
         // Refocus barcode scanner
         if (barcodeRef.current) barcodeRef.current.focus();
@@ -616,8 +624,8 @@ export default function POS({ products, categories, customers, recentOrders, rep
                         {/* RIGHT: Cart and Payment Panels (3/6 columns) */}
                         <div className="lg:col-span-3 bg-slate-50 border border-slate-250 rounded-2xl shadow-md flex flex-col justify-between lg:h-[calc(100vh-230px)] min-h-[620px] overflow-hidden">
                             
-                            {/* Scrollable Upper Cart & Settings */}
-                            <div className="flex-grow flex flex-col overflow-y-auto p-5 space-y-4">
+                            {/* Upper Cart & Settings */}
+                            <div className="flex-grow flex flex-col overflow-hidden p-5 space-y-4">
                                 
                                 {/* Top Scanner & Customer Row */}
                                 <div className="grid grid-cols-2 gap-3 flex-shrink-0 border-b border-slate-100 pb-4">
@@ -697,7 +705,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                         {cart.reduce((sum, item) => sum + (item.quantity || 0), 0)} Units ({cart.length} Products)
                                     </span>
                                 </div>
-                                <div className="border border-slate-200 bg-slate-100/40 p-3 space-y-2.5 rounded-2xl min-h-[300px]">
+                                <div ref={cartItemsRef} className="border border-slate-200 bg-slate-100/40 p-3 space-y-2.5 rounded-2xl flex-grow overflow-y-auto min-h-[200px]">
                                     {cart.length > 0 ? (
                                         cart.filter(Boolean).map((item) => (
                                             <div key={item.key} className="flex justify-between items-center bg-white border border-slate-200 p-2.5 rounded-xl shadow-sm hover:border-slate-300 transition-all gap-3">
