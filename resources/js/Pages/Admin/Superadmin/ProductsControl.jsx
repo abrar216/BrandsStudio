@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Head, useForm, Link, usePage } from '@inertiajs/react';
+import { Head, useForm, Link, usePage, router } from '@inertiajs/react';
 import AdminLayout from '../../../Layouts/AdminLayout';
 import { 
     Plus, 
@@ -123,6 +123,16 @@ export default function ProductsControl({ products = [], categories = [] }) {
             gallery_image_files: []
         });
         setIsModalOpen(true);
+    };
+
+    const handleDeleteProduct = (productId) => {
+        if (confirm("Are you sure you want to delete this product?")) {
+            router.delete(route('admin.products.destroy', productId), {
+                onError: (errors) => {
+                    alert("Failed to delete product. " + (errors.message || "Please check permissions."));
+                }
+            });
+        }
     };
 
     const handleMainImageChange = (file) => {
@@ -299,14 +309,23 @@ export default function ProductsControl({ products = [], categories = [] }) {
                                             <span className="text-xs font-black text-slate-800 bg-slate-100 border border-slate-250/30 px-2.5 py-1 rounded-md font-mono">{p.display_order}</span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <button
-                                                onClick={() => handleOpenEditModal(p)}
-                                                className="p-2 text-slate-600 hover:text-blue-650 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-xl transition-all"
-                                                title="Edit Website Parameters"
-                                            >
-                                                <Edit2 size={14} />
-                                            </button>
-                                        </td>
+                                             <div className="flex items-center space-x-2">
+                                                 <button
+                                                     onClick={() => handleOpenEditModal(p)}
+                                                     className="p-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-200 rounded-xl transition-all"
+                                                     title="Edit Website Parameters"
+                                                 >
+                                                     <Edit2 size={14} />
+                                                 </button>
+                                                 <button
+                                                     onClick={() => handleDeleteProduct(p.id)}
+                                                     className="p-2 bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 hover:border-red-400 rounded-xl transition-all shadow-sm"
+                                                     title="Delete Product"
+                                                 >
+                                                     <Trash2 size={14} />
+                                                 </button>
+                                             </div>
+                                         </td>
                                     </tr>
                                 ))
                             ) : (

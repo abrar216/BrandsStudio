@@ -400,7 +400,7 @@ export default function Products({ products, categories }) {
                                                         </button>
                                                         <button
                                                             onClick={() => handleDeleteProduct(product.id)}
-                                                            className="p-2 bg-slate-50 border border-slate-200 hover:border-red-500 hover:text-red-650 hover:text-red-600 hover:bg-red-50 text-slate-500 rounded-xl transition-all"
+                                                            className="p-2 bg-red-50 border border-red-250 text-red-600 hover:bg-red-100 hover:border-red-400 rounded-xl transition-all shadow-sm"
                                                             title="Delete Product"
                                                         >
                                                             <Trash2 size={12} />

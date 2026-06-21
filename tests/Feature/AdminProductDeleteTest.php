@@ -14,11 +14,6 @@ class AdminProductDeleteTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
     public function test_super_admin_can_delete_product()
     {
         // 1. Create a Super Admin
@@ -73,7 +68,41 @@ class AdminProductDeleteTest extends TestCase
         $this->assertDatabaseMissing('product_images', ['id' => $galleryImage->id]);
     }
 
-    public function test_standard_admin_and_other_roles_cannot_delete_product()
+    public function test_standard_admin_can_delete_product()
+    {
+        // 1. Create a Standard Admin
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        // 2. Create a Category and Product
+        $category = Category::create([
+            'name' => 'Test Category',
+            'slug' => 'test-category',
+        ]);
+
+        $product = Product::create([
+            'name' => 'Test Product',
+            'slug' => 'test-product',
+            'sku' => 'TEST-SKU-123',
+            'price' => 100.00,
+            'category_id' => $category->id,
+            'stock_quantity' => 10,
+            'status' => 'active',
+        ]);
+
+        // 3. Send delete request
+        $response = $this
+            ->actingAs($admin)
+            ->delete(route('admin.products.destroy', $product->id));
+
+        // 4. Verify redirect back with success message
+        $response->assertStatus(302);
+        $response->assertSessionHas('success', 'Product deleted successfully.');
+
+        // 5. Verify product is deleted
+        $this->assertDatabaseMissing('products', ['id' => $product->id]);
+    }
+
+    public function test_unauthorized_roles_cannot_delete_product()
     {
         // 1. Create Category and Product
         $category = Category::create([
@@ -91,16 +120,7 @@ class AdminProductDeleteTest extends TestCase
             'status' => 'active',
         ]);
 
-        // 2. Standard Admin (role: admin) is restricted and gets 403 (Forbidden)
-        $admin = User::factory()->create(['role' => 'admin']);
-        $response = $this
-            ->actingAs($admin)
-            ->delete(route('admin.products.destroy', $product->id));
-
-        $response->assertStatus(403);
-        $this->assertDatabaseHas('products', ['id' => $product->id]);
-
-        // 3. Cashier role is redirected to home/welcome by AdminMiddleware
+        // 2. Cashier role is redirected to home/welcome by AdminMiddleware
         $cashier = User::factory()->create(['role' => 'cashier']);
         $response = $this
             ->actingAs($cashier)
@@ -109,7 +129,7 @@ class AdminProductDeleteTest extends TestCase
         $response->assertStatus(302);
         $this->assertDatabaseHas('products', ['id' => $product->id]);
 
-        // 4. Customer role is redirected by AdminMiddleware
+        // 3. Customer role is redirected by AdminMiddleware
         $customer = User::factory()->create(['role' => 'customer']);
         $response = $this
             ->actingAs($customer)
@@ -118,7 +138,7 @@ class AdminProductDeleteTest extends TestCase
         $response->assertStatus(302);
         $this->assertDatabaseHas('products', ['id' => $product->id]);
 
-        // 5. Guest is redirected by auth middleware
+        // 4. Guest is redirected by auth middleware
         $response = $this->delete(route('admin.products.destroy', $product->id));
         $response->assertStatus(302);
         $this->assertDatabaseHas('products', ['id' => $product->id]);

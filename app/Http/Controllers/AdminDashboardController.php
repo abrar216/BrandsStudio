@@ -258,7 +258,7 @@ class AdminDashboardController extends Controller
 
     public function destroyProduct(Product $product)
     {
-        $this->checkSuperAdminAccess();
+        $this->checkAccess();
 
         DB::transaction(function() use ($product) {
             // Delete variants
