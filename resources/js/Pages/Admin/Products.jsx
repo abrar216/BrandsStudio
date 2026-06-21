@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage, router } from '@inertiajs/react';
 import AdminLayout from '../../Layouts/AdminLayout';
 import { 
     Plus, 
@@ -15,7 +15,8 @@ import {
     Sparkles,
     AlertCircle,
     Info,
-    RotateCcw
+    RotateCcw,
+    Trash2
 } from 'lucide-react';
 import { getAssetUrl, getProductImageUrl } from '../../Utils/asset';
 
@@ -110,6 +111,16 @@ export default function Products({ products, categories }) {
                 setEditingProduct(null);
             }
         });
+    };
+
+    const handleDeleteProduct = (productId) => {
+        if (confirm("Are you sure you want to delete this product?")) {
+            router.delete(route('admin.products.destroy', productId), {
+                onError: (errors) => {
+                    alert("Failed to delete product. " + (errors.message || "Please check permissions."));
+                }
+            });
+        }
     };
 
     const openEditModal = (product) => {
@@ -379,13 +390,22 @@ export default function Products({ products, categories }) {
 
                                                 {/* Actions */}
                                                 <td className="py-4 px-6 text-right">
-                                                    <button
-                                                        onClick={() => openEditModal(product)}
-                                                        className="p-2 bg-slate-50 border border-slate-200 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 text-slate-500 rounded-xl transition-all"
-                                                        title="Modify Product Parameters"
-                                                    >
-                                                        <Edit size={12} />
-                                                    </button>
+                                                    <div className="flex items-center justify-end space-x-2">
+                                                        <button
+                                                            onClick={() => openEditModal(product)}
+                                                            className="p-2 bg-slate-50 border border-slate-200 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 text-slate-500 rounded-xl transition-all"
+                                                            title="Modify Product Parameters"
+                                                        >
+                                                            <Edit size={12} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDeleteProduct(product.id)}
+                                                            className="p-2 bg-slate-50 border border-slate-200 hover:border-red-500 hover:text-red-650 hover:text-red-600 hover:bg-red-50 text-slate-500 rounded-xl transition-all"
+                                                            title="Delete Product"
+                                                        >
+                                                            <Trash2 size={12} />
+                                                        </button>
+                                                    </div>
                                                 </td>
 
                                             </tr>

@@ -256,6 +256,32 @@ class AdminDashboardController extends Controller
         return back()->with('success', 'Product updated successfully!');
     }
 
+    public function destroyProduct(Product $product)
+    {
+        $this->checkSuperAdminAccess();
+
+        DB::transaction(function() use ($product) {
+            // Delete variants
+            $product->variants()->delete();
+
+            // Delete storage files if present (for old file uploads)
+            if ($product->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($product->image)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);
+            }
+            if ($product->main_image && \Illuminate\Support\Facades\Storage::disk('public')->exists($product->main_image)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($product->main_image);
+            }
+
+            // Delete gallery images
+            $product->images()->delete();
+
+            // Delete the product
+            $product->delete();
+        });
+
+        return back()->with('success', 'Product deleted successfully.');
+    }
+
     // Categories Management
     public function categories()
     {

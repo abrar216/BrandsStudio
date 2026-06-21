@@ -125,6 +125,7 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->prefix
     Route::get('/products', [AdminDashboardController::class, 'products'])->name('products');
     Route::post('/products', [AdminDashboardController::class, 'storeProduct'])->name('products.store');
     Route::patch('/products/{product}', [AdminDashboardController::class, 'updateProduct'])->name('products.update');
+    Route::delete('/products/{product}', [AdminDashboardController::class, 'destroyProduct'])->name('products.destroy');
     
     // Categories Management
     Route::get('/categories', [AdminDashboardController::class, 'categories'])->name('categories');
