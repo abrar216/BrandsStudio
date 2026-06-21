@@ -168,27 +168,22 @@ export default function POS({ products, categories, customers, recentOrders, rep
         setCart(prevCart => {
             const safeCart = Array.isArray(prevCart) ? prevCart.filter(Boolean) : [];
             const existing = safeCart.find(item => item && item.key === itemKey);
-            
-            if (existing) {
-                return safeCart.map(item => 
-                    item.key === itemKey 
-                        ? { ...item, quantity: item.quantity + 1 } 
-                        : item
-                );
-            } else {
-                return [...safeCart, {
-                    key: itemKey,
-                    id: product.id,
-                    variant_id: variant ? variant.id : null,
-                    name: product.name,
-                    sku: variant ? variant.sku : product.sku,
-                    size: variant ? variant.size : null,
-                    color: variant ? variant.color : null,
-                    price: Number(price) || 0,
-                    quantity: 1,
-                    max_stock: Number(maxStock) || 0
-                }];
-            }
+            const remaining = safeCart.filter(item => item && item.key !== itemKey);
+
+            const newItem = {
+                key: itemKey,
+                id: product.id,
+                variant_id: variant ? variant.id : null,
+                name: product.name,
+                sku: variant ? variant.sku : product.sku,
+                size: variant ? variant.size : null,
+                color: variant ? variant.color : null,
+                price: Number(price) || 0,
+                quantity: existing ? existing.quantity + 1 : 1,
+                max_stock: Number(maxStock) || 0
+            };
+
+            return [newItem, ...remaining];
         });
 
         triggerAlert('success', `Added ${product.name} to cart.`);

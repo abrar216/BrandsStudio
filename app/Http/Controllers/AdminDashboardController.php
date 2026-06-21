@@ -172,6 +172,7 @@ class AdminDashboardController extends Controller
                 'is_new_arrival' => $request->is_new_arrival ?? false,
                 'status' => 'active',
                 'image' => $imagePath,
+                'main_image' => $imagePath,
             ]);
 
             // Add variants if provided
@@ -237,6 +238,7 @@ class AdminDashboardController extends Controller
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);
             }
             $data['image'] = $this->imageToBase64($request->file('image'));
+            $data['main_image'] = $data['image'];
         }
 
         $product->update($data);

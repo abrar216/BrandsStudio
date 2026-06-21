@@ -81,13 +81,13 @@ export default function Categories({ categories }) {
     };
 
     const handleDelete = (categoryId) => {
-        if (confirm("Are you sure you want to delete this category? All associated products may lose their collection mapping.")) {
+        if (confirm("Are you sure you want to delete this category? All associated products may lose their category mapping.")) {
             router.delete(route('admin.categories.destroy', categoryId));
         }
     };
 
     return (
-        <AdminLayout title="Collection Categories Manager">
+        <AdminLayout title="Categories Manager">
             <Head title="Categories Management" />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -99,7 +99,7 @@ export default function Categories({ categories }) {
                             <Plus size={16} />
                         </div>
                         <div>
-                            <h3 className="text-sm font-black uppercase text-slate-800 tracking-wider">Add New Collection</h3>
+                            <h3 className="text-sm font-black uppercase text-slate-800 tracking-wider">Add New Category</h3>
                             <p className="text-xs text-slate-500 font-semibold mt-0.5">Establish catalog classification categories</p>
                         </div>
                     </div>
@@ -107,7 +107,7 @@ export default function Categories({ categories }) {
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {/* Name */}
                         <div>
-                            <label className="block text-xs uppercase font-bold text-slate-500 mb-1.5 font-sans">Collection Name *</label>
+                            <label className="block text-xs uppercase font-bold text-slate-500 mb-1.5 font-sans">Category Name *</label>
                             <input
                                 type="text"
                                 required
@@ -121,7 +121,7 @@ export default function Categories({ categories }) {
 
                         {/* Description */}
                         <div>
-                            <label className="block text-xs uppercase font-bold text-slate-500 mb-1.5 font-sans">Collection Description</label>
+                            <label className="block text-xs uppercase font-bold text-slate-500 mb-1.5 font-sans">Category Description</label>
                             <textarea
                                 placeholder="Describe the style profile, fabric directions, or target seasonal vibe..."
                                 value={data.description}
@@ -134,7 +134,7 @@ export default function Categories({ categories }) {
 
                         {/* Cover Image */}
                         <div>
-                            <label className="block text-xs uppercase font-bold text-slate-500 mb-1.5 font-sans">Collection Cover Image</label>
+                            <label className="block text-xs uppercase font-bold text-slate-500 mb-1.5 font-sans">Category Cover Image</label>
                             <input
                                 type="file"
                                 accept="image/*"
@@ -151,7 +151,7 @@ export default function Categories({ categories }) {
                             className="w-full flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-2.5 rounded-xl text-sm font-black transition-colors shadow-sm"
                         >
                             <Sparkles size={14} />
-                            <span>{processing ? 'Creating Collection...' : 'Create Collection'}</span>
+                            <span>{processing ? 'Creating Category...' : 'Create Category'}</span>
                         </button>
                     </form>
                 </div>
@@ -163,7 +163,7 @@ export default function Categories({ categories }) {
                     <div className="bg-slate-50 rounded-2xl border border-slate-200/60 p-6 shadow-sm">
                         <div className="flex items-center space-x-2">
                             <FolderKanban size={16} className="text-blue-600" />
-                            <h4 className="text-sm font-bold uppercase text-slate-500 tracking-wider">Active Brand Collections</h4>
+                            <h4 className="text-sm font-bold uppercase text-slate-500 tracking-wider">Active Brand Categories</h4>
                         </div>
                         <p className="text-base font-bold text-slate-800 font-serif mt-1">Live divisions inside shop catalog</p>
                     </div>
@@ -189,7 +189,7 @@ export default function Categories({ categories }) {
 
                                     {/* Description */}
                                     <p className="text-xs text-slate-500 font-semibold leading-relaxed min-h-[40px]">
-                                        {c.description || 'No custom description defined for this collection category.'}
+                                        {c.description || 'No custom description defined for this category.'}
                                     </p>
 
                                     {/* Cover Image Preview */}
@@ -246,7 +246,7 @@ export default function Categories({ categories }) {
                                     <Sparkles size={16} className="text-blue-600 mr-2" />
                                     <span>Edit Category: {editingCategory?.name}</span>
                                 </h3>
-                                <p className="text-xs text-slate-500 font-semibold mt-0.5">Modify collection details</p>
+                                <p className="text-xs text-slate-500 font-semibold mt-0.5">Modify category details</p>
                             </div>
                             <button onClick={() => { setEditModalOpen(false); setEditingCategory(null); }} className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100">
                                 <X size={18} />
@@ -257,7 +257,7 @@ export default function Categories({ categories }) {
                         <form onSubmit={handleEditSubmit} className="p-6 space-y-4">
                             {/* Name */}
                             <div>
-                                <label className="block text-xs uppercase font-bold text-slate-500 mb-1.5 font-sans">Collection Name *</label>
+                                <label className="block text-xs uppercase font-bold text-slate-500 mb-1.5 font-sans">Category Name *</label>
                                 <input
                                     type="text"
                                     required
@@ -270,7 +270,7 @@ export default function Categories({ categories }) {
 
                             {/* Description */}
                             <div>
-                                <label className="block text-xs uppercase font-bold text-slate-500 mb-1.5 font-sans">Collection Description</label>
+                                <label className="block text-xs uppercase font-bold text-slate-500 mb-1.5 font-sans">Category Description</label>
                                 <textarea
                                     value={editData.description}
                                     onChange={(e) => setEditData('description', e.target.value)}
