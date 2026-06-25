@@ -262,7 +262,7 @@ export default function AdminLayout({ children, title, noSidebar = false }) {
             )}
 
             {/* Main Application Area */}
-            <div className="flex-grow flex flex-col min-w-0 bg-slate-100 dark:bg-slate-900 transition-colors duration-200">
+            <div className={`flex-grow flex flex-col min-w-0 bg-slate-100 dark:bg-slate-900 transition-colors duration-200 ${noSidebar ? 'h-full min-h-0 overflow-hidden' : ''}`}>
                 {/* Secondary Topbar Header for Desktop */}
                 {noSidebar ? (
                     <header className="flex items-center justify-between px-6 py-3 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm z-30 flex-shrink-0">
