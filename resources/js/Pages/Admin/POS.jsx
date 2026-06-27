@@ -470,67 +470,54 @@ export default function POS({ products, categories, customers, recentOrders, rep
     };
 
     return (
-        <AdminLayout title="POS System Terminal" noSidebar={true}>
+        <AdminLayout 
+            title="POS Terminal" 
+            noSidebar={true}
+            headerContent={
+                <div className="flex bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200 dark:border-slate-700 text-[10px] font-bold">
+                    <button
+                        onClick={() => setActiveTab('terminal')}
+                        className={`flex items-center space-x-1 px-2 py-1 rounded-md transition-all ${
+                            activeTab === 'terminal' 
+                                ? 'bg-[#2563EB] text-white shadow-sm font-black' 
+                                : 'text-slate-600 dark:text-slate-400 hover:text-[#2563EB]'
+                        }`}
+                    >
+                        <ShoppingCart size={11} />
+                        <span>Terminal</span>
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('ledger')}
+                        className={`flex items-center space-x-1 px-2 py-1 rounded-md transition-all ${
+                            activeTab === 'ledger' 
+                                ? 'bg-[#2563EB] text-white shadow-sm font-black' 
+                                : 'text-slate-600 dark:text-slate-400 hover:text-[#2563EB]'
+                        }`}
+                    >
+                        <FileText size={11} />
+                        <span>Ledger</span>
+                    </button>
+                    
+                    {(auth.user.role === 'super_admin' || auth.user.role === 'admin') && (
+                        <button
+                            onClick={() => setActiveTab('reports')}
+                            className={`flex items-center space-x-1 px-2 py-1 rounded-md transition-all ${
+                                activeTab === 'reports' 
+                                    ? 'bg-[#2563EB] text-white shadow-sm font-black' 
+                                    : 'text-slate-600 dark:text-slate-400 hover:text-[#2563EB]'
+                            }`}
+                        >
+                            <TrendingUp size={11} />
+                            <span>Reports</span>
+                        </button>
+                    )}
+                </div>
+            }
+        >
             <Head title="POS Cashier Terminal" />
 
             {/* TAB CONTAINER */}
-            <div className="pos-system flex-grow flex flex-col min-h-0 h-full space-y-3 p-3 overflow-hidden bg-[#F8FAFC] dark:bg-slate-900/40">
-                
-                {/* 1. Header Control Deck & Tab Selection */}
-                <div className="bg-white dark:bg-slate-800 p-2 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 flex-shrink-0">
-                    
-                    <div className="flex items-center space-x-2.5">
-                        <span className="p-1.5 bg-blue-50 dark:bg-slate-900 text-[#2563EB] rounded-lg">
-                            <User size={14} />
-                        </span>
-                        <div>
-                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block leading-none">Logged Cashier</span>
-                            <span className="text-xs font-black text-slate-800 dark:text-white uppercase tracking-wider block mt-0.5">{auth.user.name} ({auth.user.role.toUpperCase()})</span>
-                        </div>
-                    </div>
-
-                    {/* Navigation tabs */}
-                    <div className="flex bg-slate-100 dark:bg-slate-900 p-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-bold w-full sm:w-auto">
-                        <button
-                            onClick={() => setActiveTab('terminal')}
-                            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md flex-1 md:flex-none transition-all ${
-                                activeTab === 'terminal' 
-                                    ? 'bg-[#2563EB] text-white font-bold shadow-sm' 
-                                    : 'text-slate-655 dark:text-slate-400 hover:text-[#2563EB]'
-                            }`}
-                        >
-                            <ShoppingCart size={13} />
-                            <span>Cashier Terminal</span>
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('ledger')}
-                            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md flex-1 md:flex-none transition-all ${
-                                activeTab === 'ledger' 
-                                    ? 'bg-[#2563EB] text-white font-bold shadow-sm' 
-                                    : 'text-slate-655 dark:text-slate-400 hover:text-[#2563EB]'
-                            }`}
-                        >
-                            <FileText size={13} />
-                            <span>Ledger & Returns</span>
-                        </button>
-                        
-                        {/* Reports Tab only for Admin */}
-                        {auth.user.role === 'super_admin' || auth.user.role === 'admin' ? (
-                            <button
-                                onClick={() => setActiveTab('reports')}
-                                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md flex-1 md:flex-none transition-all ${
-                                    activeTab === 'reports' 
-                                        ? 'bg-[#2563EB] text-white font-bold shadow-sm' 
-                                        : 'text-slate-655 dark:text-slate-400 hover:text-[#2563EB]'
-                                }`}
-                            >
-                                <TrendingUp size={13} />
-                               <span>POS Reports</span>
-                            </button>
-                        ) : null}
-                    </div>
-
-                </div>
+            <div className="pos-system flex-grow flex flex-col min-h-0 h-full space-y-2.5 p-2.5 overflow-hidden bg-[#F8FAFC] dark:bg-slate-900/40">
 
                 {/* 2. TAB CONTENT: TERMINAL */}
                 {activeTab === 'terminal' && (
@@ -641,12 +628,12 @@ export default function POS({ products, categories, customers, recentOrders, rep
                         </div>
 
                         {/* RIGHT: Cart and Payment Panels (35% width) */}
-                        <div className="w-full lg:w-[35%] flex flex-col min-h-0 h-full space-y-3">
+                        <div className="w-full lg:w-[35%] flex flex-col min-h-0 h-full space-y-2">
                             
                             {/* Card 1: Cart Summary */}
-                            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 shadow-sm flex items-center justify-between flex-shrink-0">
+                            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2 shadow-sm flex items-center justify-between flex-shrink-0">
                                 <div className="flex items-center space-x-2">
-                                    <ShoppingCart size={14} className="text-[#2563EB]" />
+                                    <ShoppingCart size={13} className="text-[#2563EB]" />
                                     <span className="text-xs font-bold text-slate-850 dark:text-slate-200">Cart Summary</span>
                                 </div>
                                 <div className="flex items-center space-x-1.5">
@@ -660,8 +647,8 @@ export default function POS({ products, categories, customers, recentOrders, rep
                             </div>
 
                             {/* Card 2: Cart Items */}
-                            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 shadow-sm flex-grow flex flex-col min-h-0 overflow-hidden space-y-2">
-                                <div className="flex justify-between items-center pb-1.5 border-b border-slate-100 dark:border-slate-705 flex-shrink-0">
+                            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2 shadow-sm flex-grow flex flex-col min-h-0 overflow-hidden space-y-2">
+                                <div className="flex justify-between items-center pb-1 border-b border-slate-100 dark:border-slate-700 flex-shrink-0">
                                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Cart Items</span>
                                     {cart.length > 0 && (
                                         <button 
@@ -683,7 +670,8 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                         placeholder="Scan barcode/SKU to add..."
                                         value={barcodeInput}
                                         onChange={(e) => setBarcodeInput(e.target.value)}
-                                        className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg !py-1 !pl-8 !pr-2.5 !text-xs w-full text-slate-800 dark:text-white placeholder-slate-400 focus:ring-1 focus:ring-[#2563EB]"
+                                        className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg !py-1 !pr-2.5 !text-xs w-full text-slate-800 dark:text-white placeholder-slate-400 focus:ring-1 focus:ring-[#2563EB]"
+                                        style={{ paddingLeft: '32px' }}
                                     />
                                     <button type="submit" className="hidden">Scan</button>
                                 </form>
@@ -783,7 +771,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                             </div>
 
                             {/* Card 3: Customer Info */}
-                            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 shadow-sm space-y-2 flex-shrink-0">
+                            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2 shadow-sm space-y-1.5 flex-shrink-0">
                                 <div className="flex justify-between items-center">
                                     <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Customer Info</label>
                                     <button
@@ -830,8 +818,8 @@ export default function POS({ products, categories, customers, recentOrders, rep
                             </div>
 
                             {/* Card 4: Order Summary */}
-                            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 shadow-sm space-y-2 flex-shrink-0">
-                                <div className="flex justify-between items-center border-b border-slate-105 dark:border-slate-700/60 pb-1">
+                            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2 shadow-sm space-y-1.5 flex-shrink-0">
+                                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-700/60 pb-1">
                                     <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Order Summary</label>
                                     
                                     {/* Discount controls */}
@@ -887,7 +875,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                             </div>
 
                             {/* Card 5: Payment Section */}
-                            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 shadow-sm space-y-2 flex-shrink-0">
+                            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2 shadow-sm space-y-1.5 flex-shrink-0">
                                 <div>
                                     <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Payment Method</label>
                                     <div className="grid grid-cols-4 gap-1">
@@ -979,7 +967,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                 <button
                                     onClick={handlePOSCheckout}
                                     disabled={checkoutLoading || cart.length === 0}
-                                    className="w-full bg-[#2563EB] hover:bg-[#3B82F6] disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-600 text-white text-xs font-black py-3 rounded-xl transition-all shadow-md uppercase flex items-center justify-center space-x-1.5 select-none"
+                                    className="w-full bg-[#2563EB] hover:bg-[#3B82F6] disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-600 text-white text-xs font-black py-2 rounded-lg transition-all shadow-md uppercase flex items-center justify-center space-x-1.5 select-none"
                                 >
                                     <CheckCircle size={13} className="stroke-[3]" />
                                     <span>{checkoutLoading ? 'Processing...' : 'Complete Sale'}</span>
