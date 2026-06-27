@@ -649,7 +649,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
 
                             {/* Card 2: Cart Items */}
                             <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-1.5 shadow-sm flex-grow flex flex-col min-h-[130px] overflow-hidden space-y-1">
-                                <div className="flex justify-between items-center pb-0.5 border-b border-slate-100 dark:border-slate-700/40 flex-shrink-0">
+                                <div className="flex justify-between items-center pb-1 mb-1 border-b border-slate-100 dark:border-slate-700/40 flex-shrink-0">
                                     <span className="text-[8.5px] font-bold uppercase tracking-wider text-slate-500">Cart Items</span>
                                     {cart.length > 0 && (
                                         <button 
@@ -671,8 +671,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                         placeholder="Scan barcode/SKU to add..."
                                         value={barcodeInput}
                                         onChange={(e) => setBarcodeInput(e.target.value)}
-                                        className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md !h-[24px] !py-0 !pr-2 !text-[9.5px] w-full text-slate-800 dark:text-white placeholder-slate-400 focus:ring-1 focus:ring-[#2563EB]"
-                                        style={{ paddingLeft: '24px' }}
+                                        className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md !h-[24px] !py-0 !pl-7 !pr-2 !text-[9.5px] w-full text-slate-800 dark:text-white placeholder-slate-400 focus:ring-1 focus:ring-[#2563EB]"
                                     />
                                     <button type="submit" className="hidden">Scan</button>
                                 </form>
