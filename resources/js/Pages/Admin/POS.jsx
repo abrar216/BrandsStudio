@@ -671,7 +671,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                         placeholder="Scan barcode/SKU to add..."
                                         value={barcodeInput}
                                         onChange={(e) => setBarcodeInput(e.target.value)}
-                                        className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md !py-0.5 !pr-2 !text-[9.5px] w-full text-slate-800 dark:text-white placeholder-slate-400 focus:ring-1 focus:ring-[#2563EB]"
+                                        className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md !h-[24px] !py-0 !pr-2 !text-[9.5px] w-full text-slate-800 dark:text-white placeholder-slate-400 focus:ring-1 focus:ring-[#2563EB]"
                                         style={{ paddingLeft: '24px' }}
                                     />
                                     <button type="submit" className="hidden">Scan</button>
@@ -780,7 +780,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                         <select
                                             value={selectedCustomerId}
                                             onChange={(e) => handleCustomerChange(e.target.value)}
-                                            className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md !text-[9px] font-bold !py-0.5 !px-1.5 w-full text-slate-700 dark:text-slate-300 focus:ring-1 focus:ring-[#2563EB] shadow-sm cursor-pointer"
+                                            className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md !text-[9px] font-bold !h-[24px] !py-0 !px-1.5 w-full text-slate-700 dark:text-slate-300 focus:ring-1 focus:ring-[#2563EB] shadow-sm cursor-pointer"
                                         >
                                             <option value="">WALK-IN (GUEST)</option>
                                             {customers.map(c => (
@@ -793,7 +793,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                     <button
                                         type="button"
                                         onClick={() => setAddCustomerModalOpen(true)}
-                                        className="text-[8px] text-[#2563EB] hover:text-[#3B82F6] font-bold flex items-center space-x-0.5 transition-all flex-shrink-0"
+                                        className="text-[8px] text-[#2563EB] hover:text-[#3B82F6] font-bold flex items-center justify-center space-x-0.5 transition-all flex-shrink-0 !h-[24px] !py-0"
                                     >
                                         <Plus size={8} className="stroke-[3]" />
                                         <span>New</span>
@@ -808,14 +808,14 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                             placeholder="Guest Name"
                                             value={customerName}
                                             onChange={(e) => setCustomerName(e.target.value)}
-                                            className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-md !py-0.5 !px-1 !text-[8.5px] text-slate-800 dark:text-slate-200 w-full placeholder-slate-400 focus:border-[#2563EB]"
+                                            className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-md !h-[22px] !py-0 !px-1 !text-[8.5px] text-slate-800 dark:text-slate-200 w-full placeholder-slate-400 focus:border-[#2563EB]"
                                         />
                                         <input
                                             type="tel"
                                             placeholder="Guest Phone"
                                             value={customerPhone}
                                             onChange={(e) => setCustomerPhone(e.target.value)}
-                                            className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-md !py-0.5 !px-1 !text-[8.5px] text-slate-800 dark:text-slate-200 w-full placeholder-slate-400 focus:border-[#2563EB]"
+                                            className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-md !h-[22px] !py-0 !px-1 !text-[8.5px] text-slate-800 dark:text-slate-200 w-full placeholder-slate-400 focus:border-[#2563EB]"
                                         />
                                     </div>
                                 )}
@@ -864,7 +864,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                                         setDiscount(isNaN(num) ? 0 : Math.max(0, num));
                                                     }
                                                 }}
-                                                className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded !py-0.5 !px-1 !text-[8.5px] text-center text-slate-800 dark:text-slate-200 font-mono font-bold w-12 focus:ring-1 focus:ring-[#2563EB]"
+                                                className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded !py-0.5 !px-1 !text-[8.5px] text-center text-slate-800 dark:text-slate-200 font-mono font-bold w-16 focus:ring-1 focus:ring-[#2563EB]"
                                                 placeholder="0"
                                             />
                                             {discountDeduction > 0 && (
@@ -901,7 +901,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                                 key={method.id}
                                                 type="button"
                                                 onClick={() => setPaymentMethod(method.id)}
-                                                className={`py-0.5 rounded text-[7.5px] font-bold text-center border transition-all ${
+                                                className={`py-0 !h-[20px] rounded text-[7.5px] font-bold text-center border transition-all ${
                                                     paymentMethod === method.id 
                                                         ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-sm' 
                                                         : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100'
@@ -921,7 +921,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                                     placeholder="0.00"
                                                     value={cashReceived}
                                                     onChange={(e) => setCashReceived(e.target.value)}
-                                                    className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded !py-0.5 !px-1.5 !text-[9.5px] text-slate-800 dark:text-white font-mono font-bold w-full text-center focus:ring-1 focus:ring-[#2563EB]"
+                                                    className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded !h-[24px] !py-0 !px-1.5 !text-[9.5px] text-slate-800 dark:text-white font-mono font-bold w-full text-center focus:ring-1 focus:ring-[#2563EB]"
                                                 />
                                             </div>
                                             <div className="text-right">
@@ -941,7 +941,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                                 placeholder="Enter Reference Slip #"
                                                 value={onlineRef}
                                                 onChange={(e) => setOnlineRef(e.target.value)}
-                                                className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded !py-0.5 !px-1.5 !text-[9.5px] text-slate-800 dark:text-white font-mono w-full focus:ring-1 focus:ring-[#2563EB]"
+                                                className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded !h-[24px] !py-0 !px-1.5 !text-[9.5px] text-slate-800 dark:text-white font-mono w-full focus:ring-1 focus:ring-[#2563EB]"
                                             />
                                         </div>
                                     )}
@@ -955,21 +955,21 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                                     placeholder="Cash"
                                                     value={partialDetails.cash}
                                                     onChange={(e) => setPartialDetails({ ...partialDetails, cash: e.target.value })}
-                                                    className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded !py-0.5 !px-1 text-[7.5px] font-bold text-center focus:ring-1 focus:ring-[#2563EB]"
+                                                    className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded !h-[22px] !py-0 !px-1 text-[7.5px] font-bold text-center focus:ring-1 focus:ring-[#2563EB]"
                                                 />
                                                 <input
                                                     type="number"
                                                     placeholder="Card"
                                                     value={partialDetails.card}
                                                     onChange={(e) => setPartialDetails({ ...partialDetails, card: e.target.value })}
-                                                    className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded !py-0.5 !px-1 text-[7.5px] font-bold text-center focus:ring-1 focus:ring-[#2563EB]"
+                                                    className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded !h-[22px] !py-0 !px-1 text-[7.5px] font-bold text-center focus:ring-1 focus:ring-[#2563EB]"
                                                 />
                                                 <input
                                                     type="number"
                                                     placeholder="Online"
                                                     value={partialDetails.online}
                                                     onChange={(e) => setPartialDetails({ ...partialDetails, online: e.target.value })}
-                                                    className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded !py-0.5 !px-1 text-[7.5px] font-bold text-center focus:ring-1 focus:ring-[#2563EB]"
+                                                    className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded !h-[22px] !py-0 !px-1 text-[7.5px] font-bold text-center focus:ring-1 focus:ring-[#2563EB]"
                                                 />
                                             </div>
                                         </div>
