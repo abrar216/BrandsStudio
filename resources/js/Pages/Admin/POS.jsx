@@ -518,14 +518,14 @@ export default function POS({ products, categories, customers, recentOrders, rep
             <Head title="POS Cashier Terminal" />
 
             {/* TAB CONTAINER */}
-            <div className="pos-system flex-grow flex flex-col min-h-0 h-full space-y-2.5 p-2.5 overflow-hidden bg-[#F8FAFC] dark:bg-slate-900/40">
+            <div className="pos-system flex-grow flex flex-col min-h-0 h-auto md:h-full space-y-2.5 p-2.5 overflow-y-auto md:overflow-hidden bg-[#F8FAFC] dark:bg-slate-900/40">
 
                 {/* 2. TAB CONTENT: TERMINAL */}
                 {activeTab === 'terminal' && (
-                    <div className="flex-grow flex flex-col lg:flex-row gap-3 min-h-0 h-full overflow-hidden">
+                    <div className="flex-grow flex flex-col md:flex-row gap-3 min-h-0 h-auto md:h-full overflow-y-auto md:overflow-hidden">
                         
                         {/* LEFT: Products Grid (65% width) */}
-                        <div className="w-full lg:w-[65%] flex flex-col min-h-0 h-full space-y-3">
+                        <div className="w-full md:w-[65%] flex flex-col min-h-0 h-auto md:h-full space-y-3">
                             
                             {/* Search and Category Filter */}
                             <div className="grid grid-cols-12 gap-2 bg-white dark:bg-slate-800 p-2 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex-shrink-0">
@@ -554,7 +554,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                             </div>
 
                             {/* Catalog Products list */}
-                            <div className="flex-grow overflow-y-auto pr-1 min-h-0">
+                            <div className="flex-grow overflow-y-auto pr-1 min-h-[300px] md:min-h-0 md:h-0">
                                 {filteredProducts.length > 0 ? (
                                     <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 pb-4">
                                         {filteredProducts.map((prod) => (
@@ -628,8 +628,8 @@ export default function POS({ products, categories, customers, recentOrders, rep
                             </div>
                         </div>
 
-                        {/* RIGHT: Cart and Payment Panels (35% width) */}
-                        <div className="w-full lg:w-[35%] flex flex-col min-h-0 h-full space-y-2">
+                         {/* RIGHT: Cart and Payment Panels (35% width) */}
+                         <div className="w-full md:w-[35%] flex flex-col min-h-0 h-auto md:h-full space-y-1.5">
                             
                             {/* Card 1: Cart Summary */}
                             <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2 shadow-sm flex items-center justify-between flex-shrink-0">
