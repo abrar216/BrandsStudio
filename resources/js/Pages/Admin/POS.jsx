@@ -901,7 +901,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                                 key={method.id}
                                                 type="button"
                                                 onClick={() => setPaymentMethod(method.id)}
-                                                className={`py-0 !h-[20px] rounded text-[7.5px] font-bold text-center border transition-all ${
+                                                className={`flex items-center justify-center py-0 !h-[20px] rounded text-[7.5px] font-bold text-center border transition-all ${
                                                     paymentMethod === method.id 
                                                         ? 'bg-[#2563EB] text-white border-[#2563EB] shadow-sm' 
                                                         : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100'
