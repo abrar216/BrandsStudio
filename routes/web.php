@@ -75,38 +75,6 @@ Route::get('/admin-setup', function (\Illuminate\Http\Request $request) {
     }
 });
 
-Route::get('/admin-cleanup', function (\Illuminate\Http\Request $request) {
-    // Security check for production environment
-    if (!app()->environment('local') && $request->query('key') !== 'brands_studio_secure_setup_9912') {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Unauthorized access to cleanup route.',
-        ], 403);
-    }
-
-    try {
-        // Run cleanup
-        \Illuminate\Support\Facades\DB::transaction(function () {
-            // PostgreSQL syntax for truncating tables with CASCADE to reset auto-increments
-            \Illuminate\Support\Facades\DB::statement('TRUNCATE TABLE order_items, orders, product_images, product_variants, products, categories, expenses, transactions, wishlists, reviews, notifications, sessions, cache RESTART IDENTITY CASCADE;');
-
-            // Delete test users (keep admin, superadmin, cashier, and staff)
-            \Illuminate\Support\Facades\DB::table('users')
-                ->whereNotIn('role', ['super_admin', 'admin', 'cashier', 'staff'])
-                ->delete();
-        });
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Production database cleaned successfully! All transactional/test data removed.',
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage(),
-        ], 500);
-    }
-});
 
 
 // 1. General E-Commerce Storefront Routes (Guest/Customer)
