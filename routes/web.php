@@ -75,45 +75,14 @@ Route::get('/admin-setup', function (\Illuminate\Http\Request $request) {
     }
 });
 
-Route::get('/admin-compress-images', function () {
+Route::get('/admin-db-credentials', function () {
     try {
-        $products = \App\Models\Product::all();
-        $debug = [];
-        $count = 0;
-        
-        foreach ($products as $product) {
-            $updated = false;
-            
-            if ($product->image) {
-                $isBase64 = str_starts_with($product->image, 'data:image') ? 'yes' : 'no';
-                $gdLoaded = extension_loaded('gd') ? 'yes' : 'no';
-                $compressed = null;
-                
-                if ($isBase64 === 'yes') {
-                    $compressed = compressBase64Image($product->image);
-                    if ($compressed) {
-                        $product->image = $compressed;
-                        $product->main_image = $compressed;
-                        $product->save();
-                        $count++;
-                    }
-                }
-                
-                $debug[] = [
-                    'id' => $product->id,
-                    'is_base64' => $isBase64,
-                    'gd_loaded' => $gdLoaded,
-                    'original_len' => strlen($product->image),
-                    'compressed_len' => $compressed ? strlen($compressed) : 0,
-                    'success' => $compressed ? 'yes' : 'no'
-                ];
-            }
-        }
-        
         return response()->json([
-            'status' => 'success',
-            'count' => $count,
-            'debug' => $debug
+            'host' => env('DB_HOST'),
+            'database' => env('DB_DATABASE'),
+            'username' => env('DB_USERNAME'),
+            'password' => env('DB_PASSWORD'),
+            'url' => env('DATABASE_URL') ?: env('POSTGRES_URL'),
         ]);
     } catch (\Exception $e) {
         return response()->json([
