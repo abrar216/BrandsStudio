@@ -75,11 +75,25 @@ Route::get('/admin-setup', function (\Illuminate\Http\Request $request) {
     }
 });
 
-Route::get('/admin-check-imagick', function () {
-    return response()->json([
-        'gd' => extension_loaded('gd'),
-        'imagick' => extension_loaded('imagick'),
-    ]);
+Route::get('/admin-clear-existing-images', function () {
+    try {
+        \Illuminate\Support\Facades\DB::table('products')->update([
+            'image' => null,
+            'main_image' => null
+        ]);
+        \Illuminate\Support\Facades\DB::table('product_images')->update([
+            'image_path' => null
+        ]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Cleared bloated product and gallery base64 image strings from database. You can now re-upload them via Admin Edit!'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage()
+        ]);
+    }
 });
 
 Route::get('/admin-check-errors', function () {
