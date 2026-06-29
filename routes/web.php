@@ -75,26 +75,6 @@ Route::get('/admin-setup', function (\Illuminate\Http\Request $request) {
     }
 });
 
-Route::get('/admin-clear-existing-images', function () {
-    try {
-        $placeholder = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
-        \Illuminate\Support\Facades\DB::table('product_images')->delete();
-        \Illuminate\Support\Facades\DB::table('products')->update([
-            'image' => $placeholder,
-            'main_image' => $placeholder
-        ]);
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Cleared bloated product and gallery base64 image strings from database. You can now re-upload them via Admin Edit!'
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage()
-        ]);
-    }
-});
-
 Route::get('/admin-check-errors', function () {
     try {
         $totalSales = \App\Models\Order::where('payment_status', 'paid')->sum('total');
