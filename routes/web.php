@@ -75,6 +75,82 @@ Route::get('/admin-setup', function (\Illuminate\Http\Request $request) {
     }
 });
 
+Route::get('/admin-check-errors', function () {
+    try {
+        $totalSales = \App\Models\Order::where('payment_status', 'paid')->sum('total');
+        $totalOrders = \App\Models\Order::count();
+        $totalExpenses = \App\Models\Expense::sum('amount');
+        $netProfit = $totalSales - $totalExpenses;
+        $totalProducts = \App\Models\Product::where('status', 'active')->count();
+        $grossValuation = \App\Models\Product::where('status', 'active')
+            ->get()
+            ->sum(function($p) {
+                return $p->price * $p->stock_quantity;
+            });
+            
+        $driver = Illuminate\Support\Facades\DB::connection()->getDriverName();
+        if ($driver === 'pgsql') {
+            $monthFormatted = "TO_CHAR(created_at, 'Mon YYYY')";
+        } elseif ($driver === 'sqlite') {
+            $monthFormatted = "case strftime('%m', created_at) when '01' then 'Jan' when '02' then 'Feb' when '03' then 'Mar' when '04' then 'Apr' when '05' then 'May' when '06' then 'Jun' when '07' then 'Jul' when '08' then 'Aug' when '09' then 'Sep' when '10' then 'Oct' when '11' then 'Nov' when '12' then 'Dec' end || ' ' || strftime('%Y', created_at)";
+        } else {
+            $monthFormatted = "DATE_FORMAT(created_at, '%b %Y')";
+        }
+        
+        $monthlySales = \App\Models\Order::where('payment_status', 'paid')
+            ->select(
+                Illuminate\Support\Facades\DB::raw('SUM(total) as sales'),
+                Illuminate\Support\Facades\DB::raw("$monthFormatted as month")
+            )
+            ->groupBy(Illuminate\Support\Facades\DB::raw($monthFormatted))
+            ->orderBy(Illuminate\Support\Facades\DB::raw('MIN(created_at)'), 'asc')
+            ->get();
+            
+        $lowStockProducts = \App\Models\Product::where('status', 'active')
+            ->where('stock_quantity', '<', 10)
+            ->limit(5)
+            ->get();
+
+        $lowStockVariants = \App\Models\ProductVariant::where('stock_quantity', '<', 5)
+            ->with('product')
+            ->limit(5)
+            ->get();
+            
+        $recentOrders = \App\Models\Order::latest()->limit(5)->get();
+        
+        $topProducts = \App\Models\OrderItem::select('product_id', Illuminate\Support\Facades\DB::raw('SUM(quantity) as total_sold'))
+            ->groupBy('product_id')
+            ->orderBy('total_sold', 'desc')
+            ->with('product')
+            ->limit(5)
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'totalSales' => $totalSales,
+                'totalOrders' => $totalOrders,
+                'totalExpenses' => $totalExpenses,
+                'netProfit' => $netProfit,
+                'totalProducts' => $totalProducts,
+                'grossValuation' => $grossValuation,
+                'monthlySales' => $monthlySales,
+                'lowStockProducts' => $lowStockProducts,
+                'lowStockVariants' => $lowStockVariants,
+                'recentOrders' => $recentOrders,
+                'topProducts' => $topProducts
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+    }
+});
+
+
 
 
 // 1. General E-Commerce Storefront Routes (Guest/Customer)
