@@ -75,6 +75,115 @@ Route::get('/admin-setup', function (\Illuminate\Http\Request $request) {
     }
 });
 
+Route::get('/admin-compress-images', function () {
+    try {
+        $products = \App\Models\Product::all();
+        $count = 0;
+        
+        foreach ($products as $product) {
+            $updated = false;
+            
+            // Compress main image
+            if ($product->image && str_starts_with($product->image, 'data:image')) {
+                $compressed = compressBase64Image($product->image);
+                if ($compressed) {
+                    $product->image = $compressed;
+                    $product->main_image = $compressed;
+                    $updated = true;
+                }
+            }
+            
+            if ($updated) {
+                $product->save();
+                $count++;
+            }
+        }
+        
+        $galleryImages = \App\Models\ProductImage::all();
+        $galleryCount = 0;
+        foreach ($galleryImages as $img) {
+            if ($img->image_path && str_starts_with($img->image_path, 'data:image')) {
+                $compressed = compressBase64Image($img->image_path);
+                if ($compressed) {
+                    $img->image_path = $compressed;
+                    $img->save();
+                    $galleryCount++;
+                }
+            }
+        }
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => "Compressed {$count} products' images and {$galleryCount} gallery images successfully!",
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+        ]);
+    }
+});
+
+// Helper function to compress base64 image
+function compressBase64Image($base64Str) {
+    try {
+        if (!str_contains($base64Str, ';base64,')) return null;
+        
+        list($type, $data) = explode(';', $base64Str);
+        list(, $data) = explode(',', $data);
+        $mime = str_replace('data:', '', $type);
+        $raw = base64_decode($data);
+        
+        if (!extension_loaded('gd')) return null;
+        
+        $src = imagecreatefromstring($raw);
+        if (!$src) return null;
+        
+        $width = imagesx($src);
+        $height = imagesy($src);
+        
+        $maxDim = 400;
+        if ($width > $maxDim || $height > $maxDim) {
+            if ($width > $height) {
+                $newWidth = $maxDim;
+                $newHeight = intval($height * ($maxDim / $width));
+            } else {
+                $newHeight = $maxDim;
+                $newWidth = intval($width * ($maxDim / $height));
+            }
+        } else {
+            $newWidth = $width;
+            $newHeight = $height;
+        }
+        
+        $dst = imagecreatetruecolor($newWidth, $newHeight);
+        
+        if ($mime === 'image/png' || $mime === 'image/gif') {
+            imagealphablending($dst, false);
+            imagesavealpha($dst, true);
+        }
+        
+        imagecopyresampled($dst, $src, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+        
+        ob_start();
+        if ($mime === 'image/png') {
+            imagepng($dst, null, 7);
+        } elseif ($mime === 'image/gif') {
+            imagegif($dst);
+        } else {
+            imagejpeg($dst, null, 70);
+        }
+        $compressedData = ob_get_clean();
+        
+        imagedestroy($src);
+        imagedestroy($dst);
+        
+        return 'data:' . $mime . ';base64,' . base64_encode($compressedData);
+    } catch (\Exception $e) {
+        return null;
+    }
+}
+
 Route::get('/admin-check-errors', function () {
     try {
         $totalSales = \App\Models\Order::where('payment_status', 'paid')->sum('total');
