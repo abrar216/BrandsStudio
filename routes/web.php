@@ -77,12 +77,13 @@ Route::get('/admin-setup', function (\Illuminate\Http\Request $request) {
 
 Route::get('/admin-clear-existing-images', function () {
     try {
+        $placeholder = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
         \Illuminate\Support\Facades\DB::table('products')->update([
-            'image' => null,
-            'main_image' => null
+            'image' => $placeholder,
+            'main_image' => $placeholder
         ]);
         \Illuminate\Support\Facades\DB::table('product_images')->update([
-            'image_path' => null
+            'image_path' => $placeholder
         ]);
         return response()->json([
             'status' => 'success',
