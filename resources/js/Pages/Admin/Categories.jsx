@@ -16,6 +16,59 @@ import {
 } from 'lucide-react';
 import { getAssetUrl, getCategoryImageUrl } from '../../Utils/asset';
 
+const compressImageFile = (file, maxDim = 400, quality = 0.7) => {
+    return new Promise((resolve) => {
+        if (!file || !file.type.startsWith('image/')) {
+            resolve(file);
+            return;
+        }
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxDim || height > maxDim) {
+                    if (width > height) {
+                        height = Math.round((height * maxDim) / width);
+                        width = maxDim;
+                    } else {
+                        width = Math.round((width * maxDim) / height);
+                        height = maxDim;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob(
+                    (blob) => {
+                        if (blob) {
+                            const compressedFile = new File([blob], file.name, {
+                                type: 'image/jpeg',
+                                lastModified: Date.now(),
+                            });
+                            resolve(compressedFile);
+                        } else {
+                            resolve(file);
+                        }
+                    },
+                    'image/jpeg',
+                    quality
+                );
+            };
+            img.onerror = () => resolve(file);
+        };
+        reader.onerror = () => resolve(file);
+    });
+};
+
 export default function Categories({ categories }) {
     
     // Form controller for adding category
@@ -138,7 +191,12 @@ export default function Categories({ categories }) {
                             <input
                                 type="file"
                                 accept="image/*"
-                                onChange={(e) => setData('image', e.target.files[0])}
+                                onChange={async (e) => {
+                                    if (e.target.files[0]) {
+                                        const compressed = await compressImageFile(e.target.files[0]);
+                                        setData('image', compressed);
+                                    }
+                                }}
                                 className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2 text-sm text-slate-700 focus:outline-none file:mr-3 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-black file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer"
                             />
                             {errors.image && <p className="text-xs text-red-500 mt-1 font-bold">{errors.image}</p>}
@@ -286,7 +344,12 @@ export default function Categories({ categories }) {
                                 <input
                                     type="file"
                                     accept="image/*"
-                                    onChange={(e) => setEditData('image', e.target.files[0])}
+                                    onChange={async (e) => {
+                                        if (e.target.files[0]) {
+                                            const compressed = await compressImageFile(e.target.files[0]);
+                                            setEditData('image', compressed);
+                                        }
+                                    }}
                                     className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2 text-sm text-slate-750 focus:outline-none file:mr-3 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-black file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer"
                                 />
                                 {editErrors.image && <p className="text-xs text-red-500 mt-1 font-bold">{editErrors.image}</p>}

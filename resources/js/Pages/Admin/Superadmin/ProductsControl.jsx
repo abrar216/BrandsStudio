@@ -21,6 +21,59 @@ import {
 } from 'lucide-react';
 import { getAssetUrl, getProductImageUrl } from '../../../Utils/asset';
 
+const compressImageFile = (file, maxDim = 400, quality = 0.7) => {
+    return new Promise((resolve) => {
+        if (!file || !file.type.startsWith('image/')) {
+            resolve(file);
+            return;
+        }
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxDim || height > maxDim) {
+                    if (width > height) {
+                        height = Math.round((height * maxDim) / width);
+                        width = maxDim;
+                    } else {
+                        width = Math.round((width * maxDim) / height);
+                        height = maxDim;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob(
+                    (blob) => {
+                        if (blob) {
+                            const compressedFile = new File([blob], file.name, {
+                                type: 'image/jpeg',
+                                lastModified: Date.now(),
+                            });
+                            resolve(compressedFile);
+                        } else {
+                            resolve(file);
+                        }
+                    },
+                    'image/jpeg',
+                    quality
+                );
+            };
+            img.onerror = () => resolve(file);
+        };
+        reader.onerror = () => resolve(file);
+    });
+};
+
 export default function ProductsControl({ products = [], categories = [] }) {
     const { props } = usePage();
     const currency = props.settings?.currency || 'Rs.';
@@ -135,18 +188,22 @@ export default function ProductsControl({ products = [], categories = [] }) {
         }
     };
 
-    const handleMainImageChange = (file) => {
+    const handleMainImageChange = async (file) => {
         if (!file) return;
-        setData('main_image_file', file);
-        setMainImagePreview(URL.createObjectURL(file));
+        const compressed = await compressImageFile(file);
+        setData('main_image_file', compressed);
+        setMainImagePreview(URL.createObjectURL(compressed));
     };
 
-    const handleGalleryImagesChange = (files) => {
+    const handleGalleryImagesChange = async (files) => {
         if (!files.length) return;
         const filesArray = Array.from(files);
-        setData('gallery_image_files', filesArray);
+        const compressedFiles = await Promise.all(
+            filesArray.map(file => compressImageFile(file))
+        );
+        setData('gallery_image_files', compressedFiles);
 
-        const newPreviews = filesArray.map(file => URL.createObjectURL(file));
+        const newPreviews = compressedFiles.map(file => URL.createObjectURL(file));
         setGalleryPreviews(prev => [...prev, ...newPreviews]);
     };
 

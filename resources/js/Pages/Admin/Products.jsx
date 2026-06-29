@@ -20,6 +20,59 @@ import {
 } from 'lucide-react';
 import { getAssetUrl, getProductImageUrl } from '../../Utils/asset';
 
+const compressImageFile = (file, maxDim = 400, quality = 0.7) => {
+    return new Promise((resolve) => {
+        if (!file || !file.type.startsWith('image/')) {
+            resolve(file);
+            return;
+        }
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxDim || height > maxDim) {
+                    if (width > height) {
+                        height = Math.round((height * maxDim) / width);
+                        width = maxDim;
+                    } else {
+                        width = Math.round((width * maxDim) / height);
+                        height = maxDim;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob(
+                    (blob) => {
+                        if (blob) {
+                            const compressedFile = new File([blob], file.name, {
+                                type: 'image/jpeg',
+                                lastModified: Date.now(),
+                            });
+                            resolve(compressedFile);
+                        } else {
+                            resolve(file);
+                        }
+                    },
+                    'image/jpeg',
+                    quality
+                );
+            };
+            img.onerror = () => resolve(file);
+        };
+        reader.onerror = () => resolve(file);
+    });
+};
+
 export default function Products({ products, categories }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
@@ -612,7 +665,12 @@ export default function Products({ products, categories }) {
                                     <input
                                         type="file"
                                         accept="image/*"
-                                        onChange={(e) => setAddData('image', e.target.files[0])}
+                                        onChange={async (e) => {
+                                            if (e.target.files[0]) {
+                                                const compressed = await compressImageFile(e.target.files[0]);
+                                                setAddData('image', compressed);
+                                            }
+                                        }}
                                         className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2 text-xs text-slate-700 focus:outline-none file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-[10px] file:font-black file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer"
                                     />
                                     {addErrors.image && <p className="text-[10px] text-red-555 text-red-500 mt-1 font-bold">{addErrors.image}</p>}
@@ -623,7 +681,14 @@ export default function Products({ products, categories }) {
                                         type="file"
                                         multiple
                                         accept="image/*"
-                                        onChange={(e) => setAddData('images', Array.from(e.target.files))}
+                                        onChange={async (e) => {
+                                            if (e.target.files.length) {
+                                                const compressedFiles = await Promise.all(
+                                                    Array.from(e.target.files).map(file => compressImageFile(file))
+                                                );
+                                                setAddData('images', compressedFiles);
+                                            }
+                                        }}
                                         className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2 text-xs text-slate-700 focus:outline-none file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-[10px] file:font-black file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer"
                                     />
                                     {addErrors.images && <p className="text-[10px] text-red-555 text-red-500 mt-1 font-bold">{addErrors.images}</p>}
@@ -968,7 +1033,12 @@ export default function Products({ products, categories }) {
                                     <input
                                         type="file"
                                         accept="image/*"
-                                        onChange={(e) => setEditData('image', e.target.files[0])}
+                                        onChange={async (e) => {
+                                            if (e.target.files[0]) {
+                                                const compressed = await compressImageFile(e.target.files[0]);
+                                                setEditData('image', compressed);
+                                            }
+                                        }}
                                         className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2 text-xs text-slate-700 focus:outline-none file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-[10px] file:font-black file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer"
                                     />
                                     {editErrors.image && <p className="text-[10px] text-red-555 text-red-500 mt-1 font-bold">{editErrors.image}</p>}
@@ -979,7 +1049,14 @@ export default function Products({ products, categories }) {
                                         type="file"
                                         multiple
                                         accept="image/*"
-                                        onChange={(e) => setEditData('images', Array.from(e.target.files))}
+                                        onChange={async (e) => {
+                                            if (e.target.files.length) {
+                                                const compressedFiles = await Promise.all(
+                                                    Array.from(e.target.files).map(file => compressImageFile(file))
+                                                );
+                                                setEditData('images', compressedFiles);
+                                            }
+                                        }}
                                         className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2 text-xs text-slate-700 focus:outline-none file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-[10px] file:font-black file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer"
                                     />
                                     {editErrors.images && <p className="text-[10px] text-red-555 text-red-500 mt-1 font-bold">{editErrors.images}</p>}
