@@ -73,6 +73,11 @@ Route::get('/admin-setup', function (\Illuminate\Http\Request $request) {
             'message' => $e->getMessage(),
         ], 500);
     }
+Route::get('/admin-check-imagick', function () {
+    return response()->json([
+        'gd' => extension_loaded('gd'),
+        'imagick' => extension_loaded('imagick'),
+    ]);
 });
 
 Route::get('/admin-check-errors', function () {
