@@ -33,8 +33,8 @@ if ($dbConnection === 'sqlite' && $dbDatabase && !file_exists($dbDatabase)) {
 }
 
 try {
-    // Run migrations and seeders automatically if settings table is missing
-    if (!Illuminate\Support\Facades\Schema::hasTable('settings')) {
+    // Only run auto-migrations if explicitly triggered via query param
+    if (isset($_GET['run_migrations']) && $_GET['run_migrations'] === '1') {
         // Resolve console kernel to run migrations and seeders
         $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
         
