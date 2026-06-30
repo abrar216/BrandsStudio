@@ -47,21 +47,25 @@ const compressImageFile = (file, maxDim = 400, quality = 0.7) => {
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
 
-                canvas.toBlob(
-                    (blob) => {
-                        if (blob) {
-                            const compressedFile = new File([blob], file.name, {
-                                type: 'image/jpeg',
-                                lastModified: Date.now(),
-                            });
-                            resolve(compressedFile);
-                        } else {
-                            resolve(file);
-                        }
-                    },
-                    'image/jpeg',
-                    quality
-                );
+                try {
+                    canvas.toBlob(
+                        (blob) => {
+                            if (blob) {
+                                const compressedFile = new File([blob], file.name, {
+                                    type: 'image/jpeg',
+                                    lastModified: Date.now(),
+                                });
+                                resolve(compressedFile);
+                            } else {
+                                resolve(file);
+                            }
+                        },
+                        'image/jpeg',
+                        quality
+                    );
+                } catch (e) {
+                    resolve(file);
+                }
             };
             img.onerror = () => resolve(file);
         };
