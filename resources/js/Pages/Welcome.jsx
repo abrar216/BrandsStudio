@@ -10,69 +10,88 @@ export default function Welcome({ categories, featuredProducts, trendingProducts
     const storeSettings = props.settings || {};
     const currency = storeSettings.currency || 'Rs.';
 
+    // Slider Logic
+    const allSliderProducts = [...featuredProducts, ...bestSellers].filter(p => getProductImageUrl(p));
+    const uniqueSliderProducts = Array.from(new Map(allSliderProducts.map(item => [item.id, item])).values()).slice(0, 5);
+    
+    const [currentSlide, setCurrentSlide] = React.useState(0);
+
+    React.useEffect(() => {
+        if (uniqueSliderProducts.length <= 1) return;
+        const interval = setInterval(() => {
+            setCurrentSlide((prev) => (prev + 1) % uniqueSliderProducts.length);
+        }, 3000);
+        return () => clearInterval(interval);
+    }, [uniqueSliderProducts.length]);
+
     return (
         <StoreLayout>
             <Head title="Premium Clothing Store" />
 
-            {/* 1. Dynamic Premium Hero Section */}
-            <div className="relative overflow-hidden bg-neutral-900 text-white min-h-[75vh] flex items-center">
-                {/* Background visual elements */}
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-neutral-800 via-neutral-900 to-black opacity-95"></div>
-                <div className="absolute inset-y-0 right-0 w-1/2 bg-gradient-to-l from-amber-500/10 to-transparent pointer-events-none hidden lg:block"></div>
-                
-                {/* Visual grid backdrop */}
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
-
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                    
-                    {/* Hero Left Content */}
-                    <div className="lg:col-span-7 space-y-6 text-left">
-                        <span className="inline-block bg-amber-500/25 border border-amber-500/40 text-amber-300 text-xs font-black tracking-widest px-4 py-1.5 rounded-full uppercase">
-                            {settings.hero_badge || "New Season Arrival '26"}
-                        </span>
-                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight font-serif leading-none text-white whitespace-pre-line uppercase">
-                            {settings.hero_title || "WEAR YOUR\nSIGNATURE."}
-                        </h1>
-                        <p className="text-sm sm:text-base text-neutral-400 font-medium leading-relaxed max-w-xl">
-                            {settings.hero_subtitle || "Experience the premium refinement of Brands Studio. Indulge in tailored silhouettes, luxury organic textures, and contemporary clean apparel designed for the modern tastemaker."}
-                        </p>
-                        
-                        <div className="pt-4 flex flex-wrap gap-4">
-                            <Link 
-                                href={settings.hero_button_link || route('collections')} 
-                                className="bg-amber-500 hover:bg-amber-600 text-white font-extrabold tracking-wider text-xs px-8 py-4 rounded-xl transition-all shadow-lg hover:shadow-amber-500/20 uppercase"
-                            >
-                                {settings.hero_button_text || "EXPLORE COLLECTION"}
-                            </Link>
-                            {settings.hero_secondary_button_text && (
-                                <Link 
-                                    href={settings.hero_secondary_button_link || route('shop', { sort: 'popular' })} 
-                                    className="bg-transparent hover:bg-white/10 text-white border border-white/20 hover:border-white font-extrabold tracking-wider text-xs px-8 py-4 rounded-xl transition-all uppercase"
-                                >
-                                    {settings.hero_secondary_button_text}
-                                </Link>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Hero Right Visual Card */}
-                    <div className="lg:col-span-5 hidden lg:block">
-                        <div className="relative bg-white/5 border border-white/10 backdrop-blur-md p-6 rounded-3xl shadow-2xl flex flex-col items-center text-center max-w-sm mx-auto">
-                            <div className="w-16 h-16 bg-gradient-to-tr from-amber-400 to-amber-600 rounded-2xl flex items-center justify-center shadow-lg mb-6">
-                                <Shirt size={30} className="text-white" />
+            {/* 1. Dynamic Premium Hero Image Slider */}
+            {uniqueSliderProducts.length > 0 ? (
+                <div className="relative overflow-hidden bg-neutral-900 text-white min-h-[75vh] flex items-center group">
+                    {uniqueSliderProducts.map((product, index) => (
+                        <div 
+                            key={product.id}
+                            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                                index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                            }`}
+                        >
+                            <img 
+                                src={getAssetUrl(`storage/${getProductImageUrl(product)}`)}
+                                alt={product.name}
+                                className="w-full h-full object-cover object-center"
+                            />
+                            {/* Overlay gradient */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+                            
+                            {/* Product Info Overlay */}
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                                    <div className="max-w-2xl">
+                                        <span className="inline-block bg-amber-500 text-white text-[10px] font-black tracking-widest px-4 py-1.5 rounded-full uppercase mb-4 shadow-lg">
+                                            TRENDING NOW
+                                        </span>
+                                        <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight font-serif text-white uppercase drop-shadow-2xl leading-none">
+                                            {product.name}
+                                        </h2>
+                                        <p className="mt-6 text-sm text-gray-200 line-clamp-2 max-w-lg drop-shadow-md font-medium">
+                                            {product.short_description || product.description || 'Experience the premium refinement of Brands Studio. Indulge in tailored silhouettes, luxury textures, and contemporary clean apparel designed for the modern tastemaker.'}
+                                        </p>
+                                        <div className="mt-8">
+                                            <Link 
+                                                href={product.slug ? route('product.show', { slug: product.slug }) : '#'}
+                                                className="inline-block bg-white text-black font-extrabold tracking-wider text-xs px-10 py-4 rounded-xl transition-all hover:bg-amber-500 hover:text-white uppercase shadow-xl"
+                                            >
+                                                SHOP NOW
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <h3 className="text-lg font-bold text-white mb-2">Tailored Luxury Fabrics</h3>
-                            <p className="text-xs text-neutral-400 mb-6 leading-relaxed">
-                                Our signature wool blends and combed ringspun organic cotton garments offer a unique sensory experience.
-                            </p>
-                            <span className="bg-neutral-800 text-amber-400 text-[10px] font-black tracking-widest px-3 py-1 rounded-md uppercase">
-                                100% QUALITY GUARANTEED
-                            </span>
                         </div>
+                    ))}
+                    
+                    {/* Slider Navigation Dots */}
+                    <div className="absolute bottom-8 left-0 right-0 z-20 flex justify-center space-x-3">
+                        {uniqueSliderProducts.map((_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => setCurrentSlide(index)}
+                                className={`w-12 h-1 rounded-full transition-all duration-300 ${
+                                    index === currentSlide ? 'bg-amber-500 scale-100' : 'bg-white/50 hover:bg-white'
+                                }`}
+                                aria-label={`Go to slide ${index + 1}`}
+                            />
+                        ))}
                     </div>
-
                 </div>
-            </div>
+            ) : (
+                <div className="relative overflow-hidden bg-neutral-900 text-white min-h-[50vh] flex items-center justify-center">
+                    <h2 className="text-2xl font-bold text-neutral-500 uppercase tracking-widest">No Featured Images Available</h2>
+                </div>
+            )}
 
 
 
