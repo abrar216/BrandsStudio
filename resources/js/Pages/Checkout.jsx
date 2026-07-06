@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Head, useForm, router, usePage } from '@inertiajs/react';
 import StoreLayout from '../Layouts/StoreLayout';
 import { getCart, getCartTotal } from '../Utils/cart';
-import { Truck, CreditCard, Tag, ShieldCheck, ArrowRight, Loader2 } from 'lucide-react';
+import { getAssetUrl, getProductImageUrl } from '../Utils/asset';
+import { Truck, CreditCard, Tag, ShieldCheck, ArrowRight, Loader2, X } from 'lucide-react';
 import axios from 'axios';
 
 export default function Checkout({ settings: propSettings, currency: propCurrency }) {
@@ -274,7 +275,17 @@ export default function Checkout({ settings: propSettings, currency: propCurrenc
                                 {cartItems.map((item) => (
                                     <div key={`${item.id}-${item.variant_id || 'none'}`} className="flex justify-between items-center py-2.5 first:pt-0 border-b border-slate-50 last:border-0">
                                         <div className="flex items-center space-x-3.5">
-                                            <div className="w-10 h-12 bg-slate-50 border rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-serif font-black text-slate-300">BS</div>
+                                            <div className="w-10 h-12 bg-slate-50 border rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-serif font-black text-slate-300 overflow-hidden">
+                                                {getProductImageUrl(item) ? (
+                                                    <img 
+                                                        src={getAssetUrl(`storage/${getProductImageUrl(item)}`)} 
+                                                        alt={item.name} 
+                                                        className="w-full h-full object-cover" 
+                                                    />
+                                                ) : (
+                                                    <span>BS</span>
+                                                )}
+                                            </div>
                                             <div>
                                                 <h4 className="text-xs font-bold text-slate-800 line-clamp-1">{item.name}</h4>
                                                 <p className="text-[9px] font-black uppercase text-slate-400">

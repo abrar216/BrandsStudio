@@ -26,6 +26,23 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
     const [quantity, setQuantity] = useState(1);
     const [activeTab, setActiveTab] = useState('description');
 
+    // Image Gallery Setup
+    const mainImg = getProductImageUrl(product);
+    const gallery = (product.images || []).map(img => {
+        const path = img.image_path;
+        if (!path || path === '0' || path === 'null' || path.includes('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=')) return null;
+        let cleanPath = path.startsWith('/') ? path.slice(1) : path;
+        if (cleanPath.startsWith('storage/')) cleanPath = cleanPath.slice(8);
+        return cleanPath;
+    }).filter(Boolean);
+    const allImages = mainImg ? [mainImg, ...gallery.filter(g => g !== mainImg)] : gallery;
+    
+    const [activeImage, setActiveImage] = useState(allImages[0] || null);
+
+    React.useEffect(() => {
+        setActiveImage(allImages[0] || null);
+    }, [product.id]);
+
     // Filter variants based on current color choice
     const getAvailableSizesForColor = (colorName) => {
         if (!product.variants) return [];
@@ -120,25 +137,50 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                 {/* Product Core Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
                     
-                    {/* Left: Premium Image visual mockup */}
-                    {getProductImageUrl(product) ? (
-                        <div className="bg-slate-100/60 border border-slate-100 rounded-3xl overflow-hidden aspect-[3/4] relative">
-                            <img 
-                                src={getAssetUrl(`storage/${getProductImageUrl(product)}`)} 
-                                alt={product.name} 
-                                className="w-full h-full object-cover"
-                            />
-                        </div>
-                    ) : (
-                        <div className="bg-slate-100/60 border border-slate-100 rounded-3xl overflow-hidden aspect-[3/4] flex flex-col justify-center items-center relative">
-                            <span className="text-[140px] opacity-10 select-none font-black tracking-widest text-slate-800 font-serif">BS</span>
-                            <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-slate-400">
-                                <span className="text-xs uppercase font-extrabold tracking-widest text-slate-500 bg-white shadow-md px-6 py-2.5 rounded-full">
-                                    {product.category?.name || 'Apparel Collection'}
-                                </span>
+                    {/* Left: Premium Image & Gallery */}
+                    <div className="flex flex-col space-y-5">
+                        {activeImage ? (
+                            <div className="bg-slate-100/60 border border-slate-100 rounded-3xl overflow-hidden aspect-[3/4] relative shadow-sm">
+                                <img 
+                                    src={getAssetUrl(`storage/${activeImage}`)} 
+                                    alt={product.name} 
+                                    className="w-full h-full object-cover transition-opacity duration-300"
+                                />
                             </div>
-                        </div>
-                    )}
+                        ) : (
+                            <div className="bg-slate-100/60 border border-slate-100 rounded-3xl overflow-hidden aspect-[3/4] flex flex-col justify-center items-center relative shadow-sm">
+                                <span className="text-[140px] opacity-10 select-none font-black tracking-widest text-slate-800 font-serif">BS</span>
+                                <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-slate-400">
+                                    <span className="text-xs uppercase font-extrabold tracking-widest text-slate-500 bg-white shadow-md px-6 py-2.5 rounded-full">
+                                        {product.category?.name || 'Apparel Collection'}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Thumbnails Gallery */}
+                        {allImages.length > 1 && (
+                            <div className="flex items-center space-x-3 overflow-x-auto py-2 px-1">
+                                {allImages.map((img, idx) => (
+                                    <button 
+                                        key={idx}
+                                        onClick={() => setActiveImage(img)}
+                                        className={`w-20 h-24 flex-shrink-0 rounded-2xl overflow-hidden border-2 transition-all duration-200 focus:outline-none ${
+                                            activeImage === img 
+                                                ? 'border-amber-500 shadow-md scale-105' 
+                                                : 'border-slate-100 hover:border-slate-300 opacity-60 hover:opacity-100'
+                                        }`}
+                                    >
+                                        <img 
+                                            src={getAssetUrl(`storage/${img}`)} 
+                                            alt={`${product.name} thumbnail ${idx + 1}`}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
 
                     {/* Right: Core Purchase Form details */}
                     <div className="space-y-8">

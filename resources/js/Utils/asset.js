@@ -33,7 +33,7 @@ export const getAssetUrl = (path) => {
 
 /**
  * Robust helper to retrieve a valid image path from a product object.
- * Filters out invalid/placeholder values like null, "0", "null", "undefined".
+ * Filters out invalid/placeholder values like null, "0", "null", "undefined" and transparent pixels.
  */
 export const getProductImageUrl = (product) => {
     if (!product) return '';
@@ -42,6 +42,9 @@ export const getProductImageUrl = (product) => {
     for (const img of candidates) {
         if (img && img !== '0' && img !== 0 && img !== 'null' && img !== 'undefined') {
             if (typeof img === 'string') {
+                if (img.includes('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=')) {
+                    continue;
+                }
                 let cleanImg = img.startsWith('/') ? img.slice(1) : img;
                 if (cleanImg.startsWith('storage/')) {
                     cleanImg = cleanImg.slice(8);
@@ -57,7 +60,7 @@ export const getProductImageUrl = (product) => {
 
 /**
  * Robust helper to retrieve a valid image path from a category object.
- * Filters out invalid/placeholder values like null, "0", "null", "undefined".
+ * Filters out invalid/placeholder values like null, "0", "null", "undefined" and transparent pixels.
  */
 export const getCategoryImageUrl = (category) => {
     if (!category) return '';
@@ -65,6 +68,9 @@ export const getCategoryImageUrl = (category) => {
     const img = category.image;
     if (img && img !== '0' && img !== 0 && img !== 'null' && img !== 'undefined') {
         if (typeof img === 'string') {
+            if (img.includes('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=')) {
+                return '';
+            }
             let cleanImg = img.startsWith('/') ? img.slice(1) : img;
             if (cleanImg.startsWith('storage/')) {
                 cleanImg = cleanImg.slice(8);
@@ -76,3 +82,4 @@ export const getCategoryImageUrl = (category) => {
     
     return '';
 };
+

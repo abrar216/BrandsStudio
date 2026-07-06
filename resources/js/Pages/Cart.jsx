@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Head, Link, usePage } from '@inertiajs/react';
 import StoreLayout from '../Layouts/StoreLayout';
 import { getCart, removeFromCart, updateQuantity, getCartTotal } from '../Utils/cart';
+import { getAssetUrl, getProductImageUrl } from '../Utils/asset';
 import { Trash2, ShoppingBag, ArrowRight, Minus, Plus } from 'lucide-react';
 
 export default function Cart() {
@@ -69,9 +70,17 @@ export default function Cart() {
                                     >
                                         {/* Left Side: Product Specs */}
                                         <div className="flex space-x-5 items-center">
-                                            {/* Small visual mock placeholder */}
-                                            <div className="w-20 h-24 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0 border">
-                                                <span className="text-[24px] font-black text-slate-300 font-serif">BS</span>
+                                            {/* Product Image */}
+                                            <div className="w-20 h-24 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0 border overflow-hidden">
+                                                {getProductImageUrl(item) ? (
+                                                    <img 
+                                                        src={getAssetUrl(`storage/${getProductImageUrl(item)}`)} 
+                                                        alt={item.name} 
+                                                        className="w-full h-full object-cover" 
+                                                    />
+                                                ) : (
+                                                    <span className="text-[24px] font-black text-slate-300 font-serif">BS</span>
+                                                )}
                                             </div>
                                             
                                             <div className="space-y-1">

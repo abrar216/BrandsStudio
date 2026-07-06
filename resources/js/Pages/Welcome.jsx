@@ -74,52 +74,7 @@ export default function Welcome({ categories, featuredProducts, trendingProducts
                 </div>
             </div>
 
-            {/* 2. Core Value Pillars Bar */}
-            <div className="bg-white border-b border-slate-100 py-10 shadow-sm">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 lg:grid-cols-4 gap-8">
-                    
-                    <div className="flex items-start space-x-4">
-                        <div className="p-3 bg-amber-50 rounded-xl text-amber-600">
-                            <Truck size={20} />
-                        </div>
-                        <div>
-                            <h4 className="text-xs font-black tracking-wide text-slate-800 uppercase">Free Expedited Delivery</h4>
-                            <p className="text-[11px] text-slate-500 font-medium">On all orders over {currency} 5000</p>
-                        </div>
-                    </div>
 
-                    <div className="flex items-start space-x-4">
-                        <div className="p-3 bg-amber-50 rounded-xl text-amber-600">
-                            <RefreshCw size={20} />
-                        </div>
-                        <div>
-                            <h4 className="text-xs font-black tracking-wide text-slate-800 uppercase">30-Day Free Returns</h4>
-                            <p className="text-[11px] text-slate-500 font-medium">Easy return and store exchange</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-start space-x-4">
-                        <div className="p-3 bg-amber-50 rounded-xl text-amber-600">
-                            <ShieldCheck size={20} />
-                        </div>
-                        <div>
-                            <h4 className="text-xs font-black tracking-wide text-slate-800 uppercase">100% Secure Checkout</h4>
-                            <p className="text-[11px] text-slate-500 font-medium">Stripe & PayPal fully encrypted</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-start space-x-4">
-                        <div className="p-3 bg-amber-50 rounded-xl text-amber-600">
-                            <Compass size={20} />
-                        </div>
-                        <div>
-                            <h4 className="text-xs font-black tracking-wide text-slate-800 uppercase">Signature Fit Promise</h4>
-                            <p className="text-[11px] text-slate-500 font-medium">Expertly calibrated premium sizing</p>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
 
             {/* 3. Shop by Category Grid */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">

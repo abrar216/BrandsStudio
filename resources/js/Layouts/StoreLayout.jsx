@@ -60,12 +60,7 @@ export default function StoreLayout({ children }) {
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans">
-            {/* Promo Banner Ticker */}
-            <div className="bg-neutral-900 text-white py-2 px-4 text-xs font-semibold tracking-wider text-center flex items-center justify-center space-x-4 border-b border-neutral-800">
-                <span>⚡ MID-SEASON SALE: GET 10% OFF SITEWIDE - USE CODE: <span className="text-amber-400 font-bold">WELCOME10</span></span>
-                <span className="hidden md:inline">•</span>
-                <span className="hidden md:inline">🚚 FREE SHIPPING ON ALL ORDERS OVER Rs. 5000</span>
-            </div>
+
 
             {/* Sticky Navigation */}
             <nav className={`sticky top-0 z-40 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-md py-3' : 'bg-white py-5'} border-b border-slate-100`}>
@@ -281,10 +276,7 @@ export default function StoreLayout({ children }) {
                                 JOIN
                             </button>
                         </form>
-                        <div className="pt-2 flex items-center space-x-4">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" className="h-4 opacity-50 hover:opacity-100 transition-opacity" />
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-4 opacity-50 hover:opacity-100 transition-opacity" />
-                        </div>
+
                     </div>
                 </div>
             </footer>
