@@ -3,7 +3,7 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import StoreLayout from '../Layouts/StoreLayout';
 import ProductCard from '../Components/ProductCard';
 import { ArrowRight, Shirt, Compass, ShieldCheck, Truck, RefreshCw, TrendingUp } from 'lucide-react';
-import { getAssetUrl, getCategoryImageUrl } from '../Utils/asset';
+import { getAssetUrl, getCategoryImageUrl, getProductImageUrl } from '../Utils/asset';
 
 export default function Welcome({ 
     categories = [], 
