@@ -177,11 +177,7 @@ export default function Cart() {
                                         <span className="text-slate-800 font-bold">{currency}{Number(estimatedTax).toFixed(2)}</span>
                                     </div>
                                     
-                                    {subtotal < 5000 && (
-                                        <div className="bg-amber-50 text-[10px] text-amber-800 p-3 rounded-xl border border-amber-100 font-bold">
-                                            💡 Add <span className="underline">{currency}{(5000 - subtotal).toFixed(2)}</span> more to unlock <span className="font-extrabold uppercase">Free Shipping</span>!
-                                        </div>
-                                    )}
+
 
                                     <div className="flex justify-between text-sm font-black text-slate-900 border-t border-slate-100 pt-5">
                                         <span className="font-serif">ORDER TOTAL</span>
