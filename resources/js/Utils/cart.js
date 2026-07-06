@@ -1,3 +1,5 @@
+import { getProductImageUrl } from './asset';
+
 // Cart Utility for LocalStorage persistence in SPA Inertia
 
 export const getCart = () => {
@@ -36,7 +38,7 @@ export const addToCart = (product, variant = null, quantity = 1) => {
             slug: product.slug,
             sku: variant ? variant.sku : product.sku,
             price: price,
-            image: product.image ?? null,
+            image: getProductImageUrl(product) || null,
             size: variant ? variant.size : null,
             color: variant ? variant.color : null,
             variant_id: variantId,
