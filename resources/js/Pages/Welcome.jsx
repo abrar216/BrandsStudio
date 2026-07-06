@@ -54,22 +54,22 @@ export default function Welcome({
                             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
                             
                             {/* Product Info Overlay */}
-                            <div className="absolute inset-0 flex items-center">
+                            <div className="absolute inset-0 flex items-end pb-24 sm:items-center sm:pb-0">
                                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-                                    <div className="max-w-2xl">
-                                        <span className="inline-block bg-amber-500 text-white text-[10px] font-black tracking-widest px-4 py-1.5 rounded-full uppercase mb-4 shadow-lg">
+                                    <div className="max-w-2xl text-left">
+                                        <span className="inline-block bg-amber-500 text-white text-[8px] sm:text-[10px] font-black tracking-widest px-3 py-1 sm:px-4 sm:py-1.5 rounded-full uppercase mb-2 sm:mb-4 shadow-lg">
                                             TRENDING NOW
                                         </span>
-                                        <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight font-serif text-white uppercase drop-shadow-2xl leading-none">
+                                        <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight font-serif text-white uppercase drop-shadow-2xl leading-none">
                                             {product.name}
                                         </h2>
-                                        <p className="mt-6 text-sm text-gray-200 line-clamp-2 max-w-lg drop-shadow-md font-medium">
+                                        <p className="hidden sm:block mt-6 text-sm text-gray-200 line-clamp-2 max-w-lg drop-shadow-md font-medium">
                                             {product.short_description || product.description || 'Experience the premium refinement of Brands Studio. Indulge in tailored silhouettes, luxury textures, and contemporary clean apparel designed for the modern tastemaker.'}
                                         </p>
-                                        <div className="mt-8">
+                                        <div className="mt-5 sm:mt-8">
                                             <Link 
                                                 href={product.slug ? route('product.show', { slug: product.slug }) : '#'}
-                                                className="inline-block bg-white text-black font-extrabold tracking-wider text-xs px-10 py-4 rounded-xl transition-all hover:bg-amber-500 hover:text-white uppercase shadow-xl"
+                                                className="inline-block bg-white text-black font-extrabold tracking-wider text-[10px] sm:text-xs px-6 py-3 sm:px-10 sm:py-4 rounded-xl transition-all hover:bg-amber-500 hover:text-white uppercase shadow-xl"
                                             >
                                                 SHOP NOW
                                             </Link>
@@ -81,12 +81,12 @@ export default function Welcome({
                     ))}
                     
                     {/* Slider Navigation Dots */}
-                    <div className="absolute bottom-8 left-0 right-0 z-20 flex justify-center space-x-3">
+                    <div className="absolute bottom-8 left-0 right-0 z-20 flex justify-center space-x-2">
                         {uniqueSliderProducts.map((_, index) => (
                             <button
                                 key={index}
                                 onClick={() => setCurrentSlide(index)}
-                                className={`w-12 h-1 rounded-full transition-all duration-300 ${
+                                className={`w-8 h-1 sm:w-12 rounded-full transition-all duration-300 ${
                                     index === currentSlide ? 'bg-amber-500 scale-100' : 'bg-white/50 hover:bg-white'
                                 }`}
                                 aria-label={`Go to slide ${index + 1}`}
