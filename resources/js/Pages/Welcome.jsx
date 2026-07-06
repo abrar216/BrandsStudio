@@ -1,22 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head, Link, usePage } from '@inertiajs/react';
 import StoreLayout from '../Layouts/StoreLayout';
 import ProductCard from '../Components/ProductCard';
 import { ArrowRight, Shirt, Compass, ShieldCheck, Truck, RefreshCw, TrendingUp } from 'lucide-react';
 import { getAssetUrl, getCategoryImageUrl } from '../Utils/asset';
 
-export default function Welcome({ categories, featuredProducts, trendingProducts, bestSellers, newArrivals, settings = {} }) {
+export default function Welcome({ 
+    categories = [], 
+    featuredProducts = [], 
+    trendingProducts = [], 
+    bestSellers = [], 
+    newArrivals = [], 
+    settings = {} 
+}) {
     const { props } = usePage();
     const storeSettings = props.settings || {};
     const currency = storeSettings.currency || 'Rs.';
 
     // Slider Logic
-    const allSliderProducts = [...featuredProducts, ...bestSellers].filter(p => getProductImageUrl(p));
+    const allSliderProducts = [...(featuredProducts || []), ...(bestSellers || [])].filter(p => getProductImageUrl(p));
     const uniqueSliderProducts = Array.from(new Map(allSliderProducts.map(item => [item.id, item])).values()).slice(0, 5);
     
-    const [currentSlide, setCurrentSlide] = React.useState(0);
+    const [currentSlide, setCurrentSlide] = useState(0);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (uniqueSliderProducts.length <= 1) return;
         const interval = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % uniqueSliderProducts.length);
