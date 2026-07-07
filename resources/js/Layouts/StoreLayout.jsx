@@ -4,7 +4,7 @@ import { ShoppingBag, Heart, Search, User, Menu, X, ChevronDown, Check, AlertCir
 import { getCartCount, getCart } from '../Utils/cart';
 
 export default function StoreLayout({ children }) {
-    const { auth, settings, flash, categories = [] } = usePage().props;
+    const { auth, settings, flash, menuCategories: categories = [] } = usePage().props;
     const [cartCount, setCartCount] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
