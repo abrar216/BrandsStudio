@@ -46,6 +46,7 @@ class HandleInertiaRequests extends Middleware
                 'unread_notifications_count' => $request->user() && $request->user()->isAdmin() ? $request->user()->unreadNotifications()->count() : 0,
             ],
             'asset_url' => asset(''),
+            'categories' => \App\Models\Category::with('children')->whereNull('parent_id')->orderBy('name', 'asc')->get(),
             'settings' => [
                 'site_name' => Setting::get('site_name', 'Brands Studio'),
                 'site_tagline' => Setting::get('site_tagline', 'Wear your signature.'),

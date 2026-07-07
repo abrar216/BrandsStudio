@@ -301,6 +301,7 @@ class AdminDashboardController extends Controller
             'name' => 'required|string|max:255|unique:categories,name',
             'description' => 'nullable|string',
             'image' => 'nullable|image|max:5120',
+            'parent_id' => 'nullable|exists:categories,id',
         ]);
 
         $imagePath = null;
@@ -313,6 +314,7 @@ class AdminDashboardController extends Controller
             'slug' => Str::slug($request->name),
             'description' => $request->description,
             'image' => $imagePath,
+            'parent_id' => $request->parent_id,
         ]);
 
         return back()->with('success', 'Category created successfully!');
@@ -326,12 +328,14 @@ class AdminDashboardController extends Controller
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'description' => 'nullable|string',
             'image' => 'nullable|image|max:5120',
+            'parent_id' => 'nullable|exists:categories,id',
         ]);
 
         $data = [
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'description' => $request->description,
+            'parent_id' => $request->parent_id,
         ];
 
         if ($request->hasFile('image')) {

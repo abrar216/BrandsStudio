@@ -4,7 +4,7 @@ import { ShoppingBag, Heart, Search, User, Menu, X, ChevronDown, Check, AlertCir
 import { getCartCount, getCart } from '../Utils/cart';
 
 export default function StoreLayout({ children }) {
-    const { auth, settings, flash } = usePage().props;
+    const { auth, settings, flash, categories = [] } = usePage().props;
     const [cartCount, setCartCount] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -77,7 +77,7 @@ export default function StoreLayout({ children }) {
                     <div className="flex justify-between items-center h-16">
                         
                         {/* Left: Brand Logo & Mobile Menu Toggle Button */}
-                        <div className="flex items-center">
+                        <div className="flex items-center mr-4 lg:mr-8 xl:mr-12">
                             {/* Mobile Menu Button */}
                             <button 
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -112,12 +112,44 @@ export default function StoreLayout({ children }) {
                         </div>
 
                         {/* Desktop Navigation Links */}
-                        <div className="hidden md:flex items-center space-x-8 font-medium tracking-wide text-xs lg:text-sm text-slate-600">
-                            <Link href={route('collections')} className="hover:text-black transition-colors duration-200">COLLECTION</Link>
-                            <Link href={route('shop', { category: 'menswear' })} className="hover:text-black transition-colors duration-200">MENSWEAR</Link>
-                            <Link href={route('shop', { category: 'womenswear' })} className="hover:text-black transition-colors duration-200">WOMENSWEAR</Link>
-                            <Link href={route('shop', { category: 'kids' })} className="hover:text-black transition-colors duration-200">KIDS</Link>
-                            <Link href={route('shop', { category: 'accessories' })} className="hover:text-black transition-colors duration-200">ACCESSORIES</Link>
+                        <div className="hidden md:flex items-center space-x-4 lg:space-x-6 xl:space-x-8 font-medium tracking-wide text-xs text-slate-600">
+                            <Link href={route('collections')} className="hover:text-black transition-colors duration-200 uppercase tracking-widest text-[11px] lg:text-xs font-bold whitespace-nowrap">COLLECTION</Link>
+                            
+                            {categories.map((cat) => (
+                                <div key={cat.id} className="group relative py-4">
+                                    {cat.children && cat.children.length > 0 ? (
+                                        <>
+                                            <Link 
+                                                href={route('shop', { category: cat.slug })} 
+                                                className="flex items-center space-x-1 hover:text-black transition-colors duration-200 uppercase tracking-widest text-[11px] lg:text-xs font-bold whitespace-nowrap"
+                                            >
+                                                <span>{cat.name}</span>
+                                                <ChevronDown size={10} className="transition-transform group-hover:rotate-180" />
+                                            </Link>
+                                            
+                                            {/* Dropdown menu panel */}
+                                            <div className="absolute left-1/2 -translate-x-1/2 top-full hidden group-hover:block w-48 bg-white border border-slate-100 rounded-xl shadow-xl py-2.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                                                {cat.children.map((sub) => (
+                                                    <Link 
+                                                        key={sub.id}
+                                                        href={route('shop', { category: sub.slug })} 
+                                                        className="block px-4 py-2 text-xs font-bold text-slate-600 hover:text-black hover:bg-slate-50 transition-colors"
+                                                    >
+                                                        {sub.name}
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <Link 
+                                            href={route('shop', { category: cat.slug })} 
+                                            className="hover:text-black transition-colors duration-200 uppercase tracking-widest text-[11px] lg:text-xs font-bold whitespace-nowrap"
+                                        >
+                                            {cat.name}
+                                        </Link>
+                                    )}
+                                </div>
+                            ))}
                         </div>
 
                         {/* Navigation Right Side (Search, Wishlist, Cart, Profile) */}
@@ -220,12 +252,35 @@ export default function StoreLayout({ children }) {
                 {/* Mobile Menu dropdown */}
                 {mobileMenuOpen && (
                     <div className="md:hidden border-t border-slate-100 bg-white py-4 px-6 space-y-4 font-semibold text-slate-700 animate-in slide-in-from-top duration-300">
-                        <Link href={route('collections')} className="block py-2 border-b border-slate-50 hover:text-black">Collection</Link>
-                        <Link href={route('shop', { category: 'menswear' })} className="block py-2 border-b border-slate-50 hover:text-black">Menswear</Link>
-                        <Link href={route('shop', { category: 'womenswear' })} className="block py-2 border-b border-slate-50 hover:text-black">Womenswear</Link>
-                        <Link href={route('shop', { category: 'kids' })} className="block py-2 border-b border-slate-50 hover:text-black">Kids</Link>
-                        <Link href={route('shop', { category: 'accessories' })} className="block py-2 border-b border-slate-50 hover:text-black">Accessories</Link>
-                        <Link href={route('wishlist')} className="block py-2 border-b border-slate-50 hover:text-black">Wishlist</Link>
+                        <Link href={route('collections')} onClick={() => setMobileMenuOpen(false)} className="block py-2 border-b border-slate-50 hover:text-black uppercase text-xs tracking-wider font-extrabold">Collection</Link>
+                        
+                        {categories.map((cat) => (
+                            <div key={cat.id} className="space-y-1 py-1 border-b border-slate-50">
+                                <Link 
+                                    href={route('shop', { category: cat.slug })} 
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="block py-1 text-slate-800 hover:text-black uppercase text-xs tracking-wider font-extrabold"
+                                >
+                                    {cat.name}
+                                </Link>
+                                {cat.children && cat.children.length > 0 && (
+                                    <div className="pl-3 py-1 space-y-2 border-l border-slate-100 ml-1">
+                                        {cat.children.map((sub) => (
+                                            <Link 
+                                                key={sub.id}
+                                                href={route('shop', { category: sub.slug })} 
+                                                onClick={() => setMobileMenuOpen(false)}
+                                                className="block text-xs font-bold text-slate-500 hover:text-black py-0.5"
+                                            >
+                                                {sub.name}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                        
+                        <Link href={route('wishlist')} onClick={() => setMobileMenuOpen(false)} className="block py-2 border-b border-slate-50 hover:text-black uppercase text-xs tracking-wider font-extrabold">Wishlist</Link>
                         
                         {/* Mobile Search */}
                         <form onSubmit={handleSearchSubmit} className="flex items-center relative mt-2">

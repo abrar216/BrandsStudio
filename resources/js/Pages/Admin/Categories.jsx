@@ -86,7 +86,8 @@ export default function Categories({ categories }) {
     } = useForm({
         name: '',
         description: '',
-        image: null
+        image: null,
+        parent_id: ''
     });
 
     // Form controller for editing category
@@ -101,7 +102,8 @@ export default function Categories({ categories }) {
         _method: 'PATCH',
         name: '',
         description: '',
-        image: null
+        image: null,
+        parent_id: ''
     });
 
     const [editModalOpen, setEditModalOpen] = useState(false);
@@ -122,7 +124,8 @@ export default function Categories({ categories }) {
             _method: 'PATCH',
             name: category.name,
             description: category.description || '',
-            image: null
+            image: null,
+            parent_id: category.parent_id || ''
         });
         setEditModalOpen(true);
     };
@@ -206,6 +209,22 @@ export default function Categories({ categories }) {
                             {errors.image && <p className="text-xs text-red-500 mt-1 font-bold">{errors.image}</p>}
                         </div>
 
+                        {/* Parent Category Selector */}
+                        <div>
+                            <label className="block text-xs uppercase font-bold text-slate-500 mb-1.5 font-sans font-black">Parent Category (Optional)</label>
+                            <select
+                                value={data.parent_id}
+                                onChange={(e) => setData('parent_id', e.target.value)}
+                                className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500/20"
+                            >
+                                <option value="">None (Primary Category)</option>
+                                {categories.filter(c => !c.parent_id).map(c => (
+                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                ))}
+                            </select>
+                            {errors.parent_id && <p className="text-xs text-red-500 mt-1 font-bold">{errors.parent_id}</p>}
+                        </div>
+
                         {/* Submit */}
                         <button
                             type="submit"
@@ -235,13 +254,19 @@ export default function Categories({ categories }) {
                         {categories.map((c) => (
                             <div key={c.id} className="relative overflow-hidden bg-slate-50 p-6 rounded-2xl border border-slate-200/60 hover:border-blue-300 hover:shadow-md transition-all duration-300 flex flex-col justify-between group shadow-sm">
                                 <div className="space-y-3 z-10">
-                                    {/* Title and stats badge */}
                                     <div className="flex items-start justify-between">
                                         <div className="flex items-center space-x-2">
                                             <div className="p-1.5 bg-blue-50 rounded-lg text-blue-600">
                                                 <Tag size={14} />
                                             </div>
-                                            <h5 className="text-base font-bold text-slate-800 leading-tight group-hover:text-blue-600 transition-colors">{c.name}</h5>
+                                            <div>
+                                                <h5 className="text-base font-bold text-slate-800 leading-tight group-hover:text-blue-600 transition-colors">{c.name}</h5>
+                                                {c.parent_id && (
+                                                    <span className="text-[9px] font-black uppercase text-amber-600 tracking-wider block">
+                                                        Sub of {categories.find(p => p.id === c.parent_id)?.name}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                         <span className="flex items-center space-x-1 bg-slate-100 border border-slate-200 text-xs font-extrabold text-slate-600 px-2.5 py-1 rounded-md">
                                             <ShoppingBag size={10} className="text-blue-600 mr-0.5" />
@@ -357,6 +382,22 @@ export default function Categories({ categories }) {
                                     className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2 text-sm text-slate-750 focus:outline-none file:mr-3 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-black file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer"
                                 />
                                 {editErrors.image && <p className="text-xs text-red-500 mt-1 font-bold">{editErrors.image}</p>}
+                            </div>
+
+                            {/* Edit Parent Category Selector */}
+                            <div>
+                                <label className="block text-xs uppercase font-bold text-slate-500 mb-1.5 font-sans font-black">Parent Category (Optional)</label>
+                                <select
+                                    value={editData.parent_id}
+                                    onChange={(e) => setEditData('parent_id', e.target.value)}
+                                    className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500/20"
+                                >
+                                    <option value="">None (Primary Category)</option>
+                                    {categories.filter(c => !c.parent_id && c.id !== editingCategory?.id).map(c => (
+                                        <option key={c.id} value={c.id}>{c.name}</option>
+                                    ))}
+                                </select>
+                                {editErrors.parent_id && <p className="text-xs text-red-500 mt-1 font-bold">{editErrors.parent_id}</p>}
                             </div>
 
                             {/* Submit Buttons */}
