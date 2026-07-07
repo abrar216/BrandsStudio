@@ -91,7 +91,7 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
         addToCart(product, activeVariant, quantity);
         
         // Trigger visual alerts
-        window.dispatchEvent(new CustomEvent('cart-updated'));
+        window.dispatchEvent(new CustomEvent('cart-updated', { detail: { product, quantity } }));
     };
 
     const handleWishlistToggle = () => {

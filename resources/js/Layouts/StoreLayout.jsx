@@ -17,8 +17,17 @@ export default function StoreLayout({ children }) {
         setCartCount(getCartCount());
 
         // Event listener for cart updates
-        const handleCartUpdate = () => {
+        let timer;
+        const handleCartUpdate = (e) => {
             setCartCount(getCartCount());
+            if (e.detail && e.detail.product) {
+                setToast({
+                    type: 'success',
+                    message: `"${e.detail.product.name}" was successfully added to your cart.`
+                });
+                if (timer) clearTimeout(timer);
+                timer = setTimeout(() => setToast(null), 4000);
+            }
         };
 
         window.addEventListener('cart-updated', handleCartUpdate);

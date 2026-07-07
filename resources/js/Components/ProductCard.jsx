@@ -36,7 +36,7 @@ export default function ProductCard({ product, currency, inWishlist = false }) {
         addToCart(product, defaultVariant, 1);
         
         // Dispatch alert event (custom)
-        window.dispatchEvent(new CustomEvent('cart-updated'));
+        window.dispatchEvent(new CustomEvent('cart-updated', { detail: { product } }));
     };
 
     const handleWishlistToggle = (e) => {
