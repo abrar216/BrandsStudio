@@ -112,18 +112,18 @@ export default function Cart() {
         <StoreLayout>
             <Head title="Shopping Cart" />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
                 
-                <h1 className="text-3xl font-black font-serif text-slate-800 uppercase tracking-wide mb-10">
+                <h1 className="text-2xl sm:text-3xl font-black font-serif text-slate-800 uppercase tracking-wide mb-6 sm:mb-10">
                     YOUR SHOPPING BAG
                 </h1>
 
                 {cartItems.length > 0 ? (
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start">
                         
                         {/* 1. Left: Cart Items List */}
                         <div className="lg:col-span-8 space-y-6">
-                            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm divide-y divide-slate-100">
+                            <div className="bg-white border border-slate-100 rounded-3xl p-4 sm:p-6 shadow-sm divide-y divide-slate-100">
                                 {cartItems.map((item, index) => (
                                     <div 
                                         key={`${item.id}-${item.variant_id || 'none'}`} 
@@ -169,7 +169,7 @@ export default function Cart() {
                                         </div>
 
                                         {/* Right Side: Quantity selectors and actions */}
-                                        <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto mt-4 sm:mt-0 space-x-8">
+                                        <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto mt-4 sm:mt-0 space-x-4 sm:space-x-8">
                                             
                                             {/* Quantity adjustment */}
                                             <div className="flex items-center border border-slate-200 rounded-xl px-1.5 bg-slate-50 scale-90">
@@ -188,7 +188,14 @@ export default function Cart() {
                                                 </button>
                                             </div>
 
-                                            {/* Total Price */}
+                                            {/* Total Price (Mobile) */}
+                                            <div className="text-right sm:hidden">
+                                                <p className="text-xs font-black text-slate-900">
+                                                    {currency}{Number(item.price * item.quantity).toFixed(2)}
+                                                </p>
+                                            </div>
+
+                                            {/* Total Price (Desktop) */}
                                             <div className="text-right hidden sm:block">
                                                 <p className="text-sm font-black text-slate-900">
                                                     {currency}{Number(item.price * item.quantity).toFixed(2)}
@@ -215,7 +222,7 @@ export default function Cart() {
 
                         {/* 2. Right: Order Summary Calculations */}
                         <div className="lg:col-span-4 space-y-6 sticky top-28">
-                            <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm space-y-6">
+                            <div className="bg-white border border-slate-100 rounded-3xl p-4 sm:p-6 shadow-sm space-y-5 sm:space-y-6">
                                 <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest pb-4 border-b border-slate-100">
                                     ORDER SUMMARY
                                 </h3>

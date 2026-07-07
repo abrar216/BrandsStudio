@@ -137,19 +137,19 @@ export default function Checkout({ settings: propSettings, currency: propCurrenc
         <StoreLayout>
             <Head title="Secure Checkout" />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
                 
-                <h1 className="text-3xl font-black font-serif text-slate-800 uppercase tracking-wide mb-10">
+                <h1 className="text-2xl sm:text-3xl font-black font-serif text-slate-800 uppercase tracking-wide mb-6 sm:mb-10">
                     SECURE CHECKOUT
                 </h1>
 
-                <form onSubmit={handleSubmitOrder} className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                <form onSubmit={handleSubmitOrder} className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start">
                     
                     {/* 1. Left: Billing & Shipping Forms */}
                     <div className="lg:col-span-7 space-y-8">
                         
                         {/* Section 1: Customer Contact Info */}
-                        <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm space-y-5">
+                        <div className="bg-white border border-slate-100 rounded-3xl p-4 sm:p-6 shadow-sm space-y-5">
                             <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest pb-3 border-b border-slate-100 flex items-center space-x-2">
                                 <span className="bg-slate-100 text-slate-700 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold">1</span>
                                 <span>CONTACT DETAILS</span>
@@ -198,7 +198,7 @@ export default function Checkout({ settings: propSettings, currency: propCurrenc
                         </div>
 
                         {/* Section 2: Shipping Address */}
-                        <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm space-y-5">
+                        <div className="bg-white border border-slate-100 rounded-3xl p-4 sm:p-6 shadow-sm space-y-5">
                             <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest pb-3 border-b border-slate-100 flex items-center space-x-2">
                                 <span className="bg-slate-100 text-slate-700 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold">2</span>
                                 <span>SHIPPING ADDRESS</span>
@@ -228,7 +228,7 @@ export default function Checkout({ settings: propSettings, currency: propCurrenc
                         </div>
 
                         {/* Section 3: Payment Method selection */}
-                        <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm space-y-5">
+                        <div className="bg-white border border-slate-100 rounded-3xl p-4 sm:p-6 shadow-sm space-y-5">
                             <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest pb-3 border-b border-slate-100 flex items-center space-x-2">
                                 <span className="bg-slate-100 text-slate-700 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold">3</span>
                                 <span>PAYMENT METHOD</span>
@@ -289,7 +289,7 @@ export default function Checkout({ settings: propSettings, currency: propCurrenc
 
                     {/* 2. Right: Cart Review & Totals checkout */}
                     <div className="lg:col-span-5 space-y-6 sticky top-28">
-                        <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm space-y-6">
+                        <div className="bg-white border border-slate-100 rounded-3xl p-4 sm:p-6 shadow-sm space-y-6">
                             <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest pb-4 border-b border-slate-100">
                                 APPAREL IN BAG
                             </h3>

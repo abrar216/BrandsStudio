@@ -136,7 +136,7 @@ export default function ProductCard({ product, currency, inWishlist = false }) {
             </div>
 
             {/* Info Section */}
-            <div className="p-4 flex-grow flex flex-col justify-between">
+            <div className="p-3 sm:p-4 flex-grow flex flex-col justify-between">
                 <div>
                     {/* Category */}
                     <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1.5">
@@ -188,17 +188,17 @@ export default function ProductCard({ product, currency, inWishlist = false }) {
                 </div>
 
                 {/* Action Buttons Grid */}
-                <div className="flex gap-2 mt-4 pt-3 border-t border-slate-50">
+                <div className="flex flex-col sm:flex-row gap-2 mt-4 pt-3 border-t border-slate-50">
                     <button
                         onClick={handleQuickAdd}
-                        className="flex-1 bg-slate-900 hover:bg-black text-white text-[10px] font-black tracking-wider py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center space-x-1.5 uppercase"
+                        className="w-full sm:flex-1 bg-slate-900 hover:bg-black text-white text-[10px] font-black tracking-wider py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center space-x-1.5 uppercase"
                     >
                         <ShoppingCart size={11} />
                         <span>ADD TO CART</span>
                     </button>
                     <Link
                         href={product.slug ? route('product.show', { slug: product.slug }) : '#'}
-                        className="flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 text-[10px] font-black tracking-wider py-2.5 rounded-xl transition-all duration-200 text-center flex items-center justify-center uppercase"
+                        className="hidden sm:flex sm:flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 text-[10px] font-black tracking-wider py-2.5 rounded-xl transition-all duration-200 text-center items-center justify-center uppercase"
                     >
                         VIEW DETAILS
                     </Link>

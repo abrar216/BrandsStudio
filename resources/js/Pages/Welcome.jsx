@@ -60,7 +60,7 @@ export default function Welcome({
                                         <span className="inline-block bg-amber-500 text-white text-[8px] sm:text-[10px] font-black tracking-widest px-3 py-1 sm:px-4 sm:py-1.5 rounded-full uppercase mb-2 sm:mb-4 shadow-lg">
                                             TRENDING NOW
                                         </span>
-                                        <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight font-serif text-white uppercase drop-shadow-2xl leading-none">
+                                        <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight font-serif text-white uppercase drop-shadow-2xl leading-tight sm:leading-none">
                                             {product.name}
                                         </h2>
                                         <p className="hidden sm:block mt-6 text-sm text-gray-200 line-clamp-2 max-w-lg drop-shadow-md font-medium">
@@ -187,7 +187,7 @@ export default function Welcome({
                             </Link>
                         </div>
 
-                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                             {featuredProducts.slice(0, 4).map((product) => (
                                 <ProductCard key={product.id} product={product} />
                             ))}
@@ -234,7 +234,7 @@ export default function Welcome({
                         </h2>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                         {newArrivals.slice(0, 8).map((product) => (
                             <ProductCard key={product.id} product={product} />
                         ))}
