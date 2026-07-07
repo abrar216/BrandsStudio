@@ -134,6 +134,7 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->prefix
     
     // Categories Management
     Route::get('/categories', [AdminDashboardController::class, 'categories'])->name('categories');
+    Route::get('/subcategories', [AdminDashboardController::class, 'subcategories'])->name('subcategories');
     Route::post('/categories', [AdminDashboardController::class, 'storeCategory'])->name('categories.store');
     Route::patch('/categories/{category}', [AdminDashboardController::class, 'updateCategory'])->name('categories.update');
     Route::delete('/categories/{category}', [AdminDashboardController::class, 'destroyCategory'])->name('categories.destroy');

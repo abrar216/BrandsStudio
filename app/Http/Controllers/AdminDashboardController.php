@@ -293,6 +293,22 @@ class AdminDashboardController extends Controller
         ]);
     }
 
+    public function subcategories()
+    {
+        $this->checkSuperAdminAccess();
+
+        // Get only parent categories for dropdown
+        $parentCategories = Category::whereNull('parent_id')->orderBy('name', 'asc')->get();
+
+        // Get subcategories with their parent category
+        $subcategories = Category::with('parent')->withCount('products')->whereNotNull('parent_id')->orderBy('name', 'asc')->get();
+
+        return Inertia::render('Admin/Subcategories', [
+            'parentCategories' => $parentCategories,
+            'subcategories' => $subcategories,
+        ]);
+    }
+
     public function storeCategory(Request $request)
     {
         $this->checkSuperAdminAccess();

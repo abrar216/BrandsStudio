@@ -658,9 +658,14 @@ export default function Products({ products, categories }) {
                                         onChange={(e) => setAddData('category_id', e.target.value)}
                                         className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2.5 text-xs text-slate-850 focus:outline-none focus:ring-1 focus:ring-blue-500/20"
                                     >
-                                        {categories.map((c) => (
-                                            <option key={c.id} value={c.id}>{c.name}</option>
-                                        ))}
+                                        {categories.map((c) => {
+                                            const parent = c.parent_id ? categories.find(p => p.id === c.parent_id) : null;
+                                            return (
+                                                <option key={c.id} value={c.id}>
+                                                    {parent ? `${parent.name} → ${c.name}` : c.name}
+                                                </option>
+                                            );
+                                        })}
                                     </select>
                                     {addErrors.category_id && <p className="text-[10px] text-red-555 text-red-500 mt-1 font-bold">{addErrors.category_id}</p>}
                                 </div>
@@ -1026,9 +1031,14 @@ export default function Products({ products, categories }) {
                                         onChange={(e) => setEditData('category_id', e.target.value)}
                                         className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2.5 text-xs text-slate-850 focus:outline-none focus:ring-1 focus:ring-blue-500/20"
                                     >
-                                        {categories.map((c) => (
-                                            <option key={c.id} value={c.id}>{c.name}</option>
-                                        ))}
+                                        {categories.map((c) => {
+                                            const parent = c.parent_id ? categories.find(p => p.id === c.parent_id) : null;
+                                            return (
+                                                <option key={c.id} value={c.id}>
+                                                    {parent ? `${parent.name} → ${c.name}` : c.name}
+                                                </option>
+                                            );
+                                        })}
                                     </select>
                                     {editErrors.category_id && <p className="text-[10px] text-red-555 text-red-500 mt-1 font-bold">{editErrors.category_id}</p>}
                                 </div>
