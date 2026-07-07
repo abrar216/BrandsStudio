@@ -68,7 +68,7 @@ export default function StoreLayout({ children }) {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans">
+        <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans overflow-x-hidden">
 
 
             {/* Sticky Navigation */}
@@ -76,25 +76,36 @@ export default function StoreLayout({ children }) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
                         
-                        {/* Mobile Menu Button */}
-                        <div className="flex items-center md:hidden">
+                        {/* Left: Brand Logo & Mobile Menu Toggle Button */}
+                        <div className="flex items-center">
+                            {/* Mobile Menu Button */}
                             <button 
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                                className="text-slate-600 hover:text-black focus:outline-none"
+                                className="text-slate-600 hover:text-black focus:outline-none md:hidden mr-4 p-1"
+                                aria-label="Toggle menu"
                             >
-                                {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                                {mobileMenuOpen ? (
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="text-slate-900 hover:text-amber-600 transition-colors">
+                                        <path d="M2 2L16 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                                        <path d="M16 2L2 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                                    </svg>
+                                ) : (
+                                    <svg width="20" height="14" viewBox="0 0 20 14" fill="none" className="text-slate-900 hover:text-amber-600 transition-colors">
+                                        <path d="M1 2H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                                        <path d="M1 7H13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                                        <path d="M1 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                                    </svg>
+                                )}
                             </button>
-                        </div>
 
-                        {/* Brand Logo */}
-                        <div className="flex-1 md:flex-initial flex justify-center md:justify-start">
-                            <Link href={route('welcome')} className="text-2xl font-black tracking-widest text-slate-900 font-serif">
-                                BRANDS STUDIO
+                            <Link href={route('welcome')} className="text-base sm:text-lg md:text-xl font-light tracking-[0.25em] text-slate-900 uppercase whitespace-nowrap font-sans">
+                                <span>BRANDS</span>
+                                <span className="font-black ml-1.5">STUDIO</span>
                             </Link>
                         </div>
 
                         {/* Desktop Navigation Links */}
-                        <div className="hidden md:flex items-center space-x-8 font-medium tracking-wide text-sm text-slate-600">
+                        <div className="hidden md:flex items-center space-x-8 font-medium tracking-wide text-xs lg:text-sm text-slate-600">
                             <Link href={route('collections')} className="hover:text-black transition-colors duration-200">COLLECTION</Link>
                             <Link href={route('shop', { category: 'menswear' })} className="hover:text-black transition-colors duration-200">MENSWEAR</Link>
                             <Link href={route('shop', { category: 'womenswear' })} className="hover:text-black transition-colors duration-200">WOMENSWEAR</Link>
@@ -103,7 +114,7 @@ export default function StoreLayout({ children }) {
                         </div>
 
                         {/* Navigation Right Side (Search, Wishlist, Cart, Profile) */}
-                        <div className="flex items-center space-x-6">
+                        <div className="flex items-center space-x-4 sm:space-x-6">
                             
                             {/* Search bar (Desktop) */}
                             <form onSubmit={handleSearchSubmit} className="hidden lg:flex items-center relative">
@@ -119,8 +130,8 @@ export default function StoreLayout({ children }) {
                                 </button>
                             </form>
 
-                            {/* Wishlist Shortcut */}
-                            <Link href={route('wishlist')} className="text-slate-600 hover:text-black relative transition-colors duration-200">
+                            {/* Wishlist Shortcut (Desktop only) */}
+                            <Link href={route('wishlist')} className="hidden md:block text-slate-600 hover:text-black relative transition-colors duration-200">
                                 <Heart size={22} />
                             </Link>
 
@@ -134,8 +145,8 @@ export default function StoreLayout({ children }) {
                                 )}
                             </Link>
 
-                            {/* User Account / Admin Panel links */}
-                            <div className="relative">
+                            {/* User Account / Admin Panel links (Desktop only) */}
+                            <div className="hidden md:block relative">
                                 {auth?.user ? (
                                     <div>
                                         <button 
@@ -143,7 +154,7 @@ export default function StoreLayout({ children }) {
                                             className="flex items-center space-x-1 text-slate-700 hover:text-black focus:outline-none py-1"
                                         >
                                             <User size={20} />
-                                            <span className="hidden sm:inline text-xs font-semibold">{(auth.user.name || '').split(' ')[0] || 'User'}</span>
+                                            <span className="text-xs font-semibold">{(auth.user.name || '').split(' ')[0] || 'User'}</span>
                                             <ChevronDown size={12} className={`transition-transform duration-200 ${userDropdownOpen ? 'rotate-180' : ''}`} />
                                         </button>
 
@@ -201,15 +212,16 @@ export default function StoreLayout({ children }) {
 
                 {/* Mobile Menu dropdown */}
                 {mobileMenuOpen && (
-                    <div className="md:hidden border-t border-slate-100 bg-white py-4 px-6 space-y-3 font-semibold text-slate-700 animate-in slide-in-from-top duration-300">
+                    <div className="md:hidden border-t border-slate-100 bg-white py-4 px-6 space-y-4 font-semibold text-slate-700 animate-in slide-in-from-top duration-300">
                         <Link href={route('collections')} className="block py-2 border-b border-slate-50 hover:text-black">Collection</Link>
                         <Link href={route('shop', { category: 'menswear' })} className="block py-2 border-b border-slate-50 hover:text-black">Menswear</Link>
                         <Link href={route('shop', { category: 'womenswear' })} className="block py-2 border-b border-slate-50 hover:text-black">Womenswear</Link>
                         <Link href={route('shop', { category: 'kids' })} className="block py-2 border-b border-slate-50 hover:text-black">Kids</Link>
                         <Link href={route('shop', { category: 'accessories' })} className="block py-2 border-b border-slate-50 hover:text-black">Accessories</Link>
+                        <Link href={route('wishlist')} className="block py-2 border-b border-slate-50 hover:text-black">Wishlist</Link>
                         
                         {/* Mobile Search */}
-                        <form onSubmit={handleSearchSubmit} className="flex items-center relative mt-4">
+                        <form onSubmit={handleSearchSubmit} className="flex items-center relative mt-2">
                             <input
                                 type="text"
                                 placeholder="Search apparel..."
@@ -221,6 +233,51 @@ export default function StoreLayout({ children }) {
                                 <Search size={16} />
                             </button>
                         </form>
+
+                        {/* Mobile Auth / Account links */}
+                        <div className="pt-4 border-t border-slate-150">
+                            {auth?.user ? (
+                                <div className="space-y-3">
+                                    <div className="px-2 py-1.5 bg-slate-50 rounded-xl">
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Signed in as</p>
+                                        <p className="text-xs font-black truncate text-slate-800">{auth.user.name}</p>
+                                    </div>
+                                    <Link href={route('dashboard')} className="block py-2 hover:text-black text-sm">Order History</Link>
+                                    <Link href={route('profile.edit')} className="block py-2 hover:text-black text-sm">Profile Settings</Link>
+                                    <Link href={route('order.tracking')} className="block py-2 hover:text-black text-sm">Track Order</Link>
+                                    
+                                    {auth.user.is_staff && (
+                                        <Link href={route('admin.pos.index')} className="block py-2 text-amber-600 font-bold text-sm">POS Terminal</Link>
+                                    )}
+                                    {auth.user.is_admin && (
+                                        <Link href={route('admin.dashboard')} className="block py-2 text-indigo-650 font-bold text-sm">Admin Dashboard</Link>
+                                    )}
+                                    <Link 
+                                        href={route('logout')} 
+                                        method="post" 
+                                        as="button" 
+                                        className="w-full text-left block py-2 text-red-650 font-bold text-sm"
+                                    >
+                                        Log Out
+                                    </Link>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-2 gap-3 pt-2">
+                                    <Link 
+                                        href={route('login')} 
+                                        className="border border-slate-200 text-slate-800 text-center py-3 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-slate-50 transition-all"
+                                    >
+                                        LOGIN
+                                    </Link>
+                                    <Link 
+                                        href={route('register')} 
+                                        className="bg-slate-900 text-white text-center py-3 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-black transition-all shadow-md"
+                                    >
+                                        REGISTER
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 )}
             </nav>
