@@ -98,9 +98,16 @@ export default function StoreLayout({ children }) {
                                 )}
                             </button>
 
-                            <Link href={route('welcome')} className="text-base sm:text-lg md:text-xl font-light tracking-[0.25em] text-slate-900 uppercase whitespace-nowrap font-sans">
-                                <span>BRANDS</span>
-                                <span className="font-black ml-1.5">STUDIO</span>
+                            <Link href={route('welcome')} className="flex items-center space-x-2 text-slate-900 uppercase whitespace-nowrap font-sans select-none">
+                                {/* Elegant Hanger Logo Icon */}
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-900 flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7">
+                                    <path d="M12 7a3 3 0 1 0-3-3" />
+                                    <path d="M12 7l9 6.5A1 1 0 0 1 20.4 15H3.6a1 1 0 0 1-.6-1.5L12 7z" />
+                                </svg>
+                                <div className="flex items-baseline leading-none text-base sm:text-lg md:text-xl font-bold">
+                                    <span className="font-extrabold tracking-[0.12em]">BRANDS</span>
+                                    <span className="font-black tracking-[0.08em] ml-1 opacity-90">STUDIO</span>
+                                </div>
                             </Link>
                         </div>
 
@@ -130,8 +137,8 @@ export default function StoreLayout({ children }) {
                                 </button>
                             </form>
 
-                            {/* Wishlist Shortcut (Desktop only) */}
-                            <Link href={route('wishlist')} className="hidden md:block text-slate-600 hover:text-black relative transition-colors duration-200">
+                            {/* Wishlist Shortcut */}
+                            <Link href={route('wishlist')} className="text-slate-600 hover:text-black relative transition-colors duration-200">
                                 <Heart size={22} />
                             </Link>
 
