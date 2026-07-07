@@ -78,6 +78,13 @@ const compressImageFile = (file, maxDim = 2048, quality = 0.85) => {
 };
 
 export default function Products({ products, categories }) {
+    const parentCategories = categories.filter(c => !c.parent_id);
+    const defaultParentId = parentCategories[0]?.id || '';
+    const defaultSubId = categories.find(c => c.parent_id === defaultParentId)?.id || defaultParentId;
+
+    const [selectedAddMainCatId, setSelectedAddMainCatId] = useState(defaultParentId);
+    const [selectedEditMainCatId, setSelectedEditMainCatId] = useState('');
+
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
@@ -106,7 +113,7 @@ export default function Products({ products, categories }) {
         discount_price: '',
         cost_price: '',
         gst_rate: '0.00',
-        category_id: categories[0]?.id || '',
+        category_id: defaultSubId,
         description: '',
         short_description: '',
         stock_quantity: 0,
@@ -179,9 +186,34 @@ export default function Products({ products, categories }) {
             });
         }
     };
+    const handleAddMainCatChange = (mainCatId) => {
+        setSelectedAddMainCatId(mainCatId);
+        const subs = categories.filter(c => c.parent_id === Number(mainCatId));
+        if (subs.length > 0) {
+            setAddData('category_id', subs[0].id);
+        } else {
+            setAddData('category_id', mainCatId);
+        }
+    };
+
+    const handleEditMainCatChange = (mainCatId) => {
+        setSelectedEditMainCatId(mainCatId);
+        const subs = categories.filter(c => c.parent_id === Number(mainCatId));
+        if (subs.length > 0) {
+            setEditData('category_id', subs[0].id);
+        } else {
+            setEditData('category_id', mainCatId);
+        }
+    };
 
     const openEditModal = (product) => {
         setEditingProduct(product);
+        
+        // Determine main category id
+        const cat = categories.find(c => c.id === product.category_id);
+        const mainCatId = cat?.parent_id ? cat.parent_id : product.category_id;
+        setSelectedEditMainCatId(mainCatId || '');
+
         setEditData({
             _method: 'PATCH',
             name: product.name,
@@ -650,22 +682,32 @@ export default function Products({ products, categories }) {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                 <div>
-                                    <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1.5 font-sans">Product Category *</label>
+                                    <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1.5 font-sans">Main Category *</label>
+                                    <select
+                                        value={selectedAddMainCatId}
+                                        onChange={(e) => handleAddMainCatChange(e.target.value)}
+                                        className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2.5 text-xs text-slate-850 focus:outline-none focus:ring-1 focus:ring-blue-500/20"
+                                    >
+                                        {parentCategories.map((c) => (
+                                            <option key={c.id} value={c.id}>{c.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1.5 font-sans">Subcategory *</label>
                                     <select
                                         value={addData.category_id}
                                         onChange={(e) => setAddData('category_id', e.target.value)}
                                         className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2.5 text-xs text-slate-850 focus:outline-none focus:ring-1 focus:ring-blue-500/20"
                                     >
-                                        {categories.map((c) => {
-                                            const parent = c.parent_id ? categories.find(p => p.id === c.parent_id) : null;
-                                            return (
-                                                <option key={c.id} value={c.id}>
-                                                    {parent ? `${parent.name} → ${c.name}` : c.name}
-                                                </option>
-                                            );
-                                        })}
+                                        {categories.filter(c => c.parent_id === Number(selectedAddMainCatId)).length === 0 && (
+                                            <option value={selectedAddMainCatId}>Assign directly to Main Category</option>
+                                        )}
+                                        {categories.filter(c => c.parent_id === Number(selectedAddMainCatId)).map((c) => (
+                                            <option key={c.id} value={c.id}>{c.name}</option>
+                                        ))}
                                     </select>
                                     {addErrors.category_id && <p className="text-[10px] text-red-555 text-red-500 mt-1 font-bold">{addErrors.category_id}</p>}
                                 </div>
@@ -1023,22 +1065,32 @@ export default function Products({ products, categories }) {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                 <div>
-                                    <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1.5 font-sans">Product Category *</label>
+                                    <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1.5 font-sans">Main Category *</label>
+                                    <select
+                                        value={selectedEditMainCatId}
+                                        onChange={(e) => handleEditMainCatChange(e.target.value)}
+                                        className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2.5 text-xs text-slate-850 focus:outline-none focus:ring-1 focus:ring-blue-500/20"
+                                    >
+                                        {parentCategories.map((c) => (
+                                            <option key={c.id} value={c.id}>{c.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1.5 font-sans">Subcategory *</label>
                                     <select
                                         value={editData.category_id}
                                         onChange={(e) => setEditData('category_id', e.target.value)}
                                         className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2.5 text-xs text-slate-850 focus:outline-none focus:ring-1 focus:ring-blue-500/20"
                                     >
-                                        {categories.map((c) => {
-                                            const parent = c.parent_id ? categories.find(p => p.id === c.parent_id) : null;
-                                            return (
-                                                <option key={c.id} value={c.id}>
-                                                    {parent ? `${parent.name} → ${c.name}` : c.name}
-                                                </option>
-                                            );
-                                        })}
+                                        {categories.filter(c => c.parent_id === Number(selectedEditMainCatId)).length === 0 && (
+                                            <option value={selectedEditMainCatId}>Assign directly to Main Category</option>
+                                        )}
+                                        {categories.filter(c => c.parent_id === Number(selectedEditMainCatId)).map((c) => (
+                                            <option key={c.id} value={c.id}>{c.name}</option>
+                                        ))}
                                     </select>
                                     {editErrors.category_id && <p className="text-[10px] text-red-555 text-red-500 mt-1 font-bold">{editErrors.category_id}</p>}
                                 </div>
