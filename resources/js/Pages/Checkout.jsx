@@ -20,17 +20,6 @@ export default function Checkout({ settings: propSettings, currency: propCurrenc
     const [couponError, setCouponError] = useState('');
     const [couponLoading, setCouponLoading] = useState(false);
 
-    // Load cart items on mount
-    useEffect(() => {
-        const items = getCart();
-        if (items.length === 0) {
-            router.get(route('cart'));
-            return;
-        }
-        setCartItems(items);
-        setSubtotal(getCartTotal());
-    }, []);
-
     // Setup Laravel Inertia form
     const { data, setData, post, processing, errors } = useForm({
         customer_name: '',
@@ -42,6 +31,32 @@ export default function Checkout({ settings: propSettings, currency: propCurrenc
         cart_items: [],
         coupon_code: '',
     });
+
+    // Load cart items on mount
+    useEffect(() => {
+        const items = getCart();
+        if (items.length === 0) {
+            router.get(route('cart'));
+            return;
+        }
+        setCartItems(items);
+        setSubtotal(getCartTotal());
+
+        // Load coupon from localStorage if exists
+        const savedCoupon = localStorage.getItem('bs_coupon');
+        if (savedCoupon) {
+            try {
+                const parsed = JSON.parse(savedCoupon);
+                if (parsed) {
+                    setCouponApplied(parsed);
+                    setCouponCodeInput(parsed.code);
+                    setData('coupon_code', parsed.code);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }, []);
 
     // Sync cart items to form data once loaded
     useEffect(() => {
@@ -70,11 +85,18 @@ export default function Checkout({ settings: propSettings, currency: propCurrenc
             if (response.data.success) {
                 setCouponApplied(response.data);
                 setData('coupon_code', response.data.code);
+                localStorage.setItem('bs_coupon', JSON.stringify({
+                    code: response.data.code,
+                    discount: response.data.discount,
+                    type: response.data.type,
+                    value: response.data.value
+                }));
             }
         } catch (error) {
             setCouponError(error.response?.data?.message || 'Failed to validate coupon.');
             setCouponApplied(null);
             setData('coupon_code', '');
+            localStorage.removeItem('bs_coupon');
         } finally {
             setCouponLoading(false);
         }
@@ -85,6 +107,7 @@ export default function Checkout({ settings: propSettings, currency: propCurrenc
         setCouponCodeInput('');
         setData('coupon_code', '');
         setCouponError('');
+        localStorage.removeItem('bs_coupon');
     };
 
     const handleSubmitOrder = (e) => {
@@ -92,8 +115,9 @@ export default function Checkout({ settings: propSettings, currency: propCurrenc
         
         post(route('order.store'), {
             onSuccess: () => {
-                // Clear the local cart on successful placement
+                // Clear the local cart and coupon on successful placement
                 localStorage.removeItem('bs_cart');
+                localStorage.removeItem('bs_coupon');
                 window.dispatchEvent(new Event('cart-updated'));
             }
         });

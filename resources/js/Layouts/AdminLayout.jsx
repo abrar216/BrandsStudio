@@ -18,7 +18,8 @@ import {
     UserCheck,
     Globe,
     Sun,
-    Moon
+    Moon,
+    Tag
 } from 'lucide-react';
 
 export default function AdminLayout({ children, title, noSidebar = false, headerContent = null }) {
@@ -86,6 +87,7 @@ export default function AdminLayout({ children, title, noSidebar = false, header
             { name: 'POS System', href: route('admin.pos.index'), icon: MonitorPlay, current: route().current('admin.pos.index') },
             { name: 'Products Inventory', href: route('admin.products'), icon: Shirt, current: route().current('admin.products') },
             { name: 'Categories', href: route('admin.categories'), icon: FolderKanban, current: route().current('admin.categories') },
+            { name: 'Coupons Control', href: route('admin.coupons'), icon: Tag, current: route().current('admin.coupons') },
             { name: 'Order Ledger', href: route('admin.orders'), icon: ShoppingBag, current: route().current('admin.orders') },
             { name: 'Expense Tracker', href: route('admin.expenses'), icon: Coins, current: route().current('admin.expenses') },
             { name: 'Website Control', href: route('admin.website-control'), icon: Globe, current: route().current('admin.website-control') || route().current('admin.homepage-sections') || route().current('admin.products-control') || route().current('admin.collections-control') },
@@ -96,6 +98,7 @@ export default function AdminLayout({ children, title, noSidebar = false, header
             { name: 'POS System', href: route('admin.pos.index'), icon: MonitorPlay, current: route().current('admin.pos.index') },
             { name: 'Products Inventory', href: route('admin.products'), icon: Shirt, current: route().current('admin.products') },
             { name: 'Categories', href: route('admin.categories'), icon: FolderKanban, current: route().current('admin.categories') },
+            { name: 'Coupons Control', href: route('admin.coupons'), icon: Tag, current: route().current('admin.coupons') },
             { name: 'Order Ledger', href: route('admin.orders'), icon: ShoppingBag, current: route().current('admin.orders') },
             { name: 'Expense Tracker', href: route('admin.expenses'), icon: Coins, current: route().current('admin.expenses') },
             { name: 'Global Settings', href: route('admin.settings'), icon: SettingsIcon, current: route().current('admin.settings') },

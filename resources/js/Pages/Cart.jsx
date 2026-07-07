@@ -3,7 +3,8 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import StoreLayout from '../Layouts/StoreLayout';
 import { getCart, removeFromCart, updateQuantity, getCartTotal } from '../Utils/cart';
 import { getAssetUrl, getProductImageUrl } from '../Utils/asset';
-import { Trash2, ShoppingBag, ArrowRight, Minus, Plus } from 'lucide-react';
+import { Trash2, ShoppingBag, ArrowRight, Minus, Plus, X, Loader2 } from 'lucide-react';
+import axios from 'axios';
 
 export default function Cart() {
     const { props } = usePage();
@@ -13,9 +14,66 @@ export default function Cart() {
     const [cartItems, setCartItems] = useState([]);
     const [subtotal, setSubtotal] = useState(0);
 
+    // Coupon states
+    const [couponCodeInput, setCouponCodeInput] = useState('');
+    const [couponApplied, setCouponApplied] = useState(null);
+    const [couponError, setCouponError] = useState('');
+    const [couponLoading, setCouponLoading] = useState(false);
+
     const refreshCart = () => {
         setCartItems(getCart());
         setSubtotal(getCartTotal());
+    };
+
+    useEffect(() => {
+        // Load coupon from localStorage if exists
+        const savedCoupon = localStorage.getItem('bs_coupon');
+        if (savedCoupon) {
+            try {
+                const parsed = JSON.parse(savedCoupon);
+                if (parsed) {
+                    setCouponApplied(parsed);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }, []);
+
+    const handleApplyCoupon = async () => {
+        if (!couponCodeInput.trim()) return;
+        setCouponLoading(true);
+        setCouponError('');
+        try {
+            const response = await axios.post(route('coupon.apply'), {
+                code: couponCodeInput,
+                subtotal: subtotal
+            });
+            if (response.data.success) {
+                const applied = {
+                    code: response.data.code,
+                    discount: response.data.discount,
+                    type: response.data.type,
+                    value: response.data.value
+                };
+                setCouponApplied(applied);
+                localStorage.setItem('bs_coupon', JSON.stringify(applied));
+                setCouponCodeInput('');
+            }
+        } catch (error) {
+            setCouponError(error.response?.data?.message || 'Failed to validate coupon.');
+            setCouponApplied(null);
+            localStorage.removeItem('bs_coupon');
+        } finally {
+            setCouponLoading(false);
+        }
+    };
+
+    const handleRemoveCoupon = () => {
+        setCouponApplied(null);
+        localStorage.removeItem('bs_coupon');
+        setCouponError('');
+        setCouponCodeInput('');
     };
 
     useEffect(() => {
@@ -37,11 +95,18 @@ export default function Cart() {
         updateQuantity(productId, variantId, currentQty + amount);
     };
 
+    const discount = couponApplied
+        ? (couponApplied.type === 'percentage'
+            ? Math.round(subtotal * (Number(couponApplied.value) / 100) * 100) / 100
+            : Math.min(Number(couponApplied.value), subtotal))
+        : 0;
+
     const shippingCharges = Number(settings.shipping_charges || 250);
-    const shipping = subtotal >= 5000 || subtotal === 0 ? 0.00 : shippingCharges;
+    const taxableAmount = Math.max(0, subtotal - discount);
+    const shipping = taxableAmount >= 5000 || subtotal === 0 ? 0.00 : shippingCharges;
     const taxRate = Number(settings.tax_rate || 10) / 100; // 10% tax
-    const estimatedTax = subtotal * taxRate;
-    const total = subtotal + shipping + estimatedTax;
+    const estimatedTax = taxableAmount * taxRate;
+    const total = taxableAmount + shipping + estimatedTax;
 
     return (
         <StoreLayout>
@@ -177,12 +242,51 @@ export default function Cart() {
                                         <span className="text-slate-800 font-bold">{currency}{Number(estimatedTax).toFixed(2)}</span>
                                     </div>
                                     
-
+                                    {discount > 0 && (
+                                        <div className="flex justify-between text-emerald-600 font-black">
+                                            <span>Coupon Discount</span>
+                                            <span>-{currency}{Number(discount).toFixed(2)}</span>
+                                        </div>
+                                    )}
 
                                     <div className="flex justify-between text-sm font-black text-slate-900 border-t border-slate-100 pt-5">
                                         <span className="font-serif">ORDER TOTAL</span>
                                         <span className="font-serif">{currency}{Number(total).toFixed(2)}</span>
                                     </div>
+                                </div>
+
+                                {/* Coupon Form Widget */}
+                                <div className="border-t border-slate-100 pt-4 space-y-3">
+                                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-wider">APPLY DISCOUNT CODE</h4>
+                                    {couponApplied ? (
+                                        <div className="flex items-center justify-between bg-emerald-50 text-emerald-800 text-xs font-black p-3 rounded-xl border border-emerald-100">
+                                            <span>PROMO: <span className="font-extrabold uppercase">{couponApplied.code}</span> Applied!</span>
+                                            <button 
+                                                onClick={handleRemoveCoupon}
+                                                className="text-emerald-500 hover:text-emerald-800 focus:outline-none"
+                                            >
+                                                <X size={14} />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center space-x-2">
+                                            <input 
+                                                type="text" 
+                                                placeholder="Enter coupon code..."
+                                                value={couponCodeInput}
+                                                onChange={(e) => setCouponCodeInput(e.target.value.toUpperCase())}
+                                                className="bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs w-full font-bold focus:bg-white"
+                                            />
+                                            <button 
+                                                onClick={handleApplyCoupon}
+                                                disabled={couponLoading}
+                                                className="bg-slate-900 hover:bg-black text-white text-[10px] font-black py-3 px-4 rounded-xl transition-all uppercase flex items-center justify-center min-w-[70px]"
+                                            >
+                                                {couponLoading ? <Loader2 size={12} className="animate-spin" /> : 'APPLY'}
+                                            </button>
+                                        </div>
+                                    )}
+                                    {couponError && <p className="text-[9px] text-red-500 font-bold mt-1">✗ {couponError}</p>}
                                 </div>
 
                                 <div className="pt-4">
