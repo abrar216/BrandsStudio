@@ -314,7 +314,14 @@ class AdminDashboardController extends Controller
         $this->checkSuperAdminAccess();
 
         $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                \Illuminate\Validation\Rule::unique('categories')->where(function ($query) use ($request) {
+                    return $query->where('parent_id', $request->parent_id);
+                })
+            ],
             'description' => 'nullable|string',
             'image' => 'nullable|image|max:5120',
             'parent_id' => 'nullable|exists:categories,id',
@@ -325,9 +332,13 @@ class AdminDashboardController extends Controller
             $imagePath = $this->imageToBase64($request->file('image'));
         }
 
+        // Generate unique slug scoped by parent name if it exists
+        $parent = $request->parent_id ? Category::find($request->parent_id) : null;
+        $slug = $parent ? Str::slug($parent->name . '-' . $request->name) : Str::slug($request->name);
+
         Category::create([
             'name' => $request->name,
-            'slug' => Str::slug($request->name),
+            'slug' => $slug,
             'description' => $request->description,
             'image' => $imagePath,
             'parent_id' => $request->parent_id,
@@ -341,15 +352,26 @@ class AdminDashboardController extends Controller
         $this->checkSuperAdminAccess();
 
         $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                \Illuminate\Validation\Rule::unique('categories')->where(function ($query) use ($request) {
+                    return $query->where('parent_id', $request->parent_id);
+                })->ignore($category->id)
+            ],
             'description' => 'nullable|string',
             'image' => 'nullable|image|max:5120',
             'parent_id' => 'nullable|exists:categories,id',
         ]);
 
+        // Generate unique slug scoped by parent name if it exists
+        $parent = $request->parent_id ? Category::find($request->parent_id) : null;
+        $slug = $parent ? Str::slug($parent->name . '-' . $request->name) : Str::slug($request->name);
+
         $data = [
             'name' => $request->name,
-            'slug' => Str::slug($request->name),
+            'slug' => $slug,
             'description' => $request->description,
             'parent_id' => $request->parent_id,
         ];
