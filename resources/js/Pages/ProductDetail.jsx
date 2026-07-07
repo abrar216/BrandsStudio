@@ -222,9 +222,10 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                         </div>
 
                         {/* Short Description */}
-                        <p className="text-sm text-slate-500 leading-relaxed font-medium">
-                            {product.short_description || 'A timeless Brands Studio wardrobe basic, engineered using sustainably sourced fabrics and majestic tailored calibrations to secure a flattering and clean contemporary drape.'}
-                        </p>
+                        <div 
+                            className="text-sm text-slate-500 leading-relaxed font-medium space-y-2"
+                            dangerouslySetInnerHTML={{ __html: product.short_description || product.description || 'A timeless Brands Studio wardrobe basic, engineered using sustainably sourced fabrics and majestic tailored calibrations to secure a flattering and clean contemporary drape.' }}
+                        />
 
                         {/* Color Selector Swatches */}
                         {allColors.length > 0 && (
@@ -294,7 +295,7 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                         {/* Stock alerts */}
                         <div className="text-xs font-bold">
                             {availableStock > 0 ? (
-                                <span className="text-emerald-600">✓ In Stock ({availableStock} units available)</span>
+                                <span className="text-emerald-600">✓ In Stock</span>
                             ) : (
                                 <span className="text-red-500">✗ Out of Stock</span>
                             )}
@@ -378,7 +379,7 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                     {/* Tab content 1: Description */}
                     {activeTab === 'description' && (
                         <div className="max-w-4xl space-y-6 text-sm text-slate-500 leading-relaxed font-medium">
-                            <p>{product.description || 'No detailed description specified.'}</p>
+                            <div className="prose prose-slate max-w-none text-slate-500 text-sm" dangerouslySetInnerHTML={{ __html: product.description || 'No detailed description specified.' }} />
                             <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 grid grid-cols-2 gap-4 text-xs font-bold text-slate-700">
                                 <div>• Fabric Blend: 100% Organically Sourced Long-staple Combed Cotton</div>
                                 <div>• Cut/Sizing: Premium Italian Sartorial Slim Silhouette Fit</div>
