@@ -194,6 +194,10 @@ export default function Cart() {
                                         <ArrowRight size={14} />
                                     </Link>
                                 </div>
+
+                                <div className="text-[10px] text-slate-450 leading-relaxed text-center font-medium mt-4 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                    ℹ️ <span className="font-bold">Disclaimer:</span> Product color and image quality may vary slightly due to photographic lighting sources or your device screen display settings.
+                                </div>
                             </div>
                         </div>
 
