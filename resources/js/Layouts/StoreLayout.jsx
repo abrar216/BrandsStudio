@@ -292,14 +292,14 @@ export default function StoreLayout({ children }) {
 
             {/* Notification Toast */}
             {toast && (
-                <div className="fixed bottom-5 right-5 z-50 animate-in slide-in-from-bottom duration-300">
-                    <div className={`flex items-center space-x-3 px-5 py-3.5 rounded-xl shadow-2xl border ${
+                <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-top duration-300">
+                    <div className={`flex items-center space-x-3 px-6 py-3.5 rounded-2xl shadow-2xl border ${
                         toast.type === 'success' 
-                            ? 'bg-emerald-950 text-emerald-250 border-emerald-800' 
-                            : 'bg-red-950 text-red-250 border-red-800'
+                            ? 'bg-slate-900 text-white border-slate-800' 
+                            : 'bg-red-600 text-white border-red-500'
                     }`}>
-                        {toast.type === 'success' ? <Check size={18} className="text-emerald-400" /> : <AlertCircle size={18} className="text-red-400" />}
-                        <span className="text-xs font-bold tracking-wide">{toast.message}</span>
+                        {toast.type === 'success' ? <Check size={16} className="text-emerald-400" /> : <AlertCircle size={16} className="text-red-200" />}
+                        <span className="text-xs font-bold tracking-wide text-white">{toast.message}</span>
                     </div>
                 </div>
             )}
