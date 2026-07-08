@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aa715b4183fb30d40dbf87a9f5da20c6",
+    "content-hash": "0110a8fa17d0de4deab290b3a515106f",
     "packages": [
         {
             "name": "brick/math",
@@ -507,6 +507,59 @@
                 }
             ],
             "time": "2025-03-06T22:45:56+00:00"
+        },
+        {
+            "name": "fpdf/fpdf",
+            "version": "1.86.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/coreydoughty/Fpdf.git",
+                "reference": "2034ab9f7b03b8294933d7fd27828d13963368e5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/coreydoughty/Fpdf/zipball/2034ab9f7b03b8294933d7fd27828d13963368e5",
+                "reference": "2034ab9f7b03b8294933d7fd27828d13963368e5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "FPDF": "Fpdf\\Fpdf"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Fpdf\\": "src/Fpdf"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Corey Doughty",
+                    "email": "corey@doughty.ca"
+                }
+            ],
+            "description": "FPDF Composer Wrapper",
+            "homepage": "https://github.com/coreydoughty/Fpdf",
+            "keywords": [
+                "fpdf",
+                "pdf",
+                "wrapper"
+            ],
+            "support": {
+                "issues": "https://github.com/coreydoughty/Fpdf/issues",
+                "source": "https://github.com/coreydoughty/Fpdf/tree/1.86.1"
+            },
+            "time": "2025-12-08T14:03:59+00:00"
         },
         {
             "name": "fruitcake/php-cors",
@@ -8657,5 +8710,5 @@
         "php": "^8.2"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }

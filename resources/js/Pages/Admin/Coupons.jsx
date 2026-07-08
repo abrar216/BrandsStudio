@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import AdminLayout from '../../Layouts/AdminLayout';
 import { 
     Plus, 
@@ -76,7 +76,7 @@ export default function Coupons({ coupons = [] }) {
 
     const handleDelete = (couponId) => {
         if (confirm('Are you sure you want to delete this coupon?')) {
-            useForm().delete(route('admin.coupons.destroy', couponId));
+            router.delete(route('admin.coupons.destroy', couponId));
         }
     };
 
