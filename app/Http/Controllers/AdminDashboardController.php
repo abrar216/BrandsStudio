@@ -36,10 +36,31 @@ class AdminDashboardController extends Controller
         $this->checkAccess();
 
         // 1. Core aggregates
-        $totalSales = Order::where('payment_status', 'paid')->sum('total');
+        $totalSales = Order::where('payment_status', 'paid')
+            ->whereNotIn('status', ['returned', 'cancelled'])
+            ->sum('total');
         $totalOrders = Order::count();
         $totalExpenses = Expense::sum('amount');
-        $netProfit = $totalSales - $totalExpenses;
+
+        // Fetch all paid and active order items to calculate cost of goods sold (COGS)
+        $orderItems = OrderItem::whereHas('order', function($q) {
+            $q->where('payment_status', 'paid')
+              ->whereNotIn('status', ['returned', 'cancelled']);
+        })->with(['product', 'variant'])->get();
+
+        $totalCost = 0;
+        foreach ($orderItems as $item) {
+            $cost = 0;
+            if ($item->product_variant_id && $item->variant) {
+                $cost = $item->variant->cost_price !== null ? $item->variant->cost_price : ($item->product->cost_price ?? 0);
+            } else if ($item->product) {
+                $cost = $item->product->cost_price ?? 0;
+            }
+            $totalCost += $cost * $item->quantity;
+        }
+
+        // Net Profit = (Sales Revenue) - (Cost of Goods Sold) - (Total Expenses)
+        $netProfit = $totalSales - $totalCost - $totalExpenses;
 
         // Calculate total products and inventory valuation
         $totalProducts = Product::where('status', 'active')->count();
@@ -60,6 +81,7 @@ class AdminDashboardController extends Controller
         }
 
         $monthlySales = Order::where('payment_status', 'paid')
+            ->whereNotIn('status', ['returned', 'cancelled'])
             ->select(
                 DB::raw('SUM(total) as sales'),
                 DB::raw("$monthFormatted as month")
