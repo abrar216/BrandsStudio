@@ -45,7 +45,7 @@ export default function Cart() {
         setCouponLoading(true);
         setCouponError('');
         try {
-            const response = await axios.post(route('coupon.apply'), {
+            const response = await axios.post('/api/coupon/apply', {
                 code: couponCodeInput,
                 subtotal: subtotal
             });
