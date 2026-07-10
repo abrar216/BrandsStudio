@@ -87,10 +87,6 @@ Route::get('/admin-cleanup', function (\Illuminate\Http\Request $request) {
     }
 
     try {
-        // Disable foreign key checks
-        \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
-
-        // Truncate target e-commerce tables
         $tables = [
             'order_items',
             'orders',
@@ -104,24 +100,27 @@ Route::get('/admin-cleanup', function (\Illuminate\Http\Request $request) {
             'notifications',
         ];
 
-        $truncated = [];
-        foreach ($tables as $table) {
-            \Illuminate\Support\Facades\DB::table($table)->truncate();
-            $truncated[] = $table;
-        }
+        $driver = \Illuminate\Support\Facades\DB::getDriverName();
 
-        // Restore foreign key checks
-        \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
+        if ($driver === 'mysql') {
+            \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
+            foreach ($tables as $table) {
+                \Illuminate\Support\Facades\DB::table($table)->truncate();
+            }
+            \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
+        } else {
+            // PostgreSQL or other drivers: Use TRUNCATE with CASCADE
+            \Illuminate\Support\Facades\DB::statement('TRUNCATE TABLE ' . implode(', ', $tables) . ' CASCADE;');
+        }
 
         return response()->json([
             'status' => 'success',
             'message' => 'E-Commerce store data cleared successfully!',
-            'truncated_tables' => $truncated,
+            'driver_used' => $driver,
+            'truncated_tables' => $tables,
             'note' => 'Users, roles, and settings tables were preserved as requested.'
         ]);
     } catch (\Exception $e) {
-        // Restore foreign key checks in case of error
-        \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
         return response()->json([
             'status' => 'error',
             'message' => $e->getMessage(),
