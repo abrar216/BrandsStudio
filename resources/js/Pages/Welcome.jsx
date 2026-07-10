@@ -196,31 +196,6 @@ export default function Welcome({
                 </div>
             )}
 
-            {/* 5. Luxury Promotional Static Banner */}
-            <div className="bg-neutral-900 text-white py-20 relative overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-neutral-800 to-black opacity-90"></div>
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:3rem_3rem]"></div>
-                
-                <div className="relative max-w-4xl mx-auto px-6 text-center space-y-6">
-                    <span className="bg-amber-500/20 text-amber-300 text-[10px] font-black tracking-widest px-4 py-1.5 rounded-full uppercase border border-amber-500/30">
-                        {settings.banner_badge || "THE ART OF APPAREL"}
-                    </span>
-                    <h2 className="text-3xl sm:text-5xl font-black font-serif tracking-tight leading-tight whitespace-pre-line uppercase">
-                        {settings.banner_title || "SUSTAINABLE MATERIALS. \n MAJESTIC TAILORING."}
-                    </h2>
-                    <p className="text-neutral-400 text-sm max-w-lg mx-auto leading-relaxed">
-                        {settings.banner_subtitle || "At Brands Studio, we combine age-old Italian sartorial techniques with 100% organic long-staple cotton and recycled fibers, crafting sustainable heirlooms that grow softer with every wear."}
-                    </p>
-                    <div className="pt-2">
-                        <Link 
-                            href={settings.banner_button_link || route('collections')} 
-                            className="inline-block bg-white hover:bg-neutral-100 text-slate-900 font-extrabold tracking-wider text-xs px-10 py-4 rounded-xl shadow-lg transition-all uppercase"
-                        >
-                            {settings.banner_button_text || "SHOP COLLECTION"}
-                        </Link>
-                    </div>
-                </div>
-            </div>
 
             {/* 6. New Arrivals (Grid of products) */}
             {newArrivals.length > 0 && (
