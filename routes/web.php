@@ -88,6 +88,7 @@ Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product
 Route::get('/cart', [OrderController::class, 'cart'])->name('cart');
 Route::get('/tracking', [OrderController::class, 'tracking'])->name('order.tracking');
 Route::post('/api/coupon/apply', [OrderController::class, 'applyCoupon'])->name('coupon.apply');
+Route::post('/coupon/apply', [OrderController::class, 'applyCoupon']);
 Route::get('/shipping-info', function () {
     return Inertia\Inertia::render('ShippingInfo');
 })->name('shipping.info');
