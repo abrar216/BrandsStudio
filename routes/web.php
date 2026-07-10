@@ -124,7 +124,8 @@ Route::get('/admin-cleanup', function (\Illuminate\Http\Request $request) {
         return response()->json([
             'status' => 'error',
             'message' => $e->getMessage(),
-        ], 500);
+            'trace' => $e->getTraceAsString(),
+        ], 200);
     }
 });
 
