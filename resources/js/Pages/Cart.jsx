@@ -296,13 +296,19 @@ export default function Cart() {
                                     {couponError && <p className="text-[9px] text-red-500 font-bold mt-1">✗ {couponError}</p>}
                                 </div>
 
-                                <div className="pt-4">
+                                <div className="pt-4 space-y-2.5">
                                     <Link
                                         href={route('checkout')}
                                         className="w-full bg-slate-900 hover:bg-black text-white text-xs font-black tracking-wider py-4 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center space-x-3 uppercase"
                                     >
                                         <span>PROCEED TO CHECKOUT</span>
                                         <ArrowRight size={14} />
+                                    </Link>
+                                    <Link
+                                        href={route('shop')}
+                                        className="w-full bg-white hover:bg-slate-50 text-slate-700 text-xs font-black tracking-wider py-3.5 px-6 rounded-xl border border-slate-200 transition-all flex items-center justify-center space-x-2 uppercase"
+                                    >
+                                        <span>Continue Shopping</span>
                                     </Link>
                                 </div>
 
@@ -325,7 +331,7 @@ export default function Cart() {
                         </div>
                         <div className="pt-2">
                             <Link 
-                                href={route('welcome')}
+                                href={route('shop')}
                                 className="bg-slate-900 hover:bg-black text-white text-xs font-black px-8 py-3.5 rounded-xl shadow-md transition-all uppercase tracking-wider inline-block"
                             >
                                 CONTINUE SHOPPING

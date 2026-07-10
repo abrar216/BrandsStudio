@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Head, Link, useForm, router, usePage } from '@inertiajs/react';
 import StoreLayout from '../Layouts/StoreLayout';
 import ProductCard from '../Components/ProductCard';
-import { ShoppingCart, Star, Heart, Check, Minus, Plus, MessageSquare } from 'lucide-react';
+import { ShoppingCart, Star, Heart, Check, Minus, Plus, MessageSquare, ArrowLeft } from 'lucide-react';
 import { addToCart } from '../Utils/cart';
 import { getAssetUrl, getProductImageUrl } from '../Utils/asset';
 
@@ -133,6 +133,17 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
             <Head title={product.name} />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+                
+                {/* Back to Shop / Continue Shopping Link */}
+                <div className="mb-8">
+                    <Link 
+                        href={route('shop')}
+                        className="inline-flex items-center space-x-2 text-slate-450 hover:text-slate-900 text-xs font-black tracking-widest uppercase transition-all duration-200"
+                    >
+                        <ArrowLeft size={12} />
+                        <span>Continue Shopping</span>
+                    </Link>
+                </div>
                 
                 {/* Product Core Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-start">

@@ -147,7 +147,7 @@ export default function OrderSuccess({ order, currency: propCurrency }) {
                     </button>
 
                     <Link
-                        href={route('welcome')}
+                        href={route('shop')}
                         className="bg-slate-900 hover:bg-black text-white text-xs font-black px-8 py-3.5 rounded-xl transition-all shadow-md flex items-center space-x-2 uppercase"
                     >
                         <span>CONTINUE SHOPPING</span>
