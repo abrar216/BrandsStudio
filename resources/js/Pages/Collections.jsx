@@ -36,33 +36,6 @@ export default function Collections({ categories = [], products = [] }) {
         <StoreLayout>
             <Head title="Signature Collections - Brands Studio" />
 
-            {/* Premium Luxury Hero Banner */}
-            <div className="relative overflow-hidden bg-[#faf8f5] border-b border-stone-200/80 py-20 sm:py-24">
-                {/* Subtle luxury backdrop details */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-amber-100/30 via-transparent to-transparent opacity-70 pointer-events-none"></div>
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(180,140,100,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(180,140,100,0.02)_1px,transparent_1px)] bg-[size:3rem_3rem]"></div>
-                
-                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-                    <div className="inline-flex items-center space-x-2 px-4 py-1.5 bg-amber-50 border border-amber-200/50 rounded-full text-amber-800 text-[10px] font-black tracking-widest uppercase">
-                        <Sparkles size={11} className="text-amber-600 animate-spin" style={{ animationDuration: '6s' }} />
-                        <span>Sartorial Masterpieces</span>
-                    </div>
-
-                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black font-serif tracking-tight text-stone-900 leading-none uppercase">
-                        BRANDS STUDIO <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-700 via-amber-600 to-amber-800 font-normal italic font-serif tracking-wide lowercase">
-                            signature collections
-                        </span>
-                    </h1>
-
-                    <div className="max-w-2xl mx-auto flex flex-col items-center">
-                        <div className="h-[1px] w-24 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent mb-4"></div>
-                        <p className="text-xs sm:text-sm text-stone-600 font-medium tracking-wide leading-relaxed">
-                            Discover exquisite seasonal edits, meticulous tailoring, and contemporary silhouettes. Crafted for the global modern tastemaker with an eye for premium textile aesthetics.
-                        </p>
-                    </div>
-                </div>
-            </div>
 
             {/* Filter and Search Container */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
