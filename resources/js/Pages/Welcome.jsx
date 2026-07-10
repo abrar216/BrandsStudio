@@ -37,7 +37,7 @@ export default function Welcome({
 
             {/* 1. Dynamic Premium Hero Image Slider */}
             {uniqueSliderProducts.length > 0 ? (
-                <div className="relative overflow-hidden bg-neutral-950 text-white min-h-[85vh] lg:min-h-[80vh] flex items-center group">
+                <div className="relative overflow-hidden bg-neutral-950 text-white min-h-[75vh] sm:min-h-[80vh] flex items-center group">
                     {uniqueSliderProducts.map((product, index) => (
                         <div 
                             key={product.id}
@@ -45,52 +45,49 @@ export default function Welcome({
                                 index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
                             }`}
                         >
-                            {/* Ambient dynamic glow background */}
+                            {/* Blurred background image that fills the full container (just like before) */}
                             <img 
                                 src={getAssetUrl(`storage/${getProductImageUrl(product)}`)}
                                 alt=""
-                                className="absolute inset-0 w-full h-full object-cover filter blur-3xl opacity-20 select-none pointer-events-none scale-110"
+                                className="absolute inset-0 w-full h-full object-cover object-center filter blur-lg opacity-40 scale-105 select-none pointer-events-none"
                             />
                             
-                            {/* Inner Split Container */}
-                            <div className="absolute inset-0 flex flex-col lg:flex-row items-center justify-between max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 gap-6 lg:gap-16 py-16 lg:py-0">
-                                
-                                {/* Left Side: Product Info */}
-                                <div className="w-full lg:w-1/2 text-left space-y-4 sm:space-y-6 z-20 order-2 lg:order-1 mt-4 lg:mt-0 px-2">
-                                    <span className="inline-block bg-amber-500 text-white text-[8px] sm:text-[10px] font-black tracking-widest px-3 py-1.5 rounded-full uppercase shadow-lg">
-                                        TRENDING NOW
-                                    </span>
-                                    <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight font-serif text-white uppercase drop-shadow-2xl leading-tight sm:leading-none">
-                                        {product.name}
-                                    </h2>
-                                    <p className="text-xs sm:text-sm text-neutral-300 line-clamp-3 max-w-lg drop-shadow-md font-medium leading-relaxed">
-                                        {product.short_description || product.description || 'Experience the premium refinement of Brands Studio. Indulge in tailored silhouettes, luxury textures, and contemporary clean apparel designed for the modern tastemaker.'}
-                                    </p>
-                                    <div className="pt-2">
-                                        <Link 
-                                            href={product.slug ? route('product.show', { slug: product.slug }) : '#'}
-                                            className="inline-block bg-white text-black font-extrabold tracking-wider text-[10px] sm:text-xs px-8 py-3.5 sm:px-10 sm:py-4 rounded-xl transition-all hover:bg-amber-500 hover:text-white uppercase shadow-xl"
-                                        >
-                                            SHOP NOW
-                                        </Link>
-                                    </div>
-                                </div>
-
-                                {/* Right Side: Hero Image Container (Shows image fully) */}
-                                <div className="w-full lg:w-1/2 h-[35vh] sm:h-[45vh] lg:h-[68vh] flex items-center justify-center z-20 order-1 lg:order-2">
-                                    <div className="relative w-full h-full max-h-[60vh] rounded-3xl overflow-hidden shadow-2xl bg-neutral-900/40 border border-white/5 flex items-center justify-center p-2">
-                                        <img 
-                                            src={getAssetUrl(`storage/${getProductImageUrl(product)}`)}
-                                            alt={product.name}
-                                            className="max-w-full max-h-full object-contain rounded-2xl"
-                                        />
-                                    </div>
-                                </div>
-
+                            {/* Centered foreground image that is fully visible (object-contain) */}
+                            <div className="absolute inset-0 flex items-center justify-center z-10">
+                                <img 
+                                    src={getAssetUrl(`storage/${getProductImageUrl(product)}`)}
+                                    alt={product.name}
+                                    className="w-full h-full object-contain object-center sm:object-right-bottom sm:mr-[10%] lg:mr-[15%]"
+                                />
                             </div>
+
+                            {/* Dark gradient overlay to blend background and text */}
+                            <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-black/85 via-black/45 to-transparent z-20 pointer-events-none"></div>
                             
-                            {/* Overlay gradient */}
-                            <div className="absolute inset-0 bg-gradient-to-b from-neutral-950/20 via-transparent to-neutral-950/90 z-10 pointer-events-none"></div>
+                            {/* Product Info Overlay */}
+                            <div className="absolute inset-0 flex items-end pb-24 sm:items-center sm:pb-0 z-30">
+                                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+                                    <div className="max-w-xl text-left">
+                                        <span className="inline-block bg-amber-500 text-white text-[8px] sm:text-[10px] font-black tracking-widest px-3 py-1 sm:px-4 sm:py-1.5 rounded-full uppercase mb-2 sm:mb-4 shadow-lg">
+                                            TRENDING NOW
+                                        </span>
+                                        <h2 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight font-serif text-white uppercase drop-shadow-2xl leading-tight sm:leading-none">
+                                            {product.name}
+                                        </h2>
+                                        <p className="hidden sm:block mt-6 text-sm text-neutral-200 line-clamp-2 max-w-lg drop-shadow-md font-medium leading-relaxed">
+                                            {product.short_description || product.description || 'Experience the refinement of Brands Studio. Indulge in tailored silhouettes, luxury textures, and contemporary clean apparel designed for the modern tastemaker.'}
+                                        </p>
+                                        <div className="mt-5 sm:mt-8">
+                                            <Link 
+                                                href={product.slug ? route('product.show', { slug: product.slug }) : '#'}
+                                                className="inline-block bg-white text-black font-extrabold tracking-wider text-[10px] sm:text-xs px-6 py-3 sm:px-10 sm:py-4 rounded-xl transition-all hover:bg-amber-500 hover:text-white uppercase shadow-xl"
+                                            >
+                                                SHOP NOW
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     ))}
                     
