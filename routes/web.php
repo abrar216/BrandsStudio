@@ -76,6 +76,60 @@ Route::get('/admin-setup', function (\Illuminate\Http\Request $request) {
 });
 
 
+// Temporary utility route to reset/cleanup database store data for fresh entries.
+Route::get('/admin-cleanup', function (\Illuminate\Http\Request $request) {
+    // Security check for production environment
+    if (!app()->environment('local') && $request->query('key') !== 'brands_studio_secure_cleanup_9912') {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Unauthorized access to cleanup route.',
+        ], 403);
+    }
+
+    try {
+        // Disable foreign key checks
+        \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS = 0;');
+
+        // Truncate target e-commerce tables
+        $tables = [
+            'order_items',
+            'orders',
+            'product_variants',
+            'products',
+            'categories',
+            'coupons',
+            'expenses',
+            'wishlists',
+            'reviews',
+            'notifications',
+        ];
+
+        $truncated = [];
+        foreach ($tables as $table) {
+            \Illuminate\Support\Facades\DB::table($table)->truncate();
+            $truncated[] = $table;
+        }
+
+        // Restore foreign key checks
+        \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'E-Commerce store data cleared successfully!',
+            'truncated_tables' => $truncated,
+            'note' => 'Users, roles, and settings tables were preserved as requested.'
+        ]);
+    } catch (\Exception $e) {
+        // Restore foreign key checks in case of error
+        \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS = 1;');
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+});
+
+
 
 
 
