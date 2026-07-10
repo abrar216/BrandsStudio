@@ -98,15 +98,15 @@ export default function StoreLayout({ children }) {
                                 )}
                             </button>
 
-                            <Link href={route('welcome')} className="flex items-center space-x-2 text-slate-900 uppercase whitespace-nowrap font-sans select-none">
+                            <Link href={route('welcome')} className="flex items-center space-x-2.5 text-slate-900 uppercase whitespace-nowrap select-none group">
                                 {/* Elegant Hanger Logo Icon */}
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-900 flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7">
+                                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-slate-900 flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 group-hover:scale-110 transition-transform duration-300">
                                     <path d="M12 7a3 3 0 1 0-3-3" />
                                     <path d="M12 7l9 6.5A1 1 0 0 1 20.4 15H3.6a1 1 0 0 1-.6-1.5L12 7z" />
                                 </svg>
-                                <div className="flex items-baseline leading-none text-base sm:text-lg md:text-xl font-bold">
-                                    <span className="font-extrabold tracking-[0.12em]">BRANDS</span>
-                                    <span className="font-black tracking-[0.08em] ml-1 opacity-90">STUDIO</span>
+                                <div className="flex items-baseline leading-none text-lg sm:text-xl md:text-2xl font-bold font-['Cinzel']">
+                                    <span className="font-black tracking-[0.15em] text-slate-900">BRANDS</span>
+                                    <span className="font-normal tracking-[0.2em] ml-1.5 text-slate-500 opacity-90">STUDIO</span>
                                 </div>
                             </Link>
                         </div>
@@ -355,7 +355,10 @@ export default function StoreLayout({ children }) {
                     
                     {/* Brand Info */}
                     <div className="space-y-4">
-                        <h3 className="text-xl font-bold font-serif tracking-widest text-white">BRANDS STUDIO</h3>
+                        <div className="flex items-baseline leading-none text-xl font-bold font-['Cinzel'] text-white">
+                            <span className="font-black tracking-[0.15em]">BRANDS</span>
+                            <span className="font-normal tracking-[0.2em] ml-1.5 text-neutral-400 opacity-90">STUDIO</span>
+                        </div>
                         <p className="text-xs text-neutral-400 leading-relaxed">
                             {settings?.site_tagline || 'Wear your signature.'} Offering high-fashion tailored silhouettes, premium textures, and contemporary styles designed for everyday luxury.
                         </p>
