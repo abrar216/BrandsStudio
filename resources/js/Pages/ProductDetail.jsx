@@ -38,9 +38,11 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
     const allImages = mainImg ? [mainImg, ...gallery.filter(g => g !== mainImg)] : gallery;
     
     const [activeImage, setActiveImage] = useState(allImages[0] || null);
+    const [activeMobileImageIdx, setActiveMobileImageIdx] = useState(0);
 
     React.useEffect(() => {
         setActiveImage(allImages[0] || null);
+        setActiveMobileImageIdx(0);
     }, [product.id]);
 
     // Filter variants based on current color choice
@@ -148,53 +150,77 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                 {/* Product Core Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-start">
                     
-                    {/* Left: Premium Image & Gallery */}
-                    <div className="flex flex-col space-y-5">
-                        {activeImage ? (
-                            <div className="bg-slate-100/60 border border-slate-100 rounded-3xl overflow-hidden aspect-[3/4] relative shadow-sm">
-                                <img 
-                                    src={getAssetUrl(`storage/${activeImage}`)} 
-                                    alt={product.name} 
-                                    className="w-full h-full object-cover transition-opacity duration-300"
-                                />
-                            </div>
-                        ) : (
-                            <div className="bg-slate-100/60 border border-slate-100 rounded-3xl overflow-hidden aspect-[3/4] flex flex-col justify-center items-center relative shadow-sm">
-                                <span className="text-[140px] opacity-10 select-none font-black tracking-widest text-slate-800 font-serif">BS</span>
-                                <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-slate-400">
-                                    <span className="text-xs uppercase font-extrabold tracking-widest text-slate-500 bg-white shadow-md px-6 py-2.5 rounded-full">
-                                        {product.category?.name || 'Apparel Collection'}
-                                    </span>
+                    {/* Left: Premium Image Grid & Carousel (Diners inspired layout) */}
+                    <div className="w-full">
+                        {/* Desktop View: Grid Layout (Flexible grid depending on image count) */}
+                        <div className="hidden md:grid grid-cols-2 gap-4">
+                            {allImages.length > 0 ? (
+                                allImages.map((img, idx) => {
+                                    // Make single image span full grid width, or the first of 3 images
+                                    const spanClass = allImages.length === 1 || (allImages.length === 3 && idx === 0)
+                                        ? 'col-span-2'
+                                        : 'col-span-1';
+                                    return (
+                                        <div 
+                                            key={idx} 
+                                            className={`bg-stone-50 border border-stone-200/40 rounded-3xl overflow-hidden aspect-[3/4] relative shadow-sm hover:shadow-md transition-shadow duration-300 ${spanClass}`}
+                                        >
+                                            <img 
+                                                src={getAssetUrl(`storage/${img}`)} 
+                                                alt={`${product.name} view ${idx + 1}`} 
+                                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                                            />
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <div className="col-span-2 bg-slate-100/60 border border-slate-100 rounded-3xl overflow-hidden aspect-[3/4] flex flex-col justify-center items-center relative shadow-sm">
+                                    <span className="text-[140px] opacity-10 select-none font-black tracking-widest text-slate-800 font-serif">BS</span>
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-slate-400">
+                                        <span className="text-xs uppercase font-extrabold tracking-widest text-slate-500 bg-white shadow-md px-6 py-2.5 rounded-full">
+                                            {product.category?.name || 'Apparel Collection'}
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
+                        </div>
 
-                        {/* Thumbnails Gallery */}
-                        {allImages.length > 1 && (
-                            <div className="flex items-center space-x-3 overflow-x-auto py-2 px-1">
-                                {allImages.map((img, idx) => (
-                                    <button 
-                                        key={idx}
-                                        onClick={() => setActiveImage(img)}
-                                        className={`w-20 h-24 flex-shrink-0 rounded-2xl overflow-hidden border-2 transition-all duration-200 focus:outline-none ${
-                                            activeImage === img 
-                                                ? 'border-amber-500 shadow-md scale-105' 
-                                                : 'border-slate-100 hover:border-slate-300 opacity-60 hover:opacity-100'
-                                        }`}
-                                    >
-                                        <img 
-                                            src={getAssetUrl(`storage/${img}`)} 
-                                            alt={`${product.name} thumbnail ${idx + 1}`}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </button>
-                                ))}
-                            </div>
-                        )}
+                        {/* Mobile View: Horizontal Carousel with indicator dots */}
+                        <div className="block md:hidden relative overflow-hidden rounded-3xl bg-stone-50 border border-stone-200/40">
+                            {allImages.length > 0 ? (
+                                <div className="relative aspect-[3/4] w-full">
+                                    <img 
+                                        src={getAssetUrl(`storage/${allImages[activeMobileImageIdx]}`)} 
+                                        alt={product.name} 
+                                        className="w-full h-full object-cover transition-opacity duration-300"
+                                    />
+                                    
+                                    {/* Carousel Indicators (Dots) */}
+                                    {allImages.length > 1 && (
+                                        <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2 z-10">
+                                            {allImages.map((_, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() => setActiveMobileImageIdx(idx)}
+                                                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                                                        activeMobileImageIdx === idx ? 'w-5 bg-slate-900' : 'w-1.5 bg-slate-450 opacity-50'
+                                                    }`}
+                                                    aria-label={`Go to image ${idx + 1}`}
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="bg-slate-100/60 border border-slate-100 rounded-3xl overflow-hidden aspect-[3/4] flex flex-col justify-center items-center relative shadow-sm">
+                                    <span className="text-[100px] opacity-10 select-none font-black tracking-widest text-slate-800 font-serif">BS</span>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
-                    {/* Right: Core Purchase Form details */}
-                    <div className="space-y-8">
+                    {/* Right: Core Purchase Form details (Sticky on scroll for desktop) */}
+                    <div className="space-y-8 md:sticky md:top-28 md:self-start">
                         <div>
                             {/* Breadcrumb / Category */}
                             <p className="text-[10px] font-black uppercase text-amber-600 tracking-widest mb-2">
