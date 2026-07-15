@@ -78,6 +78,15 @@ Route::get('/admin-setup', function (\Illuminate\Http\Request $request) {
                 }
             }
 
+            $allGalleryImages = \App\Models\ProductImage::all();
+            $repairedGallery = 0;
+            foreach ($allGalleryImages as $gi) {
+                if ($gi->image_path && strlen($gi->image_path) > 150000) {
+                    $gi->update(['image_path' => $transparentPixel]);
+                    $repairedGallery++;
+                }
+            }
+
             // Refetch products without the heavy base64 strings to return in response
             $products = \App\Models\Product::select('id', 'name', 'slug', 'price', 'stock_quantity')->get();
         }
@@ -87,6 +96,7 @@ Route::get('/admin-setup', function (\Illuminate\Http\Request $request) {
             'message' => 'User account and products checked/updated!',
             'repaired_products' => $repairedProducts,
             'repaired_categories' => $repairedCategories,
+            'repaired_gallery_images' => $repairedGallery,
             'user' => [
                 'name' => $user->name,
                 'email' => $user->email,
