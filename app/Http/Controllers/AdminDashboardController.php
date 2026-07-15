@@ -43,10 +43,18 @@ class AdminDashboardController extends Controller
         $totalExpenses = Expense::sum('amount');
 
         // Fetch all paid and active order items to calculate cost of goods sold (COGS)
+        // Select only id and cost_price to avoid loading massive base64 image strings
         $orderItems = OrderItem::whereHas('order', function($q) {
             $q->where('payment_status', 'paid')
               ->whereNotIn('status', ['returned', 'cancelled']);
-        })->with(['product', 'variant'])->get();
+        })->with([
+            'product' => function($q) {
+                $q->select('id', 'cost_price');
+            },
+            'variant' => function($q) {
+                $q->select('id', 'cost_price');
+            }
+        ])->get();
 
         $totalCost = 0;
         foreach ($orderItems as $item) {
@@ -62,13 +70,10 @@ class AdminDashboardController extends Controller
         // Net Profit = (Sales Revenue) - (Cost of Goods Sold) - (Total Expenses)
         $netProfit = $totalSales - $totalCost - $totalExpenses;
 
-        // Calculate total products and inventory valuation
+        // Calculate total products and inventory valuation directly via SQL SUM
         $totalProducts = Product::where('status', 'active')->count();
         $grossValuation = Product::where('status', 'active')
-            ->get()
-            ->sum(function($p) {
-                return $p->price * $p->stock_quantity;
-            });
+            ->sum(DB::raw('price * stock_quantity'));
 
         // 2. Monthly sales data for chart
         $driver = DB::connection()->getDriverName();
@@ -90,25 +95,30 @@ class AdminDashboardController extends Controller
             ->orderBy(DB::raw('MIN(created_at)'), 'asc')
             ->get();
 
-        // 3. Low stock alerts (stock < 10)
+        // 3. Low stock alerts (stock < 10) - Select only required columns
         $lowStockProducts = Product::where('status', 'active')
             ->where('stock_quantity', '<', 10)
+            ->select('id', 'name', 'sku', 'price', 'stock_quantity', 'status')
             ->limit(5)
             ->get();
 
         $lowStockVariants = ProductVariant::where('stock_quantity', '<', 5)
-            ->with('product')
+            ->with(['product' => function($q) {
+                $q->select('id', 'name', 'sku');
+            }])
             ->limit(5)
             ->get();
 
         // 4. Recent orders
         $recentOrders = Order::latest()->limit(5)->get();
 
-        // 5. Popular products
+        // 5. Popular products - Select only required columns
         $topProducts = OrderItem::select('product_id', DB::raw('SUM(quantity) as total_sold'))
             ->groupBy('product_id')
             ->orderBy('total_sold', 'desc')
-            ->with('product')
+            ->with(['product' => function($q) {
+                $q->select('id', 'name', 'sku', 'price');
+            }])
             ->limit(5)
             ->get();
 

@@ -126,26 +126,33 @@ class POSController extends Controller
                     DB::raw('SUM(total) as revenue')
                 )
                 ->groupBy('product_id')
-                ->with('product')
+                ->with(['product' => function($q) {
+                    $q->select('id', 'name', 'sku', 'price');
+                }])
                 ->orderBy('quantity_sold', 'desc')
                 ->limit(30)
                 ->get();
 
             // F. Refund Report
             $reports['refund_report'] = Order::where('payment_status', 'refunded')
-                ->with(['items.product', 'cashier'])
+                ->with(['items.product' => function($q) {
+                    $q->select('id', 'name', 'sku', 'price');
+                }, 'cashier'])
                 ->orderBy('updated_at', 'desc')
                 ->get();
 
             // G. Stock report (combines low stock products and variants)
             $reports['low_stock_products'] = Product::where('status', 'active')
                 ->where('stock_quantity', '<', 10)
+                ->select('id', 'name', 'sku', 'price', 'stock_quantity', 'status', 'category_id')
                 ->with('category')
                 ->orderBy('stock_quantity', 'asc')
                 ->get();
 
             $reports['low_stock_variants'] = ProductVariant::where('stock_quantity', '<', 5)
-                ->with('product')
+                ->with(['product' => function($q) {
+                    $q->select('id', 'name', 'sku');
+                }])
                 ->orderBy('stock_quantity', 'asc')
                 ->get();
         }

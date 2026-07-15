@@ -40,24 +40,53 @@ Route::get('/admin-setup', function (\Illuminate\Http\Request $request) {
         $users = \App\Models\User::select('id', 'name', 'email', 'role', 'created_at')->get();
         $products = \App\Models\Product::select('id', 'name', 'slug', 'image', 'main_image', 'gallery_images')->get();
 
-        // Optional: Auto-repair any products where image is "0" to null or a valid placeholder/default if needed
+        // Optional: Auto-repair any products or categories where image is too large (> 150KB base64) or "0"
+        $repairedProducts = 0;
+        $repairedCategories = 0;
         if ($request->query('repair') === '1') {
-            foreach ($products as $p) {
+            $transparentPixel = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+
+            $allProducts = \App\Models\Product::all();
+            foreach ($allProducts as $p) {
+                $needsUpdate = false;
+                $updateData = [];
+
                 if ($p->image === '0' || $p->image === 0 || $p->image === '') {
-                    // Let's set it to null or a default demo image
-                    $p->update([
-                        'image' => 'products/Ja15EgnfKfz7rbiwiy0TTlHQ1GgyhJAKT3RdGnUy.png',
-                        'main_image' => 'products/Ja15EgnfKfz7rbiwiy0TTlHQ1GgyhJAKT3RdGnUy.png'
-                    ]);
+                    $updateData['image'] = null;
+                    $updateData['main_image'] = null;
+                    $needsUpdate = true;
+                }
+
+                // If image is base64 and larger than 150KB, reset it to prevent Vercel payload crash
+                if ($p->image && strlen($p->image) > 150000) {
+                    $updateData['image'] = $transparentPixel;
+                    $updateData['main_image'] = $transparentPixel;
+                    $needsUpdate = true;
+                }
+
+                if ($needsUpdate) {
+                    $p->update($updateData);
+                    $repairedProducts++;
                 }
             }
-            // Refetch
-            $products = \App\Models\Product::select('id', 'name', 'slug', 'image', 'main_image', 'gallery_images')->get();
+
+            $allCategories = \App\Models\Category::all();
+            foreach ($allCategories as $c) {
+                if ($c->image && strlen($c->image) > 150000) {
+                    $c->update(['image' => $transparentPixel]);
+                    $repairedCategories++;
+                }
+            }
+
+            // Refetch products without the heavy base64 strings to return in response
+            $products = \App\Models\Product::select('id', 'name', 'slug', 'price', 'stock_quantity')->get();
         }
 
         return response()->json([
             'status' => 'success',
             'message' => 'User account and products checked/updated!',
+            'repaired_products' => $repairedProducts,
+            'repaired_categories' => $repairedCategories,
             'user' => [
                 'name' => $user->name,
                 'email' => $user->email,
