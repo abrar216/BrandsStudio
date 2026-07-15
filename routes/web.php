@@ -129,6 +129,7 @@ Route::get('/admin-cleanup', function (\Illuminate\Http\Request $request) {
         $tables = [
             'order_items',
             'orders',
+            'product_images',
             'product_variants',
             'products',
             'categories',
