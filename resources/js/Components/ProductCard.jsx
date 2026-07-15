@@ -13,6 +13,7 @@ export default function ProductCard({ product, currency, inWishlist = false }) {
     const isDiscounted = !!product.discount_price;
     
     const [wishlisted, setWishlisted] = useState(inWishlist);
+    const [isHovered, setIsHovered] = useState(false);
 
     // Sync with inWishlist prop changes (e.g. if the item is removed from Wishlist page)
     useEffect(() => {
@@ -23,6 +24,19 @@ export default function ProductCard({ product, currency, inWishlist = false }) {
     const colors = product.variants 
         ? [...new Set(product.variants.map(v => v.color).filter(Boolean))]
         : [];
+
+    // Extract product images to find secondary hover image
+    const mainImg = getProductImageUrl(product);
+    const gallery = (product.images || []).map(img => {
+        const path = img.image_path;
+        if (!path || path === '0' || path === 'null' || path.includes('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=')) return null;
+        let cleanPath = path.startsWith('/') ? path.slice(1) : path;
+        if (cleanPath.startsWith('storage/')) cleanPath = cleanPath.slice(8);
+        return cleanPath;
+    }).filter(Boolean);
+    
+    const secondaryImages = gallery.filter(g => g !== mainImg);
+    const secondImg = secondaryImages[0] || null;
 
     const handleQuickAdd = (e) => {
         e.preventDefault();
@@ -78,23 +92,27 @@ export default function ProductCard({ product, currency, inWishlist = false }) {
     };
 
     return (
-        <div className="group relative bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full">
+        <div className="group relative bg-white border border-stone-200/60 rounded-none overflow-hidden transition-all duration-300 flex flex-col h-full">
             
             {/* Image Section */}
-            <div className="relative aspect-[3/4] bg-slate-100 overflow-hidden">
-                <Link href={product.slug ? route('product.show', { slug: product.slug }) : '#'} className="block h-full font-sans">
+            <div className="relative aspect-[3/4] bg-stone-50 overflow-hidden">
+                <Link 
+                    href={product.slug ? route('product.show', { slug: product.slug }) : '#'} 
+                    className="block h-full font-sans"
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                >
                     {getProductImageUrl(product) ? (
                         <img 
-                            src={getAssetUrl(`storage/${getProductImageUrl(product)}`)} 
+                            src={getAssetUrl(isHovered && secondImg ? `storage/${secondImg}` : `storage/${mainImg}`)} 
                             alt={product.name} 
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                         />
                     ) : (
-                        /* Visual mockup of the fashion clothing item using simple SVG/icon and gradient */
-                        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-tr from-slate-200 to-slate-50 relative">
-                            <span className="text-[100px] opacity-10 select-none font-black text-slate-800">BS</span>
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-stone-100 relative">
+                            <span className="text-[80px] opacity-10 select-none font-black text-slate-800">BS</span>
                             <div className="absolute inset-0 flex items-center justify-center p-8 text-center text-slate-400">
-                                <span className="text-xs uppercase font-extrabold tracking-widest text-slate-500 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm">
+                                <span className="text-[10px] uppercase font-bold tracking-widest text-stone-500 bg-white border border-stone-200 px-3 py-1">
                                     {product.category?.name || 'Apparel'}
                                 </span>
                             </div>
@@ -102,21 +120,16 @@ export default function ProductCard({ product, currency, inWishlist = false }) {
                     )}
                 </Link>
 
-                {/* Status Badges */}
-                <div className="absolute top-3 left-3 flex flex-col space-y-1.5 z-10">
+                {/* Diners Style Status Badges */}
+                <div className="absolute top-2.5 left-2.5 flex flex-col space-y-1 z-10">
                     {product.is_new_arrival && (
-                        <span className="bg-neutral-900 text-white text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md shadow-sm">
+                        <span className="bg-neutral-900 text-white text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-none">
                             NEW
                         </span>
                     )}
                     {isDiscounted && (
-                        <span className="bg-red-500 text-white text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md shadow-sm">
-                            SALE
-                        </span>
-                    )}
-                    {product.is_best_seller && (
-                        <span className="bg-amber-500 text-white text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md shadow-sm flex items-center space-x-1">
-                            <span>BEST</span>
+                        <span className="bg-red-600 text-white text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-none">
+                            {Math.round(((product.price - product.discount_price) / product.price) * 100)}% OFF
                         </span>
                     )}
                 </div>
@@ -124,87 +137,63 @@ export default function ProductCard({ product, currency, inWishlist = false }) {
                 {/* Floating Wishlist Button */}
                 <button
                     onClick={handleWishlistToggle}
-                    className="absolute top-3 right-3 z-30 w-8 h-8 rounded-full bg-white/95 backdrop-blur-sm shadow-md hover:shadow-lg text-slate-500 hover:text-red-500 hover:scale-105 transition-all flex items-center justify-center focus:outline-none"
+                    className="absolute top-2.5 right-2.5 z-30 w-7 h-7 bg-white/90 border border-stone-200/50 hover:bg-white text-stone-500 hover:text-red-500 transition-all flex items-center justify-center focus:outline-none"
                     title={wishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
                 >
                     <Heart 
-                        size={14} 
+                        size={12} 
                         fill={wishlisted ? "currentColor" : "none"} 
-                        className={`transition-colors duration-200 ${wishlisted ? "text-red-500" : "text-slate-500 hover:text-red-500"}`} 
+                        className={`transition-colors duration-200 ${wishlisted ? "text-red-500" : "text-stone-500 hover:text-red-500"}`} 
                     />
                 </button>
             </div>
 
-            {/* Info Section */}
-            <div className="p-3 sm:p-4 flex-grow flex flex-col justify-between">
-                <div>
+            {/* Info Section - Diners Styled */}
+            <div className="p-3 flex-grow flex flex-col justify-between bg-white text-center">
+                <div className="space-y-1">
                     {/* Category */}
-                    <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1.5">
+                    <p className="text-[9px] uppercase font-bold text-stone-400 tracking-[0.15em]">
                         {product.category?.name || 'Collections'}
                     </p>
 
                     {/* Name */}
                     <Link href={product.slug ? route('product.show', { slug: product.slug }) : '#'}>
-                        <h4 className="text-sm font-bold text-slate-800 hover:text-slate-950 transition-colors line-clamp-1">
+                        <h4 className="text-[11px] font-bold text-stone-800 hover:text-black transition-colors uppercase tracking-wider line-clamp-2 min-h-[32px]">
                             {product.name}
                         </h4>
                     </Link>
 
                     {/* Color Swatches */}
                     {colors.length > 0 && (
-                        <div className="flex space-x-1.5 mt-2.5">
+                        <div className="flex justify-center space-x-1.5 py-1">
                             {colors.slice(0, 4).map((color, i) => (
                                 <span 
                                     key={i} 
                                     title={color}
-                                    className={`w-3.5 h-3.5 rounded-full ${getColorClass(color)} ring-1 ring-offset-1 ring-transparent hover:ring-slate-400 cursor-pointer transition-all`}
+                                    className={`w-2.5 h-2.5 rounded-full border border-stone-300 ${getColorClass(color)} cursor-pointer transition-all`}
                                 />
                             ))}
                             {colors.length > 4 && (
-                                <span className="text-[9px] font-bold text-slate-400 pl-0.5">+{colors.length - 4}</span>
+                                <span className="text-[8px] font-bold text-stone-450 pl-0.5">+{colors.length - 4}</span>
                             )}
                         </div>
                     )}
                 </div>
 
                 {/* Price and Ratings */}
-                <div className="flex justify-between items-center mt-4 pt-3 border-t border-slate-50">
-                    <div className="flex items-baseline space-x-2">
-                        <span className="text-base font-black text-slate-900">
-                            {currencySymbol}{Number(activePrice).toFixed(2)}
+                <div className="mt-2 pt-2 border-t border-stone-100 flex flex-col items-center space-y-1">
+                    <div className="flex items-baseline justify-center space-x-2">
+                        <span className="text-[12px] font-black text-stone-900">
+                            {currencySymbol}{Number(activePrice).toLocaleString('en-US', { minimumFractionDigits: 0 })}
                         </span>
                         {isDiscounted && (
-                            <span className="text-xs text-slate-400 line-through">
-                                {currencySymbol}{Number(product.price).toFixed(2)}
+                            <span className="text-[10px] text-stone-400 line-through">
+                                {currencySymbol}{Number(product.price).toLocaleString('en-US', { minimumFractionDigits: 0 })}
                             </span>
                         )}
                     </div>
-                    
-                    {/* Rating display */}
-                    <div className="flex items-center space-x-0.5 text-amber-400">
-                        <Star size={11} fill="currentColor" />
-                        <span className="text-[10px] font-bold text-slate-500">4.8</span>
-                    </div>
-                </div>
-
-                {/* Action Buttons Grid */}
-                <div className="flex flex-col sm:flex-row gap-2 mt-4 pt-3 border-t border-slate-50">
-                    <button
-                        onClick={handleQuickAdd}
-                        className="w-full sm:flex-1 bg-slate-900 hover:bg-black text-white text-[10px] font-black tracking-wider py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center space-x-1.5 uppercase"
-                    >
-                        <ShoppingCart size={11} />
-                        <span>ADD TO CART</span>
-                    </button>
-                    <Link
-                        href={product.slug ? route('product.show', { slug: product.slug }) : '#'}
-                        className="hidden sm:flex sm:flex-1 border border-slate-200 hover:bg-slate-50 text-slate-700 text-[10px] font-black tracking-wider py-2.5 rounded-xl transition-all duration-200 text-center items-center justify-center uppercase"
-                    >
-                        VIEW DETAILS
-                    </Link>
                 </div>
             </div>
-
         </div>
     );
 }

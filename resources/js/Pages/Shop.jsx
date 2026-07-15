@@ -147,37 +147,37 @@ export default function Shop({
         <StoreLayout>
             <Head title="Shop Collections" />
 
-            {/* Banner Header */}
-            <div className="bg-slate-100 border-b border-slate-200/60 py-12">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h1 className="text-3xl font-black font-serif tracking-wide text-slate-900">
+            {/* Banner Header (Diners Style) */}
+            <div className="bg-stone-50 border-b border-stone-200/60 py-14">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
+                    <h1 className="text-2xl font-black tracking-[0.2em] text-neutral-900 uppercase">
                         {selectedCategory 
                             ? (categoryList.find(c => c.slug === selectedCategory)?.name || '').toUpperCase() 
                             : 'ALL CLOTHING COLLECTIONS'}
                     </h1>
-                    <p className="text-xs text-slate-500 font-medium tracking-wide mt-2">
+                    <p className="text-[10px] text-stone-400 font-bold tracking-[0.2em] uppercase">
                         Tailored Luxury Silhouettes. Curated Organic Textures. Perfect Fit.
                     </p>
                 </div>
             </div>
 
             {/* Shop Content Area */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                <div className="space-y-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div className="space-y-6">
                     
                     {/* Sort & Stats Header */}
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 border border-slate-100 rounded-2xl shadow-sm gap-4">
-                        <div className="text-xs font-bold text-slate-500">
-                            Showing <span className="text-slate-900 font-extrabold">{productList.length}</span> of <span className="text-slate-900 font-extrabold">{totalProducts}</span> products found
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-3 border border-stone-200/50 rounded-none gap-4">
+                        <div className="text-[10px] font-black tracking-widest text-stone-400 uppercase">
+                            Showing <span className="text-black font-black">{productList.length}</span> of <span className="text-black font-black">{totalProducts}</span> products
                         </div>
                         
                         <div className="flex items-center space-x-3 w-full sm:w-auto">
                             <div className="flex items-center space-x-1.5 w-full sm:w-auto">
-                                <ArrowLeftRight size={13} className="text-slate-400 hidden sm:inline" />
+                                <ArrowLeftRight size={12} className="text-stone-450 hidden sm:inline" />
                                 <select
                                     value={sort}
                                     onChange={(e) => handleSortChange(e.target.value)}
-                                    className="bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold py-2 pl-3 pr-8 w-full sm:w-auto focus:ring-0 focus:border-slate-300 cursor-pointer"
+                                    className="bg-stone-50 border border-stone-200 rounded-none text-[10px] font-black tracking-widest py-2 pl-3 pr-8 w-full sm:w-auto focus:ring-0 focus:border-stone-400 cursor-pointer uppercase"
                                 >
                                     <option value="newest">NEWEST APPAREL</option>
                                     <option value="popular">BEST SELLING</option>
@@ -190,17 +190,17 @@ export default function Shop({
 
                     {/* Products Cards Grid */}
                     {productList.length > 0 ? (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {productList.map((product) => (
                                 <ProductCard key={product.id} product={product} currency={currency} />
                             ))}
                         </div>
                     ) : (
-                        <div className="bg-white border border-slate-100 rounded-3xl p-16 text-center shadow-sm">
-                            <p className="text-sm font-bold text-slate-500">No apparel matches your active filter options.</p>
+                        <div className="bg-white border border-stone-250 p-16 text-center rounded-none">
+                            <p className="text-[11px] font-bold text-stone-500 uppercase tracking-widest">No apparel matches your active filter options.</p>
                             <button 
                                 onClick={clearFilters}
-                                className="mt-4 bg-slate-900 hover:bg-black text-white text-xs font-black px-6 py-3 rounded-xl transition-all uppercase"
+                                className="mt-4 bg-black hover:bg-neutral-800 text-white text-[10px] tracking-widest font-black px-6 py-3 rounded-none transition-all uppercase"
                             >
                                 Clear Filters
                             </button>
@@ -218,10 +218,10 @@ export default function Shop({
                                         key={i}
                                         href={link.url}
                                         dangerouslySetInnerHTML={{ __html: link.label }}
-                                        className={`px-4 py-2 text-xs font-bold rounded-xl border transition-all ${
+                                        className={`px-4 py-2.5 text-[10px] font-black tracking-widest rounded-none border transition-all ${
                                             link.active
-                                                ? 'bg-amber-500 border-amber-500 text-white shadow-sm shadow-amber-500/10'
-                                                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                                                ? 'bg-black border-black text-white'
+                                                : 'bg-white border-stone-200 text-stone-600 hover:bg-stone-50'
                                         }`}
                                     />
                                 );

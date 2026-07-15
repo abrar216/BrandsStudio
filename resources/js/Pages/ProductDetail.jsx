@@ -163,7 +163,7 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                                     return (
                                         <div 
                                             key={idx} 
-                                            className={`bg-stone-50 border border-stone-200/40 rounded-3xl overflow-hidden aspect-[3/4] relative shadow-sm hover:shadow-md transition-shadow duration-300 ${spanClass}`}
+                                            className={`bg-stone-50 border border-stone-200/40 rounded-none overflow-hidden aspect-[3/4] relative ${spanClass}`}
                                         >
                                             <img 
                                                 src={getAssetUrl(`storage/${img}`)} 
@@ -174,10 +174,10 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                                     );
                                 })
                             ) : (
-                                <div className="col-span-2 bg-slate-100/60 border border-slate-100 rounded-3xl overflow-hidden aspect-[3/4] flex flex-col justify-center items-center relative shadow-sm">
-                                    <span className="text-[140px] opacity-10 select-none font-black tracking-widest text-slate-800 font-serif">BS</span>
-                                    <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-slate-400">
-                                        <span className="text-xs uppercase font-extrabold tracking-widest text-slate-500 bg-white shadow-md px-6 py-2.5 rounded-full">
+                                <div className="col-span-2 bg-stone-100 border border-stone-200/45 rounded-none overflow-hidden aspect-[3/4] flex flex-col justify-center items-center relative">
+                                    <span className="text-[140px] opacity-10 select-none font-black tracking-widest text-stone-800">BS</span>
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-stone-400">
+                                        <span className="text-[10px] uppercase font-bold tracking-widest text-stone-500 bg-white border border-stone-200 px-5 py-2">
                                             {product.category?.name || 'Apparel Collection'}
                                         </span>
                                     </div>
@@ -186,7 +186,7 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                         </div>
 
                         {/* Mobile View: Horizontal Carousel with indicator dots */}
-                        <div className="block md:hidden relative overflow-hidden rounded-3xl bg-stone-50 border border-stone-200/40">
+                        <div className="block md:hidden relative overflow-hidden rounded-none bg-stone-50 border border-stone-200/40">
                             {allImages.length > 0 ? (
                                 <div className="relative aspect-[3/4] w-full">
                                     <img 
@@ -202,8 +202,8 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                                                 <button
                                                     key={idx}
                                                     onClick={() => setActiveMobileImageIdx(idx)}
-                                                    className={`h-1.5 rounded-full transition-all duration-300 ${
-                                                        activeMobileImageIdx === idx ? 'w-5 bg-slate-900' : 'w-1.5 bg-slate-450 opacity-50'
+                                                    className={`h-1.5 transition-all duration-300 ${
+                                                        activeMobileImageIdx === idx ? 'w-5 bg-neutral-900' : 'w-1.5 bg-stone-400 opacity-50'
                                                     }`}
                                                     aria-label={`Go to image ${idx + 1}`}
                                                 />
@@ -212,8 +212,8 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                                     )}
                                 </div>
                             ) : (
-                                <div className="bg-slate-100/60 border border-slate-100 rounded-3xl overflow-hidden aspect-[3/4] flex flex-col justify-center items-center relative shadow-sm">
-                                    <span className="text-[100px] opacity-10 select-none font-black tracking-widest text-slate-800 font-serif">BS</span>
+                                <div className="bg-stone-100 border border-stone-200/40 rounded-none overflow-hidden aspect-[3/4] flex flex-col justify-center items-center relative">
+                                    <span className="text-[100px] opacity-10 select-none font-black tracking-widest text-stone-800">BS</span>
                                 </div>
                             )}
                         </div>
@@ -223,24 +223,24 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                     <div className="space-y-8 md:sticky md:top-28 md:self-start">
                         <div>
                             {/* Breadcrumb / Category */}
-                            <p className="text-[10px] font-black uppercase text-amber-600 tracking-widest mb-2">
+                            <p className="text-[10px] font-black uppercase text-stone-400 tracking-[0.2em] mb-2">
                                 {product.category?.name || 'Curated Apparel'} / SKU: {product.sku}
                             </p>
 
-                            <h1 className="text-3xl sm:text-4xl font-black font-serif text-slate-800 uppercase tracking-wide leading-none">
+                            <h1 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 uppercase tracking-widest leading-none">
                                 {product.name}
                             </h1>
 
                             {/* Ratings Summary */}
                             <div className="flex items-center space-x-2 mt-4">
                                 <div className="flex items-center text-amber-400 space-x-0.5">
-                                    <Star size={14} fill="currentColor" />
-                                    <Star size={14} fill="currentColor" />
-                                    <Star size={14} fill="currentColor" />
-                                    <Star size={14} fill="currentColor" />
-                                    <Star size={14} fill="currentColor" />
+                                    <Star size={12} fill="currentColor" />
+                                    <Star size={12} fill="currentColor" />
+                                    <Star size={12} fill="currentColor" />
+                                    <Star size={12} fill="currentColor" />
+                                    <Star size={12} fill="currentColor" />
                                 </div>
-                                <span className="text-xs font-bold text-slate-500">
+                                <span className="text-[10px] font-bold text-stone-500 uppercase tracking-wider">
                                     ({product.reviews?.length || 0} reviews)
                                 </span>
                             </div>
@@ -248,28 +248,28 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
 
                         {/* Price Details */}
                         <div className="flex items-baseline space-x-4">
-                            <span className="text-3xl font-black text-slate-900 font-serif">
-                                {currency}{Number(activePrice).toFixed(2)}
+                            <span className="text-2xl font-black text-neutral-950">
+                                {currency}{Number(activePrice).toLocaleString('en-US', { minimumFractionDigits: 0 })}
                             </span>
                             {isDiscounted && (
-                                <span className="text-lg text-slate-450 line-through">
-                                    {currency}{Number(product.price).toFixed(2)}
+                                <span className="text-base text-stone-400 line-through">
+                                    {currency}{Number(product.price).toLocaleString('en-US', { minimumFractionDigits: 0 })}
                                 </span>
                             )}
                         </div>
 
                         {/* Short Description */}
                         <div 
-                            className="text-sm text-slate-500 leading-relaxed font-medium space-y-2"
+                            className="text-xs text-stone-500 leading-relaxed font-bold tracking-wide uppercase space-y-2"
                             dangerouslySetInnerHTML={{ __html: product.short_description || product.description || 'A timeless Brands Studio wardrobe basic, engineered using sustainably sourced fabrics and majestic tailored calibrations to secure a flattering and clean contemporary drape.' }}
                         />
 
                         {/* Color Selector Swatches */}
                         {allColors.length > 0 && (
                             <div className="space-y-3">
-                                <span className="text-xs font-black tracking-wider text-slate-800 uppercase flex items-center space-x-1.5">
+                                <span className="text-[10px] font-black tracking-[0.15em] text-neutral-800 uppercase flex items-center space-x-1.5">
                                     <span>COLOR:</span>
-                                    <span className="text-slate-400 font-bold">{selectedColor}</span>
+                                    <span className="text-stone-400 font-bold">{selectedColor}</span>
                                 </span>
                                 <div className="flex space-x-3.5">
                                     {allColors.map((color, i) => (
@@ -278,8 +278,8 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                                             onClick={() => setSelectedColor(color)}
                                             className={`w-9 h-9 rounded-full ${getColorClass(color)} ring-2 ring-offset-2 flex items-center justify-center transition-all ${
                                                 selectedColor === color 
-                                                    ? 'ring-amber-500 scale-105 shadow-md' 
-                                                    : 'ring-transparent hover:ring-slate-350'
+                                                    ? 'ring-neutral-950 scale-105 shadow-sm' 
+                                                    : 'ring-transparent hover:ring-stone-350'
                                             }`}
                                         >
                                             {selectedColor === color && (
@@ -294,9 +294,9 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                         {/* Sizes Checklist (Dynamic based on selected color) */}
                         {product.variants?.length > 0 && (
                             <div className="space-y-3">
-                                <span className="text-xs font-black tracking-wider text-slate-800 uppercase flex items-center space-x-1.5">
+                                <span className="text-[10px] font-black tracking-[0.15em] text-neutral-800 uppercase flex items-center space-x-1.5">
                                     <span>SIZE:</span>
-                                    {selectedSize && <span className="text-slate-400 font-bold">{selectedSize}</span>}
+                                    {selectedSize && <span className="text-stone-400 font-bold">{selectedSize}</span>}
                                 </span>
                                 <div className="flex flex-wrap gap-2.5">
                                     {currentSizes.map((v, i) => {
@@ -308,17 +308,17 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                                                 key={i}
                                                 disabled={isOutOfStock}
                                                 onClick={() => setSelectedSize(v.size)}
-                                                className={`border rounded-xl px-5 py-3 text-xs font-bold transition-all relative ${
+                                                className={`border rounded-none px-5 py-3 text-[10px] tracking-widest font-black transition-all relative uppercase ${
                                                     isOutOfStock
-                                                        ? 'border-slate-200 text-slate-300 line-through cursor-not-allowed bg-slate-50/50'
+                                                        ? 'border-stone-200 text-stone-300 line-through cursor-not-allowed bg-stone-50/50'
                                                         : (isSelected
-                                                            ? 'border-amber-500 bg-amber-50 text-amber-600 font-extrabold shadow-sm'
-                                                            : 'border-slate-200 text-slate-700 hover:bg-slate-50')
+                                                            ? 'border-black bg-black text-white font-extrabold'
+                                                            : 'border-stone-200 text-stone-700 hover:bg-stone-50')
                                                 }`}
                                             >
                                                 <span>{v.size}</span>
                                                 {!isOutOfStock && v.stock < 5 && (
-                                                    <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[8px] px-1 rounded-full scale-90">
+                                                    <span className="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[8px] px-1 rounded-none scale-90 font-black">
                                                         {v.stock}
                                                     </span>
                                                 )}
@@ -330,7 +330,7 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                         )}
 
                         {/* Stock alerts */}
-                        <div className="text-xs font-bold">
+                        <div className="text-[10px] font-black uppercase tracking-wider">
                             {availableStock > 0 ? (
                                 <span className="text-emerald-600">✓ In Stock</span>
                             ) : (
@@ -339,21 +339,21 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                         </div>
 
                         {/* Actions block */}
-                        <div className="flex items-center space-x-4 pt-4 border-t border-slate-100">
+                        <div className="flex items-center space-x-4 pt-4 border-t border-stone-100">
                             {/* Quantity selection */}
-                            <div className="flex items-center border border-slate-200 rounded-xl px-2 bg-slate-50">
+                            <div className="flex items-center border border-stone-200 rounded-none px-2 bg-stone-50">
                                 <button 
                                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                    className="p-2 text-slate-500 hover:text-black focus:outline-none"
+                                    className="p-2 text-stone-500 hover:text-black focus:outline-none"
                                 >
-                                    <Minus size={14} />
+                                    <Minus size={12} />
                                 </button>
-                                <span className="px-4 text-xs font-bold select-none">{quantity}</span>
+                                <span className="px-4 text-[11px] font-black select-none">{quantity}</span>
                                 <button 
                                     onClick={() => setQuantity(Math.min(availableStock || 10, quantity + 1))}
-                                    className="p-2 text-slate-500 hover:text-black focus:outline-none"
+                                    className="p-2 text-stone-500 hover:text-black focus:outline-none"
                                 >
-                                    <Plus size={14} />
+                                    <Plus size={12} />
                                 </button>
                             </div>
 
@@ -361,23 +361,23 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                             <button
                                 disabled={availableStock <= 0}
                                 onClick={handleAddToCart}
-                                className={`flex-grow bg-slate-900 hover:bg-black text-white text-xs font-black tracking-wider py-4 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center space-x-3 uppercase ${
-                                    availableStock <= 0 ? 'bg-slate-300 cursor-not-allowed hover:bg-slate-300 shadow-none' : ''
+                                className={`flex-grow bg-black hover:bg-neutral-850 text-white text-[10px] tracking-widest font-black py-4 px-6 rounded-none transition-all flex items-center justify-center space-x-3 uppercase ${
+                                    availableStock <= 0 ? 'bg-stone-300 text-stone-500 cursor-not-allowed hover:bg-stone-300 shadow-none' : ''
                                 }`}
                             >
-                                <ShoppingCart size={15} />
+                                <ShoppingCart size={13} />
                                 <span>ADD TO SHOPPING BAG</span>
                             </button>
 
                             {/* Wishlist toggle */}
                             <button
                                 onClick={handleWishlistToggle}
-                                className={`p-4 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors focus:outline-none ${
-                                    inWishlist ? 'text-red-500 bg-red-50 border-red-200' : 'text-slate-500'
+                                className={`p-4 rounded-none border border-stone-200 hover:bg-stone-50 transition-colors focus:outline-none ${
+                                    inWishlist ? 'text-red-600 bg-red-50 border-red-200' : 'text-stone-500'
                                 }`}
                                 title="Add to Wishlist"
                             >
-                                <Heart size={20} fill={inWishlist ? 'currentColor' : 'none'} />
+                                <Heart size={16} fill={inWishlist ? 'currentColor' : 'none'} />
                             </button>
                         </div>
 
@@ -386,14 +386,14 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                 </div>
 
                 {/* Tab Sections (Description / Reviews) */}
-                <div className="mt-24 border-t border-slate-100 pt-16">
-                    <div className="flex space-x-8 border-b border-slate-100 pb-4 mb-8 text-sm font-black tracking-wider">
+                <div className="mt-24 border-t border-stone-100 pt-16">
+                    <div className="flex space-x-8 border-b border-stone-100 pb-4 mb-8 text-[11px] font-black tracking-widest uppercase">
                         <button
                             onClick={() => setActiveTab('description')}
                             className={`pb-4 transition-all uppercase ${
                                 activeTab === 'description' 
-                                    ? 'text-amber-500 border-b-2 border-amber-500 font-extrabold' 
-                                    : 'text-slate-400 hover:text-slate-800'
+                                    ? 'text-neutral-950 border-b-2 border-neutral-950 font-black' 
+                                    : 'text-stone-400 hover:text-stone-850'
                             }`}
                         >
                             Garment Details
@@ -402,12 +402,12 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                             onClick={() => setActiveTab('reviews')}
                             className={`pb-4 transition-all uppercase flex items-center space-x-2 ${
                                 activeTab === 'reviews' 
-                                    ? 'text-amber-500 border-b-2 border-amber-500 font-extrabold' 
-                                    : 'text-slate-400 hover:text-slate-800'
+                                    ? 'text-neutral-950 border-b-2 border-neutral-950 font-black' 
+                                    : 'text-stone-400 hover:text-stone-850'
                             }`}
                         >
                             <span>Reviews</span>
-                            <span className="bg-slate-100 text-slate-600 text-[10px] px-2 py-0.5 rounded-full">
+                            <span className="bg-stone-100 text-stone-600 text-[9px] px-2 py-0.5 rounded-none font-bold">
                                 {product.reviews?.length || 0}
                             </span>
                         </button>
@@ -415,9 +415,9 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
 
                     {/* Tab content 1: Description */}
                     {activeTab === 'description' && (
-                        <div className="max-w-4xl space-y-6 text-sm text-slate-500 leading-relaxed font-medium">
-                            <div className="prose prose-slate max-w-none text-slate-500 text-sm" dangerouslySetInnerHTML={{ __html: product.description || 'No detailed description specified.' }} />
-                            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 grid grid-cols-2 gap-4 text-xs font-bold text-slate-700">
+                        <div className="max-w-4xl space-y-6 text-xs text-stone-500 leading-relaxed font-bold tracking-wide uppercase">
+                            <div className="prose prose-stone max-w-none text-stone-500 text-xs font-bold tracking-wide uppercase" dangerouslySetInnerHTML={{ __html: product.description || 'No detailed description specified.' }} />
+                            <div className="bg-stone-50 p-6 rounded-none border border-stone-200 grid grid-cols-1 sm:grid-cols-2 gap-4 text-[10px] font-black text-stone-600">
                                 <div>• Fabric Blend: 100% Organically Sourced Long-staple Combed Cotton</div>
                                 <div>• Cut/Sizing: Premium Italian Sartorial Slim Silhouette Fit</div>
                                 <div>• Country of Origin: Handcrafted in Florence, Italy</div>
@@ -431,21 +431,21 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
                             
                             {/* Submit a Review Form */}
-                            <div className="lg:col-span-1 bg-white border border-slate-100 p-6 rounded-2xl shadow-sm space-y-4">
-                                <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider flex items-center space-x-1.5">
-                                    <MessageSquare size={14} className="text-amber-500" />
+                            <div className="lg:col-span-1 bg-white border border-stone-200 p-6 rounded-none shadow-sm space-y-4">
+                                <h3 className="text-[10px] font-black text-neutral-800 uppercase tracking-widest flex items-center space-x-1.5">
+                                    <MessageSquare size={12} className="text-stone-450" />
                                     <span>WRITE A REVIEW</span>
                                 </h3>
 
                                 <form onSubmit={submitReview} className="space-y-4">
                                     <div>
-                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">
+                                        <label className="block text-[9px] font-black text-stone-400 uppercase tracking-wider mb-1.5">
                                             RATING SCORE
                                         </label>
                                         <select
                                             value={data.rating}
                                             onChange={(e) => setData('rating', Number(e.target.value))}
-                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs font-bold"
+                                            className="w-full bg-stone-50 border border-stone-200 rounded-none py-2 px-3 text-[10px] font-bold"
                                         >
                                             <option value="5">★★★★★ - Excellent (5/5)</option>
                                             <option value="4">★★★★☆ - Very Good (4/5)</option>
@@ -456,14 +456,14 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                                     </div>
 
                                     <div>
-                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1.5">
+                                        <label className="block text-[9px] font-black text-stone-400 uppercase tracking-wider mb-1.5">
                                             COMMENTS
                                         </label>
                                         <textarea
                                             placeholder="Write your review here..."
                                             value={data.comment}
                                             onChange={(e) => setData('comment', e.target.value)}
-                                            className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs h-28 focus:bg-white"
+                                            className="w-full bg-stone-50 border border-stone-200 rounded-none p-3 text-[10px] h-28 focus:bg-white focus:outline-none"
                                             required
                                         />
                                     </div>
@@ -471,7 +471,7 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                                     <button
                                         type="submit"
                                         disabled={processing}
-                                        className="w-full bg-slate-900 hover:bg-black text-white text-xs font-black py-3 rounded-xl transition-all uppercase"
+                                        className="w-full bg-black hover:bg-neutral-850 text-white text-[10px] tracking-widest font-black py-3 rounded-none transition-all uppercase"
                                     >
                                         SUBMIT REVIEW
                                     </button>
@@ -482,30 +482,30 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                             <div className="lg:col-span-2 space-y-6">
                                 {product.reviews && product.reviews.length > 0 ? (
                                     product.reviews.map((rev) => (
-                                        <div key={rev.id} className="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm space-y-3">
+                                        <div key={rev.id} className="bg-white border border-stone-200 p-6 rounded-none shadow-sm space-y-3">
                                             <div className="flex justify-between items-start">
                                                 <div>
-                                                    <h4 className="text-xs font-black text-slate-800 uppercase tracking-wide">{rev.user?.name}</h4>
-                                                    <p className="text-[10px] text-slate-400 font-bold">{new Date(rev.created_at).toLocaleDateString()}</p>
+                                                    <h4 className="text-[10px] font-black text-stone-800 uppercase tracking-wide">{rev.user?.name}</h4>
+                                                    <p className="text-[9px] text-stone-450 font-bold">{new Date(rev.created_at).toLocaleDateString()}</p>
                                                 </div>
                                                 <div className="flex text-amber-400 space-x-0.5">
                                                     {Array.from({ length: 5 }).map((_, i) => (
                                                         <Star 
                                                             key={i} 
-                                                            size={11} 
+                                                            size={10} 
                                                             fill={i < rev.rating ? 'currentColor' : 'none'} 
-                                                            className={i < rev.rating ? 'text-amber-400' : 'text-slate-200'}
+                                                            className={i < rev.rating ? 'text-amber-400' : 'text-stone-200'}
                                                         />
                                                     ))}
                                                 </div>
                                             </div>
-                                            <p className="text-xs text-slate-500 leading-relaxed font-semibold">
+                                            <p className="text-[11px] text-stone-550 leading-relaxed font-bold uppercase tracking-wide">
                                                 {rev.comment}
                                             </p>
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="bg-slate-50 border border-slate-100 rounded-2xl p-12 text-center text-slate-400 text-xs font-semibold">
+                                    <div className="bg-stone-50 border border-stone-200 rounded-none p-12 text-center text-stone-400 text-[10px] font-black uppercase tracking-wider">
                                         No reviews have been written for this product yet. Be the first to share your thoughts!
                                     </div>
                                 )}
@@ -517,13 +517,13 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
 
                 {/* Related Products Section */}
                 {relatedProducts.length > 0 && (
-                    <div className="mt-32 pt-16 border-t border-slate-100">
+                    <div className="mt-32 pt-16 border-t border-stone-100">
                         <div className="flex justify-between items-end mb-12">
                             <div>
-                                <span className="text-[10px] font-black uppercase tracking-widest text-amber-600">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-stone-400">
                                     DESIGNED PAIRINGS
                                 </span>
-                                <h2 className="text-2xl sm:text-3xl font-black font-serif text-slate-800 mt-1 uppercase tracking-wide">
+                                <h2 className="text-xl sm:text-2xl font-extrabold text-neutral-900 mt-1 uppercase tracking-widest">
                                     YOU MAY ALSO LIKE
                                 </h2>
                             </div>
