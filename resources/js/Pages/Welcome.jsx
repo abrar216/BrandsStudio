@@ -37,7 +37,7 @@ export default function Welcome({
 
             {/* 1. Diners Style Hero Image Slider */}
             {uniqueSliderProducts.length > 0 ? (
-                <div className="relative overflow-hidden bg-stone-50 text-neutral-900 min-h-[70vh] sm:min-h-[80vh] flex items-center border-b border-stone-200/60 group">
+                <div className="relative overflow-hidden bg-neutral-900 w-full aspect-[4/3] md:aspect-[21/9] min-h-[480px] md:min-h-[650px] border-b border-stone-200/60 group">
                     {uniqueSliderProducts.map((product, index) => (
                         <div 
                             key={product.id}
@@ -50,31 +50,29 @@ export default function Welcome({
                                 <img 
                                     src={getAssetUrl(`storage/${getProductImageUrl(product)}`)}
                                     alt={product.name}
-                                    className="w-full h-full object-cover object-top opacity-35"
+                                    className="w-full h-full object-cover object-top opacity-100"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent"></div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
                             </div>
 
-                            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-10 lg:py-0 relative z-10">
-                                <div className="max-w-xl space-y-4 px-2">
-                                    <span className="text-[9px] font-black uppercase tracking-[0.3em] text-stone-400">
-                                        NEW ARRIVALS
-                                    </span>
-                                    <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold uppercase tracking-widest text-neutral-950 leading-tight">
-                                        {product.name}
-                                    </h2>
-                                    <p className="text-[11px] sm:text-xs text-stone-500 uppercase tracking-widest leading-relaxed line-clamp-3">
-                                        {product.short_description || product.description || 'Experience the premium refinement of Brands Studio. Indulge in tailored silhouettes, luxury textures, and contemporary clean apparel designed for the modern tastemaker.'}
-                                    </p>
-                                    <div className="pt-4">
-                                        <Link 
-                                            href={product.slug ? route('product.show', { slug: product.slug }) : '#'}
-                                            className="inline-flex items-center space-x-3 bg-black hover:bg-neutral-800 text-white font-extrabold tracking-[0.2em] text-[10px] sm:text-xs px-8 py-3.5 rounded-none transition-all uppercase"
-                                        >
-                                            <span>SHOP NOW</span>
-                                            <ArrowRight size={12} />
-                                        </Link>
-                                    </div>
+                            <div className="absolute inset-x-0 bottom-16 z-20 flex flex-col items-center text-center px-6 space-y-3 sm:space-y-4">
+                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-stone-300">
+                                    NEW ARRIVALS
+                                </span>
+                                <h2 className="text-3xl sm:text-5xl font-extrabold uppercase tracking-widest text-white leading-tight max-w-3xl">
+                                    {product.name}
+                                </h2>
+                                <p className="text-[10px] sm:text-xs text-stone-300 uppercase tracking-widest leading-relaxed line-clamp-2 max-w-xl">
+                                    {product.short_description || product.description || 'Experience the premium refinement of Brands Studio. Indulge in tailored silhouettes, luxury textures, and contemporary clean apparel designed for the modern tastemaker.'}
+                                </p>
+                                <div className="pt-2">
+                                    <Link 
+                                        href={product.slug ? route('product.show', { slug: product.slug }) : '#'}
+                                        className="inline-flex items-center space-x-3 bg-white hover:bg-neutral-900 text-black hover:text-white font-extrabold tracking-[0.25em] text-[10px] sm:text-xs px-10 py-3.5 rounded-none transition-all uppercase border border-white"
+                                    >
+                                        <span>SHOP NOW</span>
+                                        <ArrowRight size={12} />
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -85,14 +83,14 @@ export default function Welcome({
                         <>
                             <button
                                 onClick={() => setCurrentSlide((prev) => (prev - 1 + uniqueSliderProducts.length) % uniqueSliderProducts.length)}
-                                className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-white/95 text-black border border-stone-200 flex items-center justify-center rounded-none hover:bg-black hover:text-white transition-all focus:outline-none"
+                                className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-black/30 text-white flex items-center justify-center rounded-none hover:bg-black transition-all focus:outline-none"
                                 aria-label="Previous Slide"
                             >
                                 <ChevronLeft size={16} />
                             </button>
                             <button
                                 onClick={() => setCurrentSlide((prev) => (prev + 1) % uniqueSliderProducts.length)}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-white/95 text-black border border-stone-200 flex items-center justify-center rounded-none hover:bg-black hover:text-white transition-all focus:outline-none"
+                                className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 bg-black/30 text-white flex items-center justify-center rounded-none hover:bg-black transition-all focus:outline-none"
                                 aria-label="Next Slide"
                             >
                                 <ChevronRight size={16} />
@@ -107,7 +105,7 @@ export default function Welcome({
                                 key={index}
                                 onClick={() => setCurrentSlide(index)}
                                 className={`h-1 transition-all duration-300 ${
-                                    index === currentSlide ? 'w-8 bg-neutral-900' : 'w-2 bg-stone-300'
+                                    index === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/40'
                                 }`}
                                 aria-label={`Go to slide ${index + 1}`}
                             />
