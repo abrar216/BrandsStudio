@@ -118,151 +118,299 @@ export default function Welcome({
                 </div>
             )}
 
-            {/* 3. Shop by Category Grid (Diners Style) */}
+            {/* 3. "WHAT WOULD YOU LIKE TO EXPLORE?" SECTION */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                <div className="text-center mb-12">
-                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-stone-400">
-                        DESIGNED CATEGORIES
-                    </span>
-                    <h2 className="text-2xl font-extrabold text-neutral-900 mt-1 uppercase tracking-widest">
-                        EXPLORE COLLECTIONS
+                <div className="text-center mb-10">
+                    <h2 className="text-xl sm:text-2xl font-black text-neutral-900 uppercase tracking-[0.25em]">
+                        WHAT WOULD YOU LIKE TO EXPLORE?
                     </h2>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {categories.map((category) => {
-                        const hasImage = !!getCategoryImageUrl(category);
-                        return (
-                            <Link 
-                                key={category.id}
-                                href={route('shop', { category: category.slug })}
-                                className="group relative overflow-hidden aspect-[4/5] flex flex-col justify-end p-6 border border-stone-200/50 rounded-none bg-stone-100"
-                            >
-                                {hasImage ? (
-                                    <>
-                                        <img 
-                                            src={getAssetUrl(`storage/${getCategoryImageUrl(category)}`)} 
-                                            alt={category.name} 
-                                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 z-0" 
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
-                                    </>
-                                ) : (
-                                    <div className="absolute inset-0 bg-stone-50 group-hover:bg-stone-100 transition-colors z-0"></div>
-                                )}
-
-                                <div className="relative z-20 space-y-1">
-                                    <h3 className="text-xs font-black uppercase tracking-[0.18em] text-white">
-                                        {category.name}
-                                    </h3>
-                                    <p className="text-[9px] text-stone-300 uppercase tracking-wider line-clamp-1">
-                                        {category.description || 'Curated fashion essentials.'}
-                                    </p>
-                                    <span className="inline-flex items-center space-x-1 text-[8px] font-black uppercase tracking-widest text-white pt-2 border-b border-white">
-                                        <span>SHOP NOW</span>
-                                    </span>
-                                </div>
-                            </Link>
-                        );
-                    })}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+                    {[
+                        { name: 'MEN POLOS', slug: 'menswear', image: 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?q=80&w=300&auto=format&fit=crop' },
+                        { name: 'MEN WESTERN', slug: 'menswear', image: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=300&auto=format&fit=crop' },
+                        { name: 'WOMEN', slug: 'womenswear', image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=300&auto=format&fit=crop' },
+                        { name: 'KIDS', slug: 'kids', image: 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?q=80&w=300&auto=format&fit=crop' },
+                        { name: 'FRAGRANCES', slug: 'fragrance', image: 'https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=300&auto=format&fit=crop' },
+                        { name: 'FOOTWEAR', slug: 'footwear', image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=300&auto=format&fit=crop' }
+                    ].map((tile, i) => (
+                        <Link 
+                            key={i}
+                            href={`/shop?category=${tile.slug}`}
+                            className="group flex flex-col items-center text-center space-y-3"
+                        >
+                            {/* Circular Explore Tile Image */}
+                            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border border-stone-200 bg-stone-50 transition-all duration-300 group-hover:shadow-md">
+                                <img 
+                                    src={tile.image} 
+                                    alt={tile.name}
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                    loading="lazy"
+                                />
+                            </div>
+                            <span className="text-[10px] font-black tracking-widest text-stone-850 group-hover:text-black uppercase">
+                                {tile.name}
+                            </span>
+                        </Link>
+                    ))}
                 </div>
             </div>
 
-            {/* 4. Featured Couture */}
-            {featuredProducts.length > 0 && (
-                <div className="bg-stone-50 border-y border-stone-200/50 py-16">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="flex justify-between items-end mb-10">
-                            <div>
-                                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-stone-400">
-                                    HOT LIST
-                                </span>
-                                <h2 className="text-xl font-extrabold text-neutral-900 mt-1 uppercase tracking-widest">
-                                    FEATURED COUTURE
-                                </h2>
-                            </div>
-                            <Link href={route('collections')} className="text-[10px] font-black tracking-widest text-neutral-900 border-b border-black pb-1 hover:opacity-75 transition-opacity uppercase">
-                                VIEW ALL
-                            </Link>
+            {/* 4. "BEST SELLER" PRODUCT GRID SECTION */}
+            <div className="bg-stone-50 border-t border-stone-200/50 py-16">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    
+                    <div className="flex flex-col sm:flex-row justify-between items-center sm:items-end mb-10 space-y-2 sm:space-y-0 text-center sm:text-left">
+                        <div>
+                            <h2 className="text-xl sm:text-2xl font-black text-neutral-900 uppercase tracking-[0.2em]">
+                                BEST SELLER
+                            </h2>
+                            <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">
+                                Discover the limiteds
+                            </p>
                         </div>
-
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                            {featuredProducts.slice(0, 4).map((product) => (
-                                <ProductCard key={product.id} product={product} />
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* 5. New Arrivals Grid */}
-            {newArrivals.length > 0 && (
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                    <div className="text-center mb-12">
-                        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-stone-400">
-                            JUST DROPPED
-                        </span>
-                        <h2 className="text-2xl font-extrabold text-neutral-900 mt-1 uppercase tracking-widest">
-                            THE NEW ARRIVALS
-                        </h2>
+                        <Link 
+                            href="/shop" 
+                            className="text-[9px] font-black tracking-widest text-neutral-900 border-b border-black pb-1 hover:opacity-75 uppercase transition-opacity"
+                        >
+                            Discover the limiteds &rarr;
+                        </Link>
                     </div>
 
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                        {newArrivals.slice(0, 8).map((product) => (
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                        {(bestSellers.length > 0 ? bestSellers : featuredProducts).slice(0, 4).map((product) => (
                             <ProductCard key={product.id} product={product} />
                         ))}
                     </div>
+
+                    <div className="text-center pt-10">
+                        <Link
+                            href="/shop"
+                            className="inline-block bg-black hover:bg-neutral-850 text-white font-black text-[10px] tracking-widest px-10 py-4 rounded-none uppercase transition-colors"
+                        >
+                            VIEW ALL PRODUCTS
+                        </Link>
+                    </div>
+
                 </div>
-            )}
+            </div>
 
-            {/* 6. Trending & Best Sellers (Side-by-Side) */}
-            <div className="bg-stone-50 border-t border-stone-200/55 py-16">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* 5. "OUR NEW COLLECTIONS" CAROUSEL */}
+            <div className="py-16 border-t border-stone-200/50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
-                    {/* Trending block */}
-                    {trendingProducts.length > 0 && (
-                        <div>
-                            <div className="flex justify-between items-end mb-6">
-                                <div>
-                                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-stone-400 flex items-center space-x-1">
-                                        <TrendingUp size={11} />
-                                        <span>VIRAL CLOTHING</span>
+                    <div className="text-center mb-10">
+                        <h2 className="text-xl sm:text-2xl font-black text-neutral-900 uppercase tracking-[0.2em]">
+                            OUR NEW COLLECTIONS
+                        </h2>
+                        <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">
+                            Discover the masterpieces
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {[
+                            { name: 'SHALWAR KAMEEZ COLLECTION', url: '/shop?category=menswear', image: 'https://images.unsplash.com/photo-1607990283143-e81e7a2c93ab?q=80&w=500&auto=format&fit=crop' },
+                            { name: 'POLO SHIRT SERIES', url: '/shop?category=menswear', image: 'https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?q=80&w=500&auto=format&fit=crop' },
+                            { name: 'FORMAL SUITING SETS', url: '/shop?category=menswear', image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=500&auto=format&fit=crop' }
+                        ].map((promo, idx) => (
+                            <Link 
+                                key={idx}
+                                href={promo.url}
+                                className="group relative overflow-hidden aspect-[4/5] bg-stone-100 flex flex-col justify-end p-6 border border-stone-200/50 rounded-none"
+                            >
+                                <img 
+                                    src={promo.image} 
+                                    alt={promo.name} 
+                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+                                <div className="relative z-20 space-y-2">
+                                    <h3 className="text-xs sm:text-sm font-black uppercase tracking-widest text-white">
+                                        {promo.name}
+                                    </h3>
+                                    <span className="inline-flex items-center space-x-1.5 text-[8px] font-black uppercase tracking-widest text-white border-b border-white pb-0.5">
+                                        <span>EXPLORE NOW</span>
                                     </span>
-                                    <h3 className="text-lg font-extrabold text-neutral-900 uppercase tracking-widest mt-1">TRENDING</h3>
                                 </div>
-                                <Link href={route('shop', { sort: 'popular' })} className="text-[9px] font-black uppercase tracking-wider text-stone-400 hover:text-black transition-colors">
-                                    See all
-                                </Link>
-                            </div>
+                            </Link>
+                        ))}
+                    </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                {trendingProducts.slice(0, 2).map((product) => (
-                                    <ProductCard key={product.id} product={product} />
-                                ))}
-                            </div>
-                        </div>
-                    )}
+                </div>
+            </div>
 
-                    {/* Best Sellers block */}
-                    {bestSellers.length > 0 && (
-                        <div>
-                            <div className="flex justify-between items-end mb-6">
-                                <div>
-                                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-stone-400">MOST WANTED</span>
-                                    <h3 className="text-lg font-extrabold text-neutral-900 uppercase tracking-widest mt-1">BEST SELLERS</h3>
+            {/* 6. KIDS CATEGORY BANNER GRID */}
+            <div className="bg-stone-50 border-t border-stone-200/50 py-16">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    
+                    <div className="text-center mb-10">
+                        <h2 className="text-xl sm:text-2xl font-black text-neutral-900 uppercase tracking-[0.2em]">
+                            KIDS SPECIALS
+                        </h2>
+                    </div>
+
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                        {[
+                            { title: 'BOYS EASTERN', image: 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?q=80&w=300&auto=format&fit=crop' },
+                            { title: 'BOYS WESTERN', image: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?q=80&w=300&auto=format&fit=crop' },
+                            { title: 'GIRLS EASTERN', image: 'https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=300&auto=format&fit=crop' },
+                            { title: 'GIRLS WESTERN', image: 'https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?q=80&w=300&auto=format&fit=crop' }
+                        ].map((kids, i) => (
+                            <div key={i} className="group relative aspect-[3/4] bg-stone-100 border border-stone-200 overflow-hidden">
+                                <img 
+                                    src={kids.image} 
+                                    alt={kids.title} 
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                />
+                                <div className="absolute inset-0 bg-black/35 z-10 flex flex-col justify-end p-4 text-center">
+                                    <h4 className="text-[10px] font-black tracking-widest text-white mb-3 uppercase">
+                                        {kids.title}
+                                    </h4>
+                                    <Link 
+                                        href="/shop?category=kids"
+                                        className="w-full bg-white hover:bg-neutral-900 hover:text-white text-black text-[8px] font-black tracking-widest py-2 rounded-none uppercase transition-all"
+                                    >
+                                        SHOP NOW
+                                    </Link>
                                 </div>
-                                <Link href={route('shop', { sort: 'popular' })} className="text-[9px] font-black uppercase tracking-wider text-stone-400 hover:text-black transition-colors">
-                                    See all
-                                </Link>
                             </div>
+                        ))}
+                    </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                {bestSellers.slice(0, 2).map((product) => (
-                                    <ProductCard key={product.id} product={product} />
-                                ))}
-                            </div>
+                    <div className="text-center">
+                        <Link 
+                            href="/shop?category=kids"
+                            className="inline-block border border-black hover:bg-black hover:text-white text-black font-black text-[10px] tracking-widest px-8 py-3.5 rounded-none uppercase transition-all"
+                        >
+                            VISIT CATEGORY
+                        </Link>
+                    </div>
+
+                </div>
+            </div>
+
+            {/* 7. FRAGRANCE + FOOTWEAR PROMO BANNERS */}
+            <div className="py-16 border-t border-stone-200/50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    {/* Fragrance Banner */}
+                    <Link 
+                        href="/shop?category=fragrance"
+                        className="group relative overflow-hidden aspect-[16/9] bg-stone-100 border border-stone-200 rounded-none flex items-center justify-center p-8"
+                    >
+                        <img 
+                            src="https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=600&auto=format&fit=crop" 
+                            alt="Fragrances Collection" 
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-black/45 z-10 flex flex-col items-center justify-center text-center space-y-2 p-6">
+                            <h3 className="text-sm sm:text-base font-black tracking-[0.25em] text-white uppercase">
+                                PREMIUM FRAGRANCES
+                            </h3>
+                            <span className="bg-white text-black text-[9px] font-black tracking-widest px-6 py-2.5 rounded-none uppercase">
+                                SHOP COLLECTION
+                            </span>
                         </div>
-                    )}
+                    </Link>
+
+                    {/* Footwear Banner */}
+                    <Link 
+                        href="/shop?category=footwear"
+                        className="group relative overflow-hidden aspect-[16/9] bg-stone-100 border border-stone-200 rounded-none flex items-center justify-center p-8"
+                    >
+                        <img 
+                            src="https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600&auto=format&fit=crop" 
+                            alt="Footwear Collection" 
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-black/45 z-10 flex flex-col items-center justify-center text-center space-y-2 p-6">
+                            <h3 className="text-sm sm:text-base font-black tracking-[0.25em] text-white uppercase">
+                                DESIGNER FOOTWEAR
+                            </h3>
+                            <span className="bg-white text-black text-[9px] font-black tracking-widest px-6 py-2.5 rounded-none uppercase">
+                                SHOP COLLECTION
+                            </span>
+                        </div>
+                    </Link>
+
+                </div>
+            </div>
+
+            {/* 8. CUSTOMER TESTIMONIALS SECTION */}
+            <div className="bg-stone-50 border-t border-stone-200/50 py-16">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    
+                    <div className="text-center mb-10">
+                        <h2 className="text-xl sm:text-2xl font-black text-neutral-900 uppercase tracking-[0.2em]">
+                            WE LOVE TRUSTING BRANDS STUDIO
+                        </h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {[
+                            { name: 'Abrar Ahmed', text: 'Absolutely love the fabric quality of their kurta sets. Refined details, fits perfectly, and delivery was incredibly fast.', rating: 5 },
+                            { name: 'Zainab Fatima', text: 'Brands Studio western wear collection is outstanding. The fabric is durable and stitches are premium quality. Highly recommended.', rating: 5 },
+                            { name: 'Kamran Malik', text: 'Ordered formal signature shirts and chinos. Best price-to-quality ratio in Pakistan. Shopping experience was very smooth.', rating: 5 }
+                        ].map((review, i) => (
+                            <div key={i} className="bg-white border border-stone-200/60 p-6 flex flex-col justify-between space-y-4 rounded-none shadow-sm">
+                                <div className="space-y-2">
+                                    <div className="flex space-x-0.5 text-amber-400">
+                                        {[...Array(review.rating)].map((_, idx) => (
+                                            <span key={idx} className="text-xs">&#9733;</span>
+                                        ))}
+                                    </div>
+                                    <p className="text-[10px] text-stone-550 leading-relaxed font-bold uppercase tracking-wide">
+                                        "{review.text}"
+                                    </p>
+                                </div>
+                                <div className="flex justify-between items-center pt-3 border-t border-stone-100">
+                                    <span className="text-[9px] font-black tracking-widest uppercase text-stone-900">
+                                        {review.name}
+                                    </span>
+                                    <span className="text-[8px] font-bold text-stone-400 uppercase tracking-widest">
+                                        Verified Buyer
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                </div>
+            </div>
+
+            {/* 9. NEWSLETTER SIGNUP SECTION */}
+            <div className="bg-white border-t border-stone-250 py-16">
+                <div className="max-w-md mx-auto px-6 text-center space-y-4">
+                    <h3 className="text-lg font-black uppercase tracking-widest text-black">
+                        NEWSLETTER
+                    </h3>
+                    <p className="text-[10px] text-stone-400 font-bold uppercase tracking-wider leading-relaxed">
+                        Be the first one to know about discounts, offers and events
+                    </p>
+                    <form 
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            window.dispatchEvent(new CustomEvent('cart-updated', { 
+                                detail: { product: { name: 'newsletter-signup' } } 
+                            }));
+                        }}
+                        className="flex items-center pt-2"
+                    >
+                        <input 
+                            type="email" 
+                            required
+                            placeholder="ENTER EMAIL ADDRESS..." 
+                            className="bg-stone-50 border border-stone-200 text-[10px] tracking-wider text-black rounded-none px-4 py-3 w-full focus:bg-white focus:ring-0 focus:border-black uppercase font-bold"
+                        />
+                        <button 
+                            type="submit" 
+                            className="bg-black hover:bg-neutral-850 text-white text-[10px] font-black tracking-widest rounded-none px-6 py-3 uppercase transition-colors"
+                        >
+                            SUBMIT
+                        </button>
+                    </form>
                 </div>
             </div>
 
