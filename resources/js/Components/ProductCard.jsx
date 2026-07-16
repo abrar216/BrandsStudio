@@ -166,15 +166,15 @@ export default function ProductCard({ product, currency, inWishlist = false }) {
                     />
                 </button>
 
-                {/* Quick View Hover Button */}
-                {isHovered && (
+                {/* Quick View Hover Slide-up Button */}
+                <div className="absolute bottom-0 inset-x-0 p-3 z-30 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-black/10 to-transparent">
                     <button
                         onClick={handleQuickViewClick}
-                        className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 bg-white/95 text-black border border-stone-200 text-[9px] font-black tracking-widest px-5 py-2.5 rounded-none transition-all uppercase hover:bg-black hover:text-white"
+                        className="w-full bg-white text-black border border-stone-200 text-[9px] font-black tracking-widest py-2.5 rounded-none transition-all uppercase hover:bg-black hover:text-white"
                     >
                         Quick View
                     </button>
-                )}
+                </div>
             </div>
 
             {/* Info Section - Diners Styled */}
@@ -258,7 +258,7 @@ export default function ProductCard({ product, currency, inWishlist = false }) {
                     {/* Quick Add CTA */}
                     <button
                         onClick={handleAddToCartClick}
-                        className="w-full bg-black hover:bg-neutral-800 text-white text-[9px] font-black tracking-widest py-3 rounded-none uppercase transition-colors"
+                        className="w-full bg-black text-white hover:bg-white hover:text-black border border-black text-[9px] font-black tracking-widest py-3 rounded-none uppercase transition-all duration-300"
                     >
                         {selectedSize ? `Add Size ${selectedSize} to bag` : 'Add to bag'}
                     </button>

@@ -187,7 +187,7 @@ export default function Welcome({
                     <div className="text-center pt-10">
                         <Link
                             href="/shop"
-                            className="inline-block bg-black hover:bg-neutral-850 text-white font-black text-[10px] tracking-widest px-10 py-4 rounded-none uppercase transition-colors"
+                            className="inline-block bg-black text-white hover:bg-white hover:text-black border border-black font-black text-[10px] tracking-widest px-10 py-4 rounded-none uppercase transition-all duration-300"
                         >
                             VIEW ALL PRODUCTS
                         </Link>
@@ -282,7 +282,7 @@ export default function Welcome({
                     <div className="text-center">
                         <Link 
                             href="/shop?category=kids"
-                            className="inline-block border border-black hover:bg-black hover:text-white text-black font-black text-[10px] tracking-widest px-8 py-3.5 rounded-none uppercase transition-all"
+                            className="inline-block border border-black bg-transparent hover:bg-black hover:text-white text-black font-black text-[10px] tracking-widest px-8 py-3.5 rounded-none uppercase transition-all duration-300"
                         >
                             VISIT CATEGORY
                         </Link>
@@ -406,7 +406,7 @@ export default function Welcome({
                         />
                         <button 
                             type="submit" 
-                            className="bg-black hover:bg-neutral-850 text-white text-[10px] font-black tracking-widest rounded-none px-6 py-3 uppercase transition-colors"
+                            className="bg-black text-white hover:bg-white hover:text-black border border-black text-[10px] font-black tracking-widest rounded-none px-6 py-3 uppercase transition-all duration-300"
                         >
                             SUBMIT
                         </button>

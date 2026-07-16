@@ -305,7 +305,7 @@ export default function StoreLayout({ children }) {
                                     MID SEASON SALE
                                 </Link>
                                 {/* Dropdown panel */}
-                                <div className="absolute left-1/2 -translate-x-1/2 top-full hidden group-hover:block w-[450px] bg-white border border-stone-200 shadow-2xl p-6 z-50 rounded-none animate-in fade-in duration-200">
+                                <div className="absolute left-1/2 -translate-x-1/2 top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 w-[450px] bg-white border border-stone-200 shadow-2xl p-6 z-50 rounded-none">
                                     <div className="grid grid-cols-2 gap-6">
                                         <div>
                                             <h5 className="font-black text-black border-b border-stone-200 pb-2 mb-3 uppercase tracking-wider">Men Sale</h5>
@@ -333,7 +333,7 @@ export default function StoreLayout({ children }) {
                             {/* Men Western */}
                             <div className="relative group py-3">
                                 <Link href="/shop?category=menswear" className="hover:text-black transition-colors uppercase">Men Western</Link>
-                                <div className="absolute left-1/2 -translate-x-1/2 top-full hidden group-hover:block w-[600px] bg-white border border-stone-200 shadow-2xl p-6 z-50 rounded-none">
+                                <div className="absolute left-1/2 -translate-x-1/2 top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 w-[600px] bg-white border border-stone-200 shadow-2xl p-6 z-50 rounded-none">
                                     <div className="grid grid-cols-3 gap-6">
                                         <div>
                                             <h5 className="font-black text-black border-b border-stone-200 pb-2 mb-3 uppercase tracking-wider">Suiting & Blazers</h5>
@@ -367,7 +367,7 @@ export default function StoreLayout({ children }) {
                             {/* Men Ethnic */}
                             <div className="relative group py-3">
                                 <Link href="/shop?category=menswear" className="hover:text-black transition-colors uppercase">Men Ethnic</Link>
-                                <div className="absolute left-1/2 -translate-x-1/2 top-full hidden group-hover:block w-[400px] bg-white border border-stone-200 shadow-2xl p-6 z-50 rounded-none">
+                                <div className="absolute left-1/2 -translate-x-1/2 top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 w-[400px] bg-white border border-stone-200 shadow-2xl p-6 z-50 rounded-none">
                                     <div className="grid grid-cols-2 gap-6">
                                         <div>
                                             <h5 className="font-black text-black border-b border-stone-200 pb-2 mb-3 uppercase tracking-wider">Wear</h5>
@@ -390,7 +390,7 @@ export default function StoreLayout({ children }) {
                             {/* Women */}
                             <div className="relative group py-3">
                                 <Link href="/shop?category=womenswear" className="hover:text-black transition-colors uppercase">Women</Link>
-                                <div className="absolute left-1/2 -translate-x-1/2 top-full hidden group-hover:block w-[400px] bg-white border border-stone-200 shadow-2xl p-6 z-50 rounded-none">
+                                <div className="absolute left-1/2 -translate-x-1/2 top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 w-[400px] bg-white border border-stone-200 shadow-2xl p-6 z-50 rounded-none">
                                     <div className="grid grid-cols-2 gap-6">
                                         <div>
                                             <h5 className="font-black text-black border-b border-stone-200 pb-2 mb-3 uppercase tracking-wider">Eastern Wear</h5>
@@ -413,7 +413,7 @@ export default function StoreLayout({ children }) {
                             {/* Kids */}
                             <div className="relative group py-3">
                                 <Link href="/shop?category=kids" className="hover:text-black transition-colors uppercase">Kids</Link>
-                                <div className="absolute left-1/2 -translate-x-1/2 top-full hidden group-hover:block w-[400px] bg-white border border-stone-200 shadow-2xl p-6 z-50 rounded-none">
+                                <div className="absolute left-1/2 -translate-x-1/2 top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 w-[400px] bg-white border border-stone-200 shadow-2xl p-6 z-50 rounded-none">
                                     <div className="grid grid-cols-2 gap-6">
                                         <div>
                                             <h5 className="font-black text-black border-b border-stone-200 pb-2 mb-3 uppercase tracking-wider">Boys</h5>
