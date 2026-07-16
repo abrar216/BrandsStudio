@@ -432,9 +432,7 @@ export default function StoreLayout({ children }) {
                                     </div>
                                 </div>
                             </div>
-
-                            <Link href="/shop?category=fragrance" className="hover:text-black py-3 transition-colors uppercase">Fragrance</Link>
-                            <Link href="/shop?category=footwear" className="hover:text-black py-3 transition-colors uppercase">Footwear</Link>
+                            
                             <Link href="/shop?category=winter-wear" className="hover:text-black py-3 transition-colors uppercase">Winter Wear</Link>
                             <Link href={route('collections')} className="hover:text-black py-3 transition-colors uppercase">Lookbook</Link>
                         </div>
@@ -739,7 +737,7 @@ export default function StoreLayout({ children }) {
                                 Trending Now
                             </h4>
                             <div className="flex flex-wrap gap-2.5">
-                                {['Men Western', 'Men Ethnic', 'Women', 'Kids', 'Fragrance', 'Footwear', 'Accessories'].map((catLabel) => (
+                                {['Men Western', 'Men Ethnic', 'Women', 'Kids', 'Winter Wear'].map((catLabel) => (
                                     <Link
                                         key={catLabel}
                                         href={`/shop?search=${encodeURIComponent(catLabel)}`}
