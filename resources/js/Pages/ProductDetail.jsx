@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Head, Link, useForm, router, usePage } from '@inertiajs/react';
 import StoreLayout from '../Layouts/StoreLayout';
 import ProductCard from '../Components/ProductCard';
-import { ShoppingCart, Star, Heart, Check, Minus, Plus, MessageSquare, ArrowLeft, ChevronLeft, ChevronRight, Share2, Maximize2, Grid, X, Search } from 'lucide-react';
+import { ShoppingCart, Star, Heart, Check, Minus, Plus, MessageSquare, ArrowLeft, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { addToCart } from '../Utils/cart';
 import { getAssetUrl, getProductImageUrl } from '../Utils/asset';
 
@@ -100,34 +100,29 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
     const [activeImage, setActiveImage] = useState(allImages[0] || null);
     const [activeMobileImageIdx, setActiveMobileImageIdx] = useState(0);
 
-    // Lightbox Modal state
-    const [lightboxOpen, setLightboxOpen] = useState(false);
-    const [lightboxIndex, setLightboxIndex] = useState(0);
-
     // Touch Swipe State for Mobile Carousel responsiveness
     const [touchStart, setTouchStart] = useState(null);
-    const [touchEnd, setTouchEnd] = useState(null);
-
-    // Scroll lock for Lightbox
-    React.useEffect(() => {
-        if (lightboxOpen) {
-            document.body.style.overflow = 'hidden';
-            document.body.style.paddingRight = 'var(--removed-body-scroll-width, 0px)';
-        } else {
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '';
-        }
-        return () => {
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '';
-        };
-    }, [lightboxOpen]);
+     const [touchEnd, setTouchEnd] = useState(null);
+ 
+     // Lightbox Modal state variables
+     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+     const [lightboxActiveIdx, setLightboxActiveIdx] = useState(0);
+ 
+     // Lock body scrolling when lightbox is active
+     React.useEffect(() => {
+         if (isLightboxOpen) {
+             document.body.style.overflow = 'hidden';
+         } else {
+             document.body.style.overflow = '';
+         }
+         return () => {
+             document.body.style.overflow = '';
+         };
+     }, [isLightboxOpen]);
 
     React.useEffect(() => {
         setActiveImage(allImages[0] || null);
         setActiveMobileImageIdx(0);
-        setLightboxIndex(0);
-        setLightboxOpen(false);
     }, [product.id]);
 
     // Filter variants based on current color choice
@@ -247,8 +242,8 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                                             src={getAssetUrl(img.startsWith('data:') ? img : `storage/${img}`)}
                                             alt={`${product.name} view ${idx + 1}`}
                                             onClick={() => {
-                                                setLightboxIndex(idx);
-                                                setLightboxOpen(true);
+                                                setLightboxActiveIdx(idx);
+                                                setIsLightboxOpen(true);
                                             }}
                                         />
                                     );
@@ -269,7 +264,7 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                         <div className="block md:hidden relative overflow-hidden rounded-none bg-stone-50 border border-stone-200/40">
                             {allImages.length > 0 ? (
                                 <div 
-                                    className="relative aspect-[4/5] max-h-[480px] w-full"
+                                    className="relative aspect-[4/5] max-h-[480px] w-full cursor-pointer"
                                     onTouchStart={(e) => {
                                         setTouchEnd(null);
                                         setTouchStart(e.targetTouches[0].clientX);
@@ -293,10 +288,10 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                                     <img 
                                         src={getAssetUrl(allImages[activeMobileImageIdx].startsWith('data:') ? allImages[activeMobileImageIdx] : `storage/${allImages[activeMobileImageIdx]}`)} 
                                         alt={product.name} 
-                                        className="w-full h-full object-cover transition-opacity duration-300 cursor-pointer"
+                                        className="w-full h-full object-cover transition-opacity duration-300"
                                         onClick={() => {
-                                            setLightboxIndex(activeMobileImageIdx);
-                                            setLightboxOpen(true);
+                                            setLightboxActiveIdx(activeMobileImageIdx);
+                                            setIsLightboxOpen(true);
                                         }}
                                     />
                                     
@@ -653,90 +648,99 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                 )}
 
             </div>
-
-            {/* Premium Immersive Full-Screen Lightbox Gallery (Diners Pakistan inspired) */}
-            {lightboxOpen && (
-                <div className="fixed inset-0 z-[100] flex bg-black/95 select-none animate-in fade-in duration-200">
-                    {/* Backdrop click to close */}
-                    <div className="absolute inset-0 cursor-zoom-out" onClick={() => setLightboxOpen(false)} />
-
-                    {/* Main View Area */}
-                    <div className="flex-grow flex items-center justify-center relative p-8">
-                        {/* Current Index */}
-                        <div className="absolute top-6 left-6 text-white/70 text-xs font-black uppercase tracking-widest">
-                            {lightboxIndex + 1} / {allImages.length}
-                        </div>
-
-                        {/* Top Control Bar */}
-                        <div className="absolute top-6 right-8 md:right-[312px] bg-black/85 border border-neutral-800 px-5 py-2 flex items-center space-x-6 text-white/60 z-10">
-                            <button className="hover:text-white transition-colors" title="Zoom"><Search size={14} /></button>
-                            <button className="hover:text-white transition-colors" title="Share"><Share2 size={14} /></button>
-                            <button className="hover:text-white transition-colors" title="Slideshow"><Play size={14} /></button>
-                            <button className="hover:text-white transition-colors" title="Fullscreen"><Maximize2 size={14} /></button>
-                            <button className="hover:text-white transition-colors" title="Grid"><Grid size={14} /></button>
-                            <button onClick={() => setLightboxOpen(false)} className="hover:text-white transition-colors border-l border-neutral-850 pl-4" title="Close"><X size={16} /></button>
-                        </div>
-
-                        {/* Left chevron button */}
-                        {allImages.length > 1 && (
+            {/* Full-Screen Lightbox Modal overlay */}
+            {isLightboxOpen && allImages.length > 0 && (
+                <div className="fixed inset-0 z-[110] bg-neutral-950/98 select-none flex animate-in fade-in duration-200">
+                    {/* Left/Center Area: Main zoomed image, arrows, progress indicator */}
+                    <div className="flex-1 flex flex-col justify-between p-6 relative">
+                        
+                        {/* Top Bar: Progress (left) & Action controls (right) */}
+                        <div className="flex items-center justify-between z-10 w-full">
+                            <span className="text-[11px] font-black tracking-widest text-stone-300 uppercase">
+                                {lightboxActiveIdx + 1} / {allImages.length}
+                            </span>
                             <button 
-                                onClick={() => setLightboxIndex((prev) => (prev - 1 + allImages.length) % allImages.length)}
-                                className="absolute left-8 top-1/2 -translate-y-1/2 bg-black/45 hover:bg-black/75 text-white p-4 transition-colors z-10 focus:outline-none rounded-none border border-neutral-800"
+                                onClick={() => setIsLightboxOpen(false)}
+                                className="text-stone-300 hover:text-white p-2 transition-colors focus:outline-none"
+                                title="Close Gallery"
                             >
-                                <ChevronLeft size={20} />
+                                <X size={24} className="stroke-[1.75]" />
                             </button>
-                        )}
+                        </div>
 
-                        {/* Centered Main Image */}
-                        <div className="max-h-[80vh] max-w-[85%] flex items-center justify-center relative z-0">
-                            <img 
-                                src={getAssetUrl(allImages[lightboxIndex].startsWith('data:') ? allImages[lightboxIndex] : `storage/${allImages[lightboxIndex]}`)} 
+                        {/* Centered Main Image & Arrow Navigators */}
+                        <div className="flex-1 flex items-center justify-center relative my-4">
+                            {/* Prev arrow button */}
+                            {allImages.length > 1 && (
+                                <button
+                                    onClick={() => setLightboxActiveIdx((prev) => (prev - 1 + allImages.length) % allImages.length)}
+                                    className="absolute left-0 md:left-4 z-10 text-stone-450 hover:text-white bg-black/10 hover:bg-black/30 p-3 rounded-none transition-all focus:outline-none"
+                                    aria-label="Previous image"
+                                >
+                                    <ChevronLeft size={24} className="stroke-[1.75]" />
+                                </button>
+                            )}
+
+                            {/* Main Zoomed Image */}
+                            <img
+                                src={getAssetUrl(allImages[lightboxActiveIdx].startsWith('data:') ? allImages[lightboxActiveIdx] : `storage/${allImages[lightboxActiveIdx]}`)}
                                 alt={`${product.name} zoomed view`}
-                                className="max-h-[80vh] max-w-full object-contain shadow-2xl border border-white/5 animate-in zoom-in-95 duration-200"
+                                className="max-h-[80vh] max-w-[95%] md:max-w-[85%] object-contain shadow-2xl animate-in zoom-in-95 duration-200"
                             />
+
+                            {/* Next arrow button */}
+                            {allImages.length > 1 && (
+                                <button
+                                    onClick={() => setLightboxActiveIdx((prev) => (prev + 1) % allImages.length)}
+                                    className="absolute right-0 md:right-4 z-10 text-stone-450 hover:text-white bg-black/10 hover:bg-black/30 p-3 rounded-none transition-all focus:outline-none"
+                                    aria-label="Next image"
+                                >
+                                    <ChevronRight size={24} className="stroke-[1.75]" />
+                                </button>
+                            )}
                         </div>
 
-                        {/* Right chevron button */}
-                        {allImages.length > 1 && (
-                            <button 
-                                onClick={() => setLightboxIndex((prev) => (prev + 1) % allImages.length)}
-                                className="absolute right-8 md:right-[312px] top-1/2 -translate-y-1/2 bg-black/45 hover:bg-black/75 text-white p-4 transition-colors z-10 focus:outline-none rounded-none border border-neutral-800"
-                            >
-                                <ChevronRight size={20} />
-                            </button>
-                        )}
+                        {/* Mobile Thumbnails Row (Visible only on mobile/tablet screen) */}
+                        <div className="md:hidden flex justify-center space-x-2.5 overflow-x-auto pb-2 z-10 max-w-full">
+                            {allImages.map((img, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => setLightboxActiveIdx(idx)}
+                                    className={`w-12 h-15 flex-shrink-0 border-2 transition-all ${
+                                        lightboxActiveIdx === idx ? 'border-red-600 opacity-100 scale-105' : 'border-transparent opacity-50'
+                                    }`}
+                                >
+                                    <img 
+                                        src={getAssetUrl(img.startsWith('data:') ? img : `storage/${img}`)} 
+                                        alt={`Thumbnail ${idx + 1}`} 
+                                        className="w-full h-full object-cover"
+                                    />
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
-                    {/* Right Thumbnails Panel (Diners Style) */}
-                    <div className="w-[280px] hidden md:flex flex-col bg-stone-200/95 h-full border-l border-stone-300 relative z-10">
-                        {/* Header title */}
-                        <div className="px-6 py-5 border-b border-stone-350 flex items-center justify-between">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-stone-600">Product Images</span>
-                            <span className="text-[9px] font-bold text-stone-500 bg-stone-300/60 px-2 py-0.5">{allImages.length} views</span>
+                    {/* Right Column: Desktop Thumbnails Sidebar (Visible only on medium/large screens) */}
+                    <div className="hidden md:flex flex-col w-72 bg-neutral-900 border-l border-neutral-800/60 h-full p-6 overflow-y-auto space-y-4 z-10">
+                        <div className="text-[10px] font-black uppercase tracking-widest text-stone-400 mb-2 border-b border-neutral-800 pb-2">
+                            Product Images
                         </div>
-                        
-                        {/* Thumbnails Grid */}
-                        <div className="flex-grow overflow-y-auto p-4">
-                            <div className="grid grid-cols-2 gap-3">
-                                {allImages.map((img, idx) => {
-                                    const isActive = idx === lightboxIndex;
-                                    return (
-                                        <div 
-                                            key={idx}
-                                            onClick={() => setLightboxIndex(idx)}
-                                            className={`cursor-pointer overflow-hidden aspect-[4/5] bg-stone-350 border-2 transition-all rounded-none ${
-                                                isActive ? 'border-red-600 shadow-md scale-[1.02]' : 'border-transparent opacity-70 hover:opacity-100 hover:scale-[1.01]'
-                                            }`}
-                                        >
-                                            <img 
-                                                src={getAssetUrl(img.startsWith('data:') ? img : `storage/${img}`)}
-                                                alt={`${product.name} thumbnail ${idx + 1}`}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                        <div className="grid grid-cols-2 gap-3">
+                            {allImages.map((img, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => setLightboxActiveIdx(idx)}
+                                    className={`aspect-[3/4] overflow-hidden border-2 transition-all ${
+                                        lightboxActiveIdx === idx ? 'border-red-600 opacity-100' : 'border-transparent opacity-60 hover:opacity-100'
+                                    }`}
+                                >
+                                    <img 
+                                        src={getAssetUrl(img.startsWith('data:') ? img : `storage/${img}`)} 
+                                        alt={`Sidebar Thumbnail ${idx + 1}`} 
+                                        className="w-full h-full object-cover"
+                                    />
+                                </button>
+                            ))}
                         </div>
                     </div>
                 </div>
