@@ -202,6 +202,15 @@ class SuperAdminController extends Controller
                 'gallery_images' => count($galleryImages) > 0 ? json_encode($galleryImages) : null,
             ]);
 
+            // Save to product_images table
+            if (count($galleryImages) > 0) {
+                foreach ($galleryImages as $path) {
+                    $product->images()->create([
+                        'image_path' => $path,
+                    ]);
+                }
+            }
+
             // Add sizes and colors variants
             $sizes = $request->filled('sizes') ? array_map('trim', explode(',', $request->sizes)) : [null];
             $colors = $request->filled('colors') ? array_map('trim', explode(',', $request->colors)) : [null];
@@ -292,7 +301,12 @@ class SuperAdminController extends Controller
         if ($request->hasFile('gallery_image_files')) {
             $existingGallery = json_decode($product->gallery_images, true) ?: [];
             foreach ($request->file('gallery_image_files') as $file) {
-                $existingGallery[] = $this->imageToBase64($file);
+                $base64 = $this->imageToBase64($file);
+                $existingGallery[] = $base64;
+                // Save to product_images relation
+                $product->images()->create([
+                    'image_path' => $base64,
+                ]);
             }
             $updateData['gallery_images'] = json_encode($existingGallery);
         }

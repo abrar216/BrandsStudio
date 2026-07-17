@@ -227,12 +227,15 @@ class AdminDashboardController extends Controller
 
             // Save multiple images
             if ($request->hasFile('images')) {
+                $galleryPaths = [];
                 foreach ($request->file('images') as $file) {
                     $path = $this->imageToBase64($file);
                     $product->images()->create([
                         'image_path' => $path,
                     ]);
+                    $galleryPaths[] = $path;
                 }
+                $product->update(['gallery_images' => json_encode($galleryPaths)]);
             }
         });
 
@@ -277,12 +280,16 @@ class AdminDashboardController extends Controller
 
         // Save multiple images
         if ($request->hasFile('images')) {
+            $product->images()->delete();
+            $galleryPaths = [];
             foreach ($request->file('images') as $file) {
                 $path = $this->imageToBase64($file);
                 $product->images()->create([
                     'image_path' => $path,
                 ]);
+                $galleryPaths[] = $path;
             }
+            $product->update(['gallery_images' => json_encode($galleryPaths)]);
         }
 
         return back()->with('success', 'Product updated successfully!');

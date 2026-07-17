@@ -46,6 +46,17 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
             console.error("Failed to parse gallery_images", e);
         }
     }
+    
+    // Fallback to related product.images if gallery_images is empty
+    if (gallery.length === 0 && product.images && Array.isArray(product.images)) {
+        gallery = product.images.map(img => {
+            const path = img.image_path;
+            if (!path || path === '0' || path === 'null' || path.includes('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=')) return null;
+            let cleanPath = path.startsWith('/') ? path.slice(1) : path;
+            if (cleanPath.startsWith('storage/')) cleanPath = cleanPath.slice(8);
+            return cleanPath;
+        }).filter(Boolean);
+    }
     const allImages = mainImg ? [mainImg, ...gallery.filter(g => g !== mainImg)] : gallery;
     
     const [activeImage, setActiveImage] = useState(allImages[0] || null);
