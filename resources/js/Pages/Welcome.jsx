@@ -142,21 +142,18 @@ export default function Welcome({
             <div className="bg-stone-50 border-t border-stone-200/50 py-10 sm:py-16">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
-                    <div className="flex flex-col sm:flex-row justify-between items-center sm:items-end mb-8 space-y-2 sm:space-y-0 text-center sm:text-left">
+                    <div className="text-center mb-10 space-y-2">
+                        <h2 className="text-xl sm:text-2xl font-black text-neutral-900 uppercase tracking-[0.2em]">
+                            BEST SELLER
+                        </h2>
                         <div>
-                            <h2 className="text-xl sm:text-2xl font-black text-neutral-900 uppercase tracking-[0.2em]">
-                                BEST SELLER
-                            </h2>
-                            <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">
+                            <Link 
+                                href="/shop" 
+                                className="inline-block text-[10px] font-bold tracking-widest text-stone-400 border-b border-stone-300 pb-0.5 hover:text-black hover:border-black uppercase transition-all"
+                            >
                                 Discover the limiteds
-                            </p>
+                            </Link>
                         </div>
-                        <Link 
-                            href="/shop" 
-                            className="text-[9px] font-black tracking-widest text-neutral-900 border-b border-black pb-1 hover:opacity-75 uppercase transition-opacity"
-                        >
-                            Discover the limiteds &rarr;
-                        </Link>
                     </div>
 
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
@@ -181,13 +178,18 @@ export default function Welcome({
             <div className="py-16 border-t border-stone-200/50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
-                    <div className="text-center mb-10">
+                    <div className="text-center mb-10 space-y-2">
                         <h2 className="text-xl sm:text-2xl font-black text-neutral-900 uppercase tracking-[0.2em]">
                             OUR NEW COLLECTIONS
                         </h2>
-                        <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-1">
-                            Discover the masterpieces
-                        </p>
+                        <div>
+                            <Link 
+                                href="/shop" 
+                                className="inline-block text-[10px] font-bold tracking-widest text-stone-400 border-b border-stone-300 pb-0.5 hover:text-black hover:border-black uppercase transition-all"
+                            >
+                                Discover the masterpieces
+                            </Link>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
