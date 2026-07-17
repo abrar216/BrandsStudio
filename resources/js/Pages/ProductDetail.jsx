@@ -28,13 +28,24 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
 
     // Image Gallery Setup
     const mainImg = getProductImageUrl(product);
-    const gallery = (product.images || []).map(img => {
-        const path = img.image_path;
-        if (!path || path === '0' || path === 'null' || path.includes('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=')) return null;
-        let cleanPath = path.startsWith('/') ? path.slice(1) : path;
-        if (cleanPath.startsWith('storage/')) cleanPath = cleanPath.slice(8);
-        return cleanPath;
-    }).filter(Boolean);
+    let gallery = [];
+    if (product.gallery_images) {
+        try {
+            const parsed = typeof product.gallery_images === 'string'
+                ? JSON.parse(product.gallery_images)
+                : product.gallery_images;
+            if (Array.isArray(parsed)) {
+                gallery = parsed.map(path => {
+                    if (!path || path === '0' || path === 'null' || path.includes('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=')) return null;
+                    let cleanPath = path.startsWith('/') ? path.slice(1) : path;
+                    if (cleanPath.startsWith('storage/')) cleanPath = cleanPath.slice(8);
+                    return cleanPath;
+                }).filter(Boolean);
+            }
+        } catch (e) {
+            console.error("Failed to parse gallery_images", e);
+        }
+    }
     const allImages = mainImg ? [mainImg, ...gallery.filter(g => g !== mainImg)] : gallery;
     
     const [activeImage, setActiveImage] = useState(allImages[0] || null);
