@@ -6,6 +6,43 @@ import { ShoppingCart, Star, Heart, Check, Minus, Plus, MessageSquare, ArrowLeft
 import { addToCart } from '../Utils/cart';
 import { getAssetUrl, getProductImageUrl } from '../Utils/asset';
 
+// Premium cursor-tracking magnification zoom component
+function ZoomableImage({ src, alt }) {
+    const [zoomStyle, setZoomStyle] = useState({ transformOrigin: 'center center', transform: 'scale(1)' });
+    
+    const handleMouseMove = (e) => {
+        const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+        const x = ((e.clientX - left) / width) * 100;
+        const y = ((e.clientY - top) / height) * 100;
+        setZoomStyle({
+            transformOrigin: `${x}% ${y}%`,
+            transform: 'scale(1.8)'
+        });
+    };
+
+    const handleMouseLeave = () => {
+        setZoomStyle({
+            transformOrigin: 'center center',
+            transform: 'scale(1)'
+        });
+    };
+
+    return (
+        <div 
+            className="bg-stone-50 border border-stone-200/40 rounded-none overflow-hidden aspect-[3/4] relative w-full cursor-zoom-in"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+        >
+            <img 
+                src={src} 
+                alt={alt} 
+                className="w-full h-full object-cover transition-transform duration-200 ease-out"
+                style={zoomStyle}
+            />
+        </div>
+    );
+}
+
 export default function ProductDetail({ product, relatedProducts = [], inWishlist }) {
     const { props } = usePage();
     const currency = props.settings?.currency || 'Rs.';
@@ -183,16 +220,11 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                             {allImages.length > 0 ? (
                                 allImages.map((img, idx) => {
                                     return (
-                                        <div 
-                                            key={idx} 
-                                            className="bg-stone-50 border border-stone-200/40 rounded-none overflow-hidden aspect-[3/4] relative w-full"
-                                        >
-                                            <img 
-                                                src={getAssetUrl(img.startsWith('data:') ? img : `storage/${img}`)} 
-                                                alt={`${product.name} view ${idx + 1}`} 
-                                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                                            />
-                                        </div>
+                                        <ZoomableImage 
+                                            key={idx}
+                                            src={getAssetUrl(img.startsWith('data:') ? img : `storage/${img}`)}
+                                            alt={`${product.name} view ${idx + 1}`}
+                                        />
                                     );
                                 })
                             ) : (
