@@ -455,11 +455,26 @@ export default function StoreLayout({ children }) {
             {/* ========================================================================= */}
             {/* FLOATING WHATSAPP BUTTON (On all pages, bottom right) */}
             {/* ========================================================================= */}
+            <style>{`
+                @keyframes whatsapp-pulse {
+                    0%, 100% {
+                        transform: scale(1);
+                        box-shadow: 0 10px 25px -5px rgba(37, 211, 102, 0.4), 0 0 0 0 rgba(37, 211, 102, 0.5);
+                    }
+                    50% {
+                        transform: scale(1.08);
+                        box-shadow: 0 20px 35px -5px rgba(37, 211, 102, 0.6), 0 0 0 12px rgba(37, 211, 102, 0);
+                    }
+                }
+                .animate-whatsapp {
+                    animation: whatsapp-pulse 2.5s infinite ease-in-out;
+                }
+            `}</style>
             <a 
                 href="https://wa.me/923001234567" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-3.5 shadow-2xl hover:scale-110 transition-transform duration-300 select-none rounded-none"
+                className="fixed bottom-6 right-6 z-50 bg-gradient-to-tr from-[#128C7E] to-[#25D366] text-white p-4 shadow-2xl hover:scale-115 transition-all duration-300 select-none rounded-full animate-whatsapp"
                 title="Chat on WhatsApp"
             >
                 {/* Clean inline SVG WhatsApp logo */}
