@@ -108,7 +108,7 @@ export default function Welcome({
                 </div>
 
                 <div className="flex overflow-x-auto space-x-6 pb-4 md:flex md:flex-wrap md:justify-center md:space-x-8 lg:space-x-12 scrollbar-none snap-x snap-mandatory">
-                    {categories.map((category) => {
+                    {categories.filter(category => !category.parent_id).map((category) => {
                         const imgPath = getCategoryImageUrl(category);
                         const imgUrl = imgPath 
                             ? getAssetUrl(`storage/${imgPath}`) 
