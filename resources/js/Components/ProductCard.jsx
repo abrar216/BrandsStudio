@@ -135,13 +135,13 @@ export default function ProductCard({ product, currency, inWishlist = false }) {
                 {/* Diners Style Top Right Wishlist Button */}
                 <button
                     onClick={handleWishlistToggle}
-                    className="absolute top-2.5 right-2.5 z-30 w-7.5 h-7.5 bg-white/90 border border-stone-200/60 hover:bg-white text-stone-500 hover:text-red-600 transition-all flex items-center justify-center rounded-none focus:outline-none"
+                    className="absolute top-2.5 right-2.5 z-30 w-9 h-9 bg-white/95 border border-stone-200/60 hover:bg-white text-stone-500 hover:text-red-600 transition-all duration-300 flex items-center justify-center rounded-none focus:outline-none shadow-sm hover:scale-110 active:scale-90"
                     title={wishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
                 >
                     <Heart 
-                        size={12} 
-                        fill={wishlisted ? "currentColor" : "none"} 
-                        className={`transition-colors duration-200 ${wishlisted ? "text-red-500" : "text-stone-500"}`} 
+                        size={16} 
+                        fill={wishlisted ? "#dc2626" : "none"} 
+                        className={`transition-all duration-300 ${wishlisted ? "text-red-600 scale-120 rotate-6" : "text-stone-600"}`} 
                     />
                 </button>
 
