@@ -361,52 +361,7 @@ export default function Welcome({
                 </div>
             </div>
 
-            {/* 7. APPAREL PROMO BANNERS */}
-            <div className="py-16 border-t border-stone-200/50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    
-                    {/* Men Couture Banner */}
-                    <Link 
-                        href="/shop?category=menswear"
-                        className="group relative overflow-hidden aspect-[16/9] bg-stone-100 border border-stone-200 rounded-none flex items-center justify-center p-8"
-                    >
-                        <img 
-                            src="https://images.unsplash.com/photo-1607990283143-e81e7a2c93ab?q=80&w=600&auto=format&fit=crop" 
-                            alt="Men's Eastern Collection" 
-                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-black/45 z-10 flex flex-col items-center justify-center text-center space-y-2 p-6">
-                            <h3 className="text-sm sm:text-base font-black tracking-[0.25em] text-white uppercase">
-                                MEN'S EASTERN COUTURE
-                            </h3>
-                            <span className="bg-white text-black text-[9px] font-black tracking-widest px-6 py-2.5 rounded-none uppercase">
-                                SHOP COLLECTION
-                            </span>
-                        </div>
-                    </Link>
 
-                    {/* Women Couture Banner */}
-                    <Link 
-                        href="/shop?category=womenswear"
-                        className="group relative overflow-hidden aspect-[16/9] bg-stone-100 border border-stone-200 rounded-none flex items-center justify-center p-8"
-                    >
-                        <img 
-                            src="https://images.unsplash.com/photo-1618220179428-22790b461013?q=80&w=600&auto=format&fit=crop" 
-                            alt="Women's Luxury Collection" 
-                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-black/45 z-10 flex flex-col items-center justify-center text-center space-y-2 p-6">
-                            <h3 className="text-sm sm:text-base font-black tracking-[0.25em] text-white uppercase">
-                                WOMEN'S LUXURY COUTURE
-                            </h3>
-                            <span className="bg-white text-black text-[9px] font-black tracking-widest px-6 py-2.5 rounded-none uppercase">
-                                SHOP COLLECTION
-                            </span>
-                        </div>
-                    </Link>
-
-                </div>
-            </div>
 
             {/* 8. CUSTOMER TESTIMONIALS SECTION */}
             <div className="bg-stone-50 border-t border-stone-200/50 py-10 sm:py-16">
