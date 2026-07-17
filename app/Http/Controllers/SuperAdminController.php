@@ -127,10 +127,18 @@ class SuperAdminController extends Controller
      */
     public function productsControl()
     {
-        $products = Product::with(['category', 'variants'])
-            ->orderBy('display_order', 'asc')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $products = Product::select([
+            'id', 'name', 'slug', 'sku', 'price', 'discount_price', 
+            'cost_price', 'gst_rate', 'category_id', 'stock_quantity', 
+            'status', 'image', 'main_image', 'description', 'short_description', 
+            'display_order', 'show_in_featured_couture', 'show_in_new_arrivals', 
+            'show_in_trending_apparel', 'show_in_best_sellers', 'show_in_explore_collections', 
+            'show_in_collections', 'created_at'
+        ])
+        ->with(['category', 'variants'])
+        ->orderBy('display_order', 'asc')
+        ->orderBy('created_at', 'desc')
+        ->get();
 
         $categories = Category::all();
 

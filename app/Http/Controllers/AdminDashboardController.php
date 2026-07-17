@@ -144,9 +144,16 @@ class AdminDashboardController extends Controller
     {
         $this->checkAccess();
 
-        $products = Product::with(['variants', 'category', 'images'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $products = Product::select([
+            'id', 'name', 'slug', 'sku', 'price', 'discount_price', 
+            'cost_price', 'gst_rate', 'category_id', 'stock_quantity', 
+            'is_featured', 'is_trending', 'is_best_seller', 'is_new_arrival', 
+            'status', 'image', 'main_image', 'description', 'short_description', 
+            'created_at'
+        ])
+        ->with(['variants', 'category'])
+        ->orderBy('created_at', 'desc')
+        ->get();
         $categories = Category::all();
 
         return Inertia::render('Admin/Products', [
