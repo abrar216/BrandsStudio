@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Head, Link, useForm, router, usePage } from '@inertiajs/react';
 import StoreLayout from '../Layouts/StoreLayout';
 import ProductCard from '../Components/ProductCard';
-import { ShoppingCart, Star, Heart, Check, Minus, Plus, MessageSquare, ArrowLeft } from 'lucide-react';
+import { ShoppingCart, Star, Heart, Check, Minus, Plus, MessageSquare, ArrowLeft, ChevronLeft, ChevronRight, Share2, Maximize2, Grid, X, Search } from 'lucide-react';
 import { addToCart } from '../Utils/cart';
 import { getAssetUrl, getProductImageUrl } from '../Utils/asset';
 
 // Premium cursor-tracking magnification zoom component
-function ZoomableImage({ src, alt }) {
+function ZoomableImage({ src, alt, onClick }) {
     const [zoomStyle, setZoomStyle] = useState({ transformOrigin: 'center center', transform: 'scale(1)' });
     
     const handleMouseMove = (e) => {
@@ -32,6 +32,7 @@ function ZoomableImage({ src, alt }) {
             className="bg-stone-50 border border-stone-200/40 rounded-none overflow-hidden aspect-[4/5] md:max-h-[580px] relative w-full cursor-zoom-in"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
+            onClick={onClick}
         >
             <img 
                 src={src} 
@@ -99,13 +100,34 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
     const [activeImage, setActiveImage] = useState(allImages[0] || null);
     const [activeMobileImageIdx, setActiveMobileImageIdx] = useState(0);
 
+    // Lightbox Modal state
+    const [lightboxOpen, setLightboxOpen] = useState(false);
+    const [lightboxIndex, setLightboxIndex] = useState(0);
+
     // Touch Swipe State for Mobile Carousel responsiveness
     const [touchStart, setTouchStart] = useState(null);
     const [touchEnd, setTouchEnd] = useState(null);
 
+    // Scroll lock for Lightbox
+    React.useEffect(() => {
+        if (lightboxOpen) {
+            document.body.style.overflow = 'hidden';
+            document.body.style.paddingRight = 'var(--removed-body-scroll-width, 0px)';
+        } else {
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        };
+    }, [lightboxOpen]);
+
     React.useEffect(() => {
         setActiveImage(allImages[0] || null);
         setActiveMobileImageIdx(0);
+        setLightboxIndex(0);
+        setLightboxOpen(false);
     }, [product.id]);
 
     // Filter variants based on current color choice
@@ -224,6 +246,10 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                                             key={idx}
                                             src={getAssetUrl(img.startsWith('data:') ? img : `storage/${img}`)}
                                             alt={`${product.name} view ${idx + 1}`}
+                                            onClick={() => {
+                                                setLightboxIndex(idx);
+                                                setLightboxOpen(true);
+                                            }}
                                         />
                                     );
                                 })
@@ -267,7 +293,11 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                                     <img 
                                         src={getAssetUrl(allImages[activeMobileImageIdx].startsWith('data:') ? allImages[activeMobileImageIdx] : `storage/${allImages[activeMobileImageIdx]}`)} 
                                         alt={product.name} 
-                                        className="w-full h-full object-cover transition-opacity duration-300"
+                                        className="w-full h-full object-cover transition-opacity duration-300 cursor-pointer"
+                                        onClick={() => {
+                                            setLightboxIndex(activeMobileImageIdx);
+                                            setLightboxOpen(true);
+                                        }}
                                     />
                                     
                                     {/* Carousel Indicators (Dots) */}
@@ -623,6 +653,94 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                 )}
 
             </div>
+
+            {/* Premium Immersive Full-Screen Lightbox Gallery (Diners Pakistan inspired) */}
+            {lightboxOpen && (
+                <div className="fixed inset-0 z-[100] flex bg-black/95 select-none animate-in fade-in duration-200">
+                    {/* Backdrop click to close */}
+                    <div className="absolute inset-0 cursor-zoom-out" onClick={() => setLightboxOpen(false)} />
+
+                    {/* Main View Area */}
+                    <div className="flex-grow flex items-center justify-center relative p-8">
+                        {/* Current Index */}
+                        <div className="absolute top-6 left-6 text-white/70 text-xs font-black uppercase tracking-widest">
+                            {lightboxIndex + 1} / {allImages.length}
+                        </div>
+
+                        {/* Top Control Bar */}
+                        <div className="absolute top-6 right-8 md:right-[312px] bg-black/85 border border-neutral-800 px-5 py-2 flex items-center space-x-6 text-white/60 z-10">
+                            <button className="hover:text-white transition-colors" title="Zoom"><Search size={14} /></button>
+                            <button className="hover:text-white transition-colors" title="Share"><Share2 size={14} /></button>
+                            <button className="hover:text-white transition-colors" title="Slideshow"><Play size={14} /></button>
+                            <button className="hover:text-white transition-colors" title="Fullscreen"><Maximize2 size={14} /></button>
+                            <button className="hover:text-white transition-colors" title="Grid"><Grid size={14} /></button>
+                            <button onClick={() => setLightboxOpen(false)} className="hover:text-white transition-colors border-l border-neutral-850 pl-4" title="Close"><X size={16} /></button>
+                        </div>
+
+                        {/* Left chevron button */}
+                        {allImages.length > 1 && (
+                            <button 
+                                onClick={() => setLightboxIndex((prev) => (prev - 1 + allImages.length) % allImages.length)}
+                                className="absolute left-8 top-1/2 -translate-y-1/2 bg-black/45 hover:bg-black/75 text-white p-4 transition-colors z-10 focus:outline-none rounded-none border border-neutral-800"
+                            >
+                                <ChevronLeft size={20} />
+                            </button>
+                        )}
+
+                        {/* Centered Main Image */}
+                        <div className="max-h-[80vh] max-w-[85%] flex items-center justify-center relative z-0">
+                            <img 
+                                src={getAssetUrl(allImages[lightboxIndex].startsWith('data:') ? allImages[lightboxIndex] : `storage/${allImages[lightboxIndex]}`)} 
+                                alt={`${product.name} zoomed view`}
+                                className="max-h-[80vh] max-w-full object-contain shadow-2xl border border-white/5 animate-in zoom-in-95 duration-200"
+                            />
+                        </div>
+
+                        {/* Right chevron button */}
+                        {allImages.length > 1 && (
+                            <button 
+                                onClick={() => setLightboxIndex((prev) => (prev + 1) % allImages.length)}
+                                className="absolute right-8 md:right-[312px] top-1/2 -translate-y-1/2 bg-black/45 hover:bg-black/75 text-white p-4 transition-colors z-10 focus:outline-none rounded-none border border-neutral-800"
+                            >
+                                <ChevronRight size={20} />
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Right Thumbnails Panel (Diners Style) */}
+                    <div className="w-[280px] hidden md:flex flex-col bg-stone-200/95 h-full border-l border-stone-300 relative z-10">
+                        {/* Header title */}
+                        <div className="px-6 py-5 border-b border-stone-350 flex items-center justify-between">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-stone-600">Product Images</span>
+                            <span className="text-[9px] font-bold text-stone-500 bg-stone-300/60 px-2 py-0.5">{allImages.length} views</span>
+                        </div>
+                        
+                        {/* Thumbnails Grid */}
+                        <div className="flex-grow overflow-y-auto p-4">
+                            <div className="grid grid-cols-2 gap-3">
+                                {allImages.map((img, idx) => {
+                                    const isActive = idx === lightboxIndex;
+                                    return (
+                                        <div 
+                                            key={idx}
+                                            onClick={() => setLightboxIndex(idx)}
+                                            className={`cursor-pointer overflow-hidden aspect-[4/5] bg-stone-350 border-2 transition-all rounded-none ${
+                                                isActive ? 'border-red-600 shadow-md scale-[1.02]' : 'border-transparent opacity-70 hover:opacity-100 hover:scale-[1.01]'
+                                            }`}
+                                        >
+                                            <img 
+                                                src={getAssetUrl(img.startsWith('data:') ? img : `storage/${img}`)}
+                                                alt={`${product.name} thumbnail ${idx + 1}`}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </StoreLayout>
     );
 }
