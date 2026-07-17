@@ -160,11 +160,6 @@ export default function StoreLayout({ children }) {
 
     return (
         <div className="min-h-screen bg-white text-neutral-900 flex flex-col font-sans overflow-x-hidden">
-            
-            {/* Diners Pakistan Style Top Announcement Bar */}
-            <div className="bg-neutral-900 text-white text-[10px] tracking-[0.25em] font-extrabold uppercase py-2.5 text-center select-none border-b border-neutral-800">
-                FREE SHIPPING IN PAKISTAN ON ORDERS ABOVE RS. 3000 | CASH ON DELIVERY
-            </div>
 
             {/* Sticky Header Wrapper */}
             <header className={`sticky top-0 z-40 bg-white border-b border-stone-200/60 transition-all duration-300 ${scrolled ? 'shadow-sm' : ''}`}>
@@ -188,7 +183,6 @@ export default function StoreLayout({ children }) {
                         <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
                             <Link href={route('welcome')} className="flex flex-col items-center select-none group text-center">
                                 <span className="font-black tracking-[0.3em] text-xl sm:text-2xl text-black">BRANDS STUDIO</span>
-                                <span className="text-[8px] font-black tracking-[0.55em] text-stone-400 -mt-0.5 ml-1">SIGNATURE</span>
                             </Link>
                         </div>
 
@@ -457,7 +451,6 @@ export default function StoreLayout({ children }) {
                         <div className="space-y-4">
                             <div className="flex flex-col items-start leading-none text-white select-none">
                                 <span className="font-black tracking-[0.25em] text-lg text-white">BRANDS STUDIO</span>
-                                <span className="text-[7px] font-black tracking-[0.45em] text-stone-500 mt-0.5">SIGNATURE</span>
                             </div>
                             <p className="text-[11px] text-stone-400 leading-relaxed font-bold tracking-wider uppercase">
                                 {settings?.site_tagline || 'Experience Premium Fashion.'} Delivering high-fashion silhouettes, tailored styles, and everyday clothing luxury. Founded to deliver quality premium selections.
