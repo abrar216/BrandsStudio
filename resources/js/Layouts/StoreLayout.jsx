@@ -293,50 +293,39 @@ export default function StoreLayout({ children }) {
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-center items-center h-12 font-black tracking-[0.2em] text-[10px] lg:text-[11px] text-stone-700 space-x-6 lg:space-x-8">
                             
-                            {/* CATEGORIES Mega Dropdown */}
-                            <div className="relative group py-3">
-                                <Link 
-                                    href="/shop" 
-                                    className="hover:text-black transition-colors uppercase font-black tracking-[0.2em] flex items-center space-x-1"
-                                >
-                                    <span>Categories</span>
-                                    <span className="text-[6px] text-stone-400 group-hover:text-black transition-colors ml-0.5">▼</span>
-                                </Link>
-                                
-                                <div className="absolute left-1/2 -translate-x-1/2 top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 w-[650px] bg-white border border-stone-200 shadow-2xl p-6 z-50 rounded-none text-left">
-                                    <div className="grid grid-cols-3 gap-6">
-                                        {categories.filter(c => !c.parent_id).map((parent) => {
-                                            const subs = categories.filter(c => c.parent_id === parent.id);
-                                            return (
-                                                <div key={parent.id} className="space-y-3">
-                                                    <Link 
-                                                        href={`/shop?category=${parent.slug}`}
-                                                        className="font-black text-black border-b border-stone-200 pb-2 block uppercase tracking-widest text-[10.5px] hover:text-red-650 transition-colors"
-                                                    >
-                                                        {parent.name}
-                                                    </Link>
-                                                    {subs.length > 0 ? (
-                                                        <ul className="space-y-2.5 text-stone-500 font-bold tracking-widest text-[9px] uppercase">
-                                                            {subs.map((sub) => (
-                                                                <li key={sub.id}>
-                                                                    <Link 
-                                                                        href={`/shop?category=${sub.slug}`}
-                                                                        className="hover:text-black transition-colors block"
-                                                                    >
-                                                                        {sub.name}
-                                                                    </Link>
-                                                                </li>
-                                                            ))}
-                                                        </ul>
-                                                    ) : (
-                                                        <p className="text-[8.5px] text-stone-400 font-bold tracking-widest uppercase">New Arrivals</p>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
+                            {categories.filter(c => !c.parent_id).map((parent) => {
+                                const subs = categories.filter(c => c.parent_id === parent.id);
+                                return (
+                                    <div key={parent.id} className="relative group py-3">
+                                        <Link 
+                                            href={`/shop?category=${parent.slug}`} 
+                                            className="hover:text-black transition-colors uppercase font-black tracking-[0.2em] flex items-center space-x-1"
+                                        >
+                                            <span>{parent.name}</span>
+                                            {subs.length > 0 && (
+                                                <span className="text-[6px] text-stone-400 group-hover:text-black transition-colors ml-0.5">▼</span>
+                                            )}
+                                        </Link>
+                                        
+                                        {subs.length > 0 && (
+                                            <div className="absolute left-1/2 -translate-x-1/2 top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 w-[200px] bg-white border border-stone-200 shadow-2xl p-4 z-50 rounded-none text-left">
+                                                <ul className="space-y-2.5 text-stone-500 font-bold tracking-widest text-[9px] uppercase">
+                                                    {subs.map((sub) => (
+                                                        <li key={sub.id}>
+                                                            <Link 
+                                                                href={`/shop?category=${sub.slug}`}
+                                                                className="hover:text-black transition-colors block py-0.5"
+                                                            >
+                                                                {sub.name}
+                                                            </Link>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
                                     </div>
-                                </div>
-                            </div>
+                                );
+                            })}
 
                             {/* COLLECTIONS Direct Link */}
                             <Link href="/shop" className="hover:text-black py-3 transition-colors uppercase font-black tracking-[0.2em]">
