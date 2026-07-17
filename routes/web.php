@@ -221,6 +221,7 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->prefix
     Route::post('/api/pos/customer', [POSController::class, 'storeCustomer'])->name('pos.customer.store');
     
     // Products Management
+    Route::get('/products/optimize-images', [AdminDashboardController::class, 'optimizeDatabaseImages'])->name('products.optimize');
     Route::get('/products', [AdminDashboardController::class, 'products'])->name('products');
     Route::post('/products', [AdminDashboardController::class, 'storeProduct'])->name('products.store');
     Route::patch('/products/{product}', [AdminDashboardController::class, 'updateProduct'])->name('products.update');

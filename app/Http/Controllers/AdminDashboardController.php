@@ -608,4 +608,140 @@ class AdminDashboardController extends Controller
         $request->user()->unreadNotifications->markAsRead();
         return back();
     }
+
+    public function optimizeDatabaseImages()
+    {
+        $this->checkSuperAdminAccess();
+
+        if (!extension_loaded('gd')) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'GD library is not loaded on the server.'
+            ], 500);
+        }
+
+        $compressedCount = 0;
+
+        DB::transaction(function() use (&$compressedCount) {
+            $products = Product::all();
+            foreach ($products as $p) {
+                $needsUpdate = false;
+                $updateData = [];
+
+                if ($p->image && strpos($p->image, 'data:') === 0 && strlen($p->image) > 100000) {
+                    $compressed = $this->compressBase64Image($p->image);
+                    if ($compressed && $compressed !== $p->image) {
+                        $updateData['image'] = $compressed;
+                        $updateData['main_image'] = $compressed;
+                        $needsUpdate = true;
+                        $compressedCount++;
+                    }
+                }
+
+                if ($p->gallery_images) {
+                    $gallery = json_decode($p->gallery_images, true);
+                    if (is_array($gallery)) {
+                        $updatedGallery = [];
+                        $galleryChanged = false;
+                        foreach ($gallery as $img) {
+                            if (strpos($img, 'data:') === 0 && strlen($img) > 100000) {
+                                $compressedImg = $this->compressBase64Image($img);
+                                if ($compressedImg && $compressedImg !== $img) {
+                                    $galleryChanged = true;
+                                    $compressedCount++;
+                                }
+                                $updatedGallery[] = $compressedImg;
+                            } else {
+                                $updatedGallery[] = $img;
+                            }
+                        }
+                        if ($galleryChanged) {
+                            $updateData['gallery_images'] = json_encode($updatedGallery);
+                            $needsUpdate = true;
+                        }
+                    }
+                }
+
+                if ($needsUpdate) {
+                    $p->update($updateData);
+                }
+            }
+
+            $galleryImages = \App\Models\ProductImage::all();
+            foreach ($galleryImages as $gi) {
+                if ($gi->image_path && strpos($gi->image_path, 'data:') === 0 && strlen($gi->image_path) > 100000) {
+                    $compressed = $this->compressBase64Image($gi->image_path);
+                    if ($compressed && $compressed !== $gi->image_path) {
+                        $gi->update(['image_path' => $compressed]);
+                        $compressedCount++;
+                    }
+                }
+            }
+
+            $categories = Category::all();
+            foreach ($categories as $c) {
+                if ($c->image && strpos($c->image, 'data:') === 0 && strlen($c->image) > 100000) {
+                    $compressed = $this->compressBase64Image($c->image);
+                    if ($compressed && $compressed !== $c->image) {
+                        $c->update(['image' => $compressed]);
+                        $compressedCount++;
+                    }
+                }
+            }
+        });
+
+        return response()->json([
+            'status' => 'success',
+            'message' => "Successfully compressed $compressedCount images in the database!"
+        ]);
+    }
+
+    private function compressBase64Image($base64Str, $maxDim = 400, $quality = 60)
+    {
+        try {
+            $parts = explode(',', $base64Str);
+            if (count($parts) < 2) return $base64Str;
+            
+            $data = base64_decode($parts[1]);
+            if (!$data) return $base64Str;
+
+            $src = imagecreatefromstring($data);
+            if (!$src) return $base64Str;
+
+            $width = imagesx($src);
+            $height = imagesy($src);
+
+            if ($width > $maxDim || $height > $maxDim) {
+                if ($width > $height) {
+                    $newWidth = $maxDim;
+                    $newHeight = intval($height * ($maxDim / $width));
+                } else {
+                    $newHeight = $maxDim;
+                    $newWidth = intval($width * ($maxDim / $height));
+                }
+            } else {
+                $newWidth = $width;
+                $newHeight = $height;
+            }
+
+            $dst = imagecreatetruecolor($newWidth, $newHeight);
+            
+            // Preserve alpha transparency for resample
+            imagealphablending($dst, false);
+            imagesavealpha($dst, true);
+            
+            imagecopyresampled($dst, $src, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+
+            ob_start();
+            imagejpeg($dst, null, $quality);
+            $compressedData = ob_get_clean();
+
+            imagedestroy($src);
+            imagedestroy($dst);
+
+            return 'data:image/jpeg;base64,' . base64_encode($compressedData);
+        } catch (\Exception $e) {
+            return $base64Str;
+        }
+    }
 }
