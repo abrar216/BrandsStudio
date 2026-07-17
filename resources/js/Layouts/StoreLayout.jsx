@@ -186,7 +186,7 @@ export default function StoreLayout({ children }) {
                         {/* Center: Brand Logo (Clickable -> Homepage) */}
                         <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
                             <Link href={route('welcome')} className="flex flex-col items-center select-none group text-center">
-                                <span className="font-black tracking-[0.3em] text-xl sm:text-2xl text-black">BRANDS STUDIO</span>
+                                 <span className="font-black text-sm tracking-[0.15em] xs:text-base xs:tracking-[0.2em] sm:text-2xl sm:tracking-[0.3em] text-black transition-all">BRANDS STUDIO</span>
                             </Link>
                         </div>
 
@@ -356,7 +356,7 @@ export default function StoreLayout({ children }) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
                     {/* Top Column Layout */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 mb-12">
                         
                         {/* Logo + Tagline Column */}
                         <div className="space-y-4">
@@ -572,7 +572,7 @@ export default function StoreLayout({ children }) {
                                     </p>
                                     <div className="space-y-2 pt-2">
                                         <Link 
-                                            href={route('cart')} 
+                                            href={route('checkout')} 
                                             onClick={() => setCartDrawerOpen(false)}
                                             className="w-full block text-center bg-black hover:bg-neutral-800 text-white font-black text-[10px] tracking-widest py-3.5 rounded-none uppercase transition-colors"
                                         >
@@ -898,16 +898,38 @@ export default function StoreLayout({ children }) {
                             </div>
 
                             {/* Footer links inside mobile menu */}
-                            <div className="border-t border-stone-100 p-6 space-y-3 bg-stone-50">
+                            <div className="border-t border-stone-100 p-6 space-y-4 bg-stone-50">
                                 {auth?.user ? (
-                                    <div className="space-y-2">
-                                        <p className="text-[9px] text-stone-400 font-bold uppercase tracking-wider">Logged in as {auth.user.name}</p>
+                                    <div className="space-y-3">
+                                        <div className="border-b border-stone-200 pb-2 mb-2">
+                                            <p className="text-[9px] text-stone-400 font-bold uppercase tracking-wider">Logged in as</p>
+                                            <p className="text-[10px] text-stone-800 font-extrabold truncate uppercase">{auth.user.name}</p>
+                                        </div>
+
+                                        <div className="flex flex-col space-y-2.5 text-[9px] font-black uppercase tracking-widest text-stone-600 mb-3">
+                                            <Link href={route('dashboard')} onClick={() => setMobileMenuOpen(false)} className="hover:text-black">Order History</Link>
+                                            <Link href={route('profile.edit')} onClick={() => setMobileMenuOpen(false)} className="hover:text-black">Profile Settings</Link>
+                                            <Link href={route('order.tracking')} onClick={() => setMobileMenuOpen(false)} className="hover:text-black">Track Order</Link>
+                                            
+                                            {auth.user.is_staff && (
+                                                <Link href={route('admin.pos.index')} onClick={() => setMobileMenuOpen(false)} className="text-amber-600 hover:text-amber-700">
+                                                    POS Terminal
+                                                </Link>
+                                            )}
+
+                                            {auth.user.is_admin && (
+                                                <Link href={route('admin.dashboard')} onClick={() => setMobileMenuOpen(false)} className="text-black hover:text-neutral-900 font-black">
+                                                    Admin Dashboard
+                                                </Link>
+                                            )}
+                                        </div>
+
                                         <Link 
                                             href={route('logout')} 
                                             method="post" 
                                             as="button" 
                                             onClick={() => setMobileMenuOpen(false)}
-                                            className="w-full block text-center bg-black text-white text-[9px] font-black tracking-widest py-3 rounded-none uppercase"
+                                            className="w-full block text-center bg-black text-white text-[9px] font-black tracking-widest py-3 rounded-none uppercase hover:bg-neutral-800 transition-colors"
                                         >
                                             Logout
                                         </Link>

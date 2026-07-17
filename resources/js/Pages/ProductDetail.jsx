@@ -62,6 +62,10 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
     const [activeImage, setActiveImage] = useState(allImages[0] || null);
     const [activeMobileImageIdx, setActiveMobileImageIdx] = useState(0);
 
+    // Touch Swipe State for Mobile Carousel responsiveness
+    const [touchStart, setTouchStart] = useState(null);
+    const [touchEnd, setTouchEnd] = useState(null);
+
     React.useEffect(() => {
         setActiveImage(allImages[0] || null);
         setActiveMobileImageIdx(0);
@@ -203,10 +207,31 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                             )}
                         </div>
 
-                        {/* Mobile View: Horizontal Carousel with indicator dots */}
+                        {/* Mobile View: Horizontal Carousel with indicator dots & touch swipe support */}
                         <div className="block md:hidden relative overflow-hidden rounded-none bg-stone-50 border border-stone-200/40">
                             {allImages.length > 0 ? (
-                                <div className="relative aspect-[3/4] w-full">
+                                <div 
+                                    className="relative aspect-[3/4] w-full"
+                                    onTouchStart={(e) => {
+                                        setTouchEnd(null);
+                                        setTouchStart(e.targetTouches[0].clientX);
+                                    }}
+                                    onTouchMove={(e) => {
+                                        setTouchEnd(e.targetTouches[0].clientX);
+                                    }}
+                                    onTouchEnd={() => {
+                                        if (!touchStart || !touchEnd) return;
+                                        const distance = touchStart - touchEnd;
+                                        const minSwipeDistance = 50;
+                                        if (distance > minSwipeDistance) {
+                                            // Next image
+                                            setActiveMobileImageIdx((prev) => (prev + 1) % allImages.length);
+                                        } else if (distance < -minSwipeDistance) {
+                                            // Prev image
+                                            setActiveMobileImageIdx((prev) => (prev - 1 + allImages.length) % allImages.length);
+                                        }
+                                    }}
+                                >
                                     <img 
                                         src={getAssetUrl(allImages[activeMobileImageIdx].startsWith('data:') ? allImages[activeMobileImageIdx] : `storage/${allImages[activeMobileImageIdx]}`)} 
                                         alt={product.name} 
@@ -356,22 +381,35 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                             )}
                         </div>
 
-                        {/* Actions block */}
-                        <div className="flex items-center space-x-4 pt-4 border-t border-stone-100">
-                            {/* Quantity selection */}
-                            <div className="flex items-center border border-stone-200 rounded-none px-2 bg-stone-50">
-                                <button 
-                                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                    className="p-2 text-stone-500 hover:text-black focus:outline-none"
+                        {/* Actions block (Responsive alignment) */}
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-4 border-t border-stone-100">
+                            <div className="flex items-center space-x-3 w-full sm:w-auto">
+                                {/* Quantity selection */}
+                                <div className="flex items-center justify-between border border-stone-200 rounded-none px-2 bg-stone-50 h-12 w-full sm:w-auto">
+                                    <button 
+                                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                        className="p-2 text-stone-500 hover:text-black focus:outline-none"
+                                    >
+                                        <Minus size={12} />
+                                    </button>
+                                    <span className="px-4 text-[11px] font-black select-none">{quantity}</span>
+                                    <button 
+                                        onClick={() => setQuantity(Math.min(availableStock || 10, quantity + 1))}
+                                        className="p-2 text-stone-500 hover:text-black focus:outline-none"
+                                    >
+                                        <Plus size={12} />
+                                    </button>
+                                </div>
+
+                                {/* Wishlist toggle (mobile layout next to quantity) */}
+                                <button
+                                    onClick={handleWishlistToggle}
+                                    className={`sm:hidden h-12 w-12 flex-shrink-0 flex items-center justify-center rounded-none border border-stone-200 hover:bg-stone-50 transition-colors focus:outline-none ${
+                                        inWishlist ? 'text-red-600 bg-red-50 border-red-200' : 'text-stone-500'
+                                    }`}
+                                    title="Add to Wishlist"
                                 >
-                                    <Minus size={12} />
-                                </button>
-                                <span className="px-4 text-[11px] font-black select-none">{quantity}</span>
-                                <button 
-                                    onClick={() => setQuantity(Math.min(availableStock || 10, quantity + 1))}
-                                    className="p-2 text-stone-500 hover:text-black focus:outline-none"
-                                >
-                                    <Plus size={12} />
+                                    <Heart size={16} fill={inWishlist ? 'currentColor' : 'none'} />
                                 </button>
                             </div>
 
@@ -379,7 +417,7 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                             <button
                                 disabled={availableStock <= 0}
                                 onClick={handleAddToCart}
-                                className={`flex-grow bg-black hover:bg-neutral-850 text-white text-[10px] tracking-widest font-black py-4 px-6 rounded-none transition-all flex items-center justify-center space-x-3 uppercase ${
+                                className={`w-full sm:flex-grow bg-black hover:bg-neutral-850 text-white text-[10px] tracking-widest font-black h-12 px-6 rounded-none transition-all flex items-center justify-center space-x-3 uppercase ${
                                     availableStock <= 0 ? 'bg-stone-300 text-stone-500 cursor-not-allowed hover:bg-stone-300 shadow-none' : ''
                                 }`}
                             >
@@ -387,10 +425,10 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                                 <span>ADD TO SHOPPING BAG</span>
                             </button>
 
-                            {/* Wishlist toggle */}
+                            {/* Wishlist toggle (desktop layout) */}
                             <button
                                 onClick={handleWishlistToggle}
-                                className={`p-4 rounded-none border border-stone-200 hover:bg-stone-50 transition-colors focus:outline-none ${
+                                className={`hidden sm:flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-none border border-stone-200 hover:bg-stone-50 transition-colors focus:outline-none ${
                                     inWishlist ? 'text-red-600 bg-red-50 border-red-200' : 'text-stone-500'
                                 }`}
                                 title="Add to Wishlist"
