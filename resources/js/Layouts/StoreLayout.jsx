@@ -293,8 +293,8 @@ export default function StoreLayout({ children }) {
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-center items-center h-12 font-black tracking-[0.2em] text-[10px] lg:text-[11px] text-stone-700 space-x-6 lg:space-x-8">
                             
-                            {categories.filter(c => !c.parent_id).map((parent) => {
-                                const subs = categories.filter(c => c.parent_id === parent.id);
+                            {categories.map((parent) => {
+                                const subs = parent.children || [];
                                 return (
                                     <div key={parent.id} className="relative group py-3">
                                         <Link 
