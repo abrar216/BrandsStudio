@@ -99,7 +99,11 @@ export default function ProductCard({ product, currency, inWishlist = false }) {
                 >
                     {mainImg ? (
                         <img 
-                            src={getAssetUrl(isHovered && secondImg ? `storage/${secondImg}` : `storage/${mainImg}`)} 
+                            src={getAssetUrl(
+                                isHovered && secondImg 
+                                    ? (secondImg.startsWith('data:') ? secondImg : `storage/${secondImg}`)
+                                    : (mainImg.startsWith('data:') ? mainImg : `storage/${mainImg}`)
+                            )} 
                             alt={product.name} 
                             className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                         />

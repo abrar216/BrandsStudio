@@ -173,7 +173,7 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                                             className="bg-stone-50 border border-stone-200/40 rounded-none overflow-hidden aspect-[3/4] relative w-full"
                                         >
                                             <img 
-                                                src={getAssetUrl(`storage/${img}`)} 
+                                                src={getAssetUrl(img.startsWith('data:') ? img : `storage/${img}`)} 
                                                 alt={`${product.name} view ${idx + 1}`} 
                                                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                                             />
@@ -197,7 +197,7 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                             {allImages.length > 0 ? (
                                 <div className="relative aspect-[3/4] w-full">
                                     <img 
-                                        src={getAssetUrl(`storage/${allImages[activeMobileImageIdx]}`)} 
+                                        src={getAssetUrl(allImages[activeMobileImageIdx].startsWith('data:') ? allImages[activeMobileImageIdx] : `storage/${allImages[activeMobileImageIdx]}`)} 
                                         alt={product.name} 
                                         className="w-full h-full object-cover transition-opacity duration-300"
                                     />
