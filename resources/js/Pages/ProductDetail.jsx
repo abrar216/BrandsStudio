@@ -152,18 +152,14 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                     
                     {/* Left: Premium Image Grid & Carousel (Diners inspired layout) */}
                     <div className="w-full">
-                        {/* Desktop View: Grid Layout (Flexible grid depending on image count) */}
-                        <div className="hidden md:grid grid-cols-2 gap-4">
+                        {/* Desktop View: Vertical stack of large images (Diners style) */}
+                        <div className="hidden md:flex md:flex-col space-y-4">
                             {allImages.length > 0 ? (
                                 allImages.map((img, idx) => {
-                                    // Make single image span full grid width, or the first of 3 images
-                                    const spanClass = allImages.length === 1 || (allImages.length === 3 && idx === 0)
-                                        ? 'col-span-2'
-                                        : 'col-span-1';
                                     return (
                                         <div 
                                             key={idx} 
-                                            className={`bg-stone-50 border border-stone-200/40 rounded-none overflow-hidden aspect-[3/4] relative ${spanClass}`}
+                                            className="bg-stone-50 border border-stone-200/40 rounded-none overflow-hidden aspect-[3/4] relative w-full"
                                         >
                                             <img 
                                                 src={getAssetUrl(`storage/${img}`)} 
@@ -174,7 +170,7 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                                     );
                                 })
                             ) : (
-                                <div className="col-span-2 bg-stone-100 border border-stone-200/45 rounded-none overflow-hidden aspect-[3/4] flex flex-col justify-center items-center relative">
+                                <div className="bg-stone-100 border border-stone-200/45 rounded-none overflow-hidden aspect-[3/4] flex flex-col justify-center items-center relative w-full">
                                     <span className="text-[140px] opacity-10 select-none font-black tracking-widest text-stone-800">BS</span>
                                     <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-stone-400">
                                         <span className="text-[10px] uppercase font-bold tracking-widest text-stone-500 bg-white border border-stone-200 px-5 py-2">
