@@ -306,7 +306,7 @@ export default function Cart() {
                                             <ArrowRight size={12} />
                                         </Link>
                                         <a
-                                            href="https://wa.me/923194601759?text=Hello%20Brands%20Studio!%20I%20have%20some%20questions%20about%2520my%2520shopping%2520cart."
+                                            href="https://wa.me/923356101234?text=Hello%20Brands%20Studio!%20I%20have%20some%20questions%20about%2520my%2520shopping%2520cart."
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="bg-emerald-600 hover:bg-emerald-700 text-white p-3.5 rounded-none transition-colors flex items-center justify-center flex-shrink-0"

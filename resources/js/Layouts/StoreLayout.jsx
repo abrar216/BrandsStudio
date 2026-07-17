@@ -471,7 +471,7 @@ export default function StoreLayout({ children }) {
                 }
             `}</style>
             <a 
-                href="https://wa.me/923001234567" 
+                href="https://wa.me/923356101234" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="fixed bottom-6 right-6 z-50 bg-gradient-to-tr from-[#128C7E] to-[#25D366] text-white p-4 shadow-2xl hover:scale-115 transition-all duration-300 select-none rounded-full animate-whatsapp"
@@ -987,7 +987,7 @@ export default function StoreLayout({ children }) {
                                 
                                 {/* Quick WhatsApp link inside menu */}
                                 <a 
-                                    href="https://wa.me/923001234567" 
+                                    href="https://wa.me/923356101234" 
                                     target="_blank" 
                                     rel="noopener noreferrer"
                                     className="flex items-center justify-center space-x-2 text-[9px] font-black uppercase tracking-widest text-[#25D366] pt-1"

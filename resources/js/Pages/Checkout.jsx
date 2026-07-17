@@ -412,7 +412,7 @@ export default function Checkout({ settings: propSettings, currency: propCurrenc
                                         <span>{processing ? 'CREATING ORDER...' : 'PLACE ORDER NOW'}</span>
                                     </button>
                                     <a
-                                        href="https://wa.me/923194601759?text=Hello%20Brands%20Studio!%20I%20need%20help%20completing%20my%20checkout%20order."
+                                        href="https://wa.me/923356101234?text=Hello%20Brands%20Studio!%20I%20need%20help%20completing%20my%20checkout%20order."
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="bg-emerald-600 hover:bg-emerald-700 text-white p-3.5 rounded-none transition-colors flex items-center justify-center flex-shrink-0"
