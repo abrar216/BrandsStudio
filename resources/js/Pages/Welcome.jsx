@@ -45,36 +45,17 @@ export default function Welcome({
                                 index === currentSlide ? 'opacity-100 translate-x-0 z-10' : 'opacity-0 translate-x-4 z-0 pointer-events-none'
                             }`}
                         >
-                            {/* Full background image layout for slider */}
-                            <div className="absolute inset-0 z-0">
+                            {/* Clickable slide link to product details */}
+                            <Link 
+                                href={product.slug ? route('product.show', { slug: product.slug }) : '#'}
+                                className="absolute inset-0 z-0 block w-full h-full cursor-pointer"
+                            >
                                 <img 
                                     src={getAssetUrl(`storage/${getProductImageUrl(product)}`)}
                                     alt={product.name}
                                     className="w-full h-full object-cover object-top opacity-100"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-                            </div>
-
-                            <div className="absolute inset-x-0 bottom-16 z-20 flex flex-col items-center text-center px-6 space-y-3 sm:space-y-4">
-                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-stone-300">
-                                    NEW ARRIVALS
-                                </span>
-                                <h2 className="text-3xl sm:text-5xl font-extrabold uppercase tracking-widest text-white leading-tight max-w-3xl">
-                                    {product.name}
-                                </h2>
-                                <p className="text-[10px] sm:text-xs text-stone-300 uppercase tracking-widest leading-relaxed line-clamp-2 max-w-xl">
-                                    {product.short_description || product.description || 'Experience the premium refinement of Brands Studio. Indulge in tailored silhouettes, luxury textures, and contemporary clean apparel designed for the modern tastemaker.'}
-                                </p>
-                                <div className="pt-2">
-                                    <Link 
-                                        href={product.slug ? route('product.show', { slug: product.slug }) : '#'}
-                                        className="inline-flex items-center space-x-3 bg-white hover:bg-neutral-900 text-black hover:text-white font-extrabold tracking-[0.25em] text-[10px] sm:text-xs px-10 py-3.5 rounded-none transition-all uppercase border border-white"
-                                    >
-                                        <span>SHOP NOW</span>
-                                        <ArrowRight size={12} />
-                                    </Link>
-                                </div>
-                            </div>
+                            </Link>
                         </div>
                     ))}
                     
