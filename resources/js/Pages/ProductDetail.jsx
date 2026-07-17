@@ -468,139 +468,136 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                                 <Heart size={16} fill={inWishlist ? 'currentColor' : 'none'} />
                             </button>
                         </div>
-
-                    </div>
-
-                </div>
-
-                {/* Tab Sections (Description / Reviews) */}
-                <div className="mt-24 border-t border-stone-100 pt-16">
-                    <div className="flex space-x-8 border-b border-stone-100 pb-4 mb-8 text-[11px] font-black tracking-widest uppercase">
-                        <button
-                            onClick={() => setActiveTab('description')}
-                            className={`pb-4 transition-all uppercase ${
-                                activeTab === 'description' 
-                                    ? 'text-neutral-950 border-b-2 border-neutral-950 font-black' 
-                                    : 'text-stone-400 hover:text-stone-850'
-                            }`}
-                        >
-                            Garment Details
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('reviews')}
-                            className={`pb-4 transition-all uppercase flex items-center space-x-2 ${
-                                activeTab === 'reviews' 
-                                    ? 'text-neutral-950 border-b-2 border-neutral-950 font-black' 
-                                    : 'text-stone-400 hover:text-stone-850'
-                            }`}
-                        >
-                            <span>Reviews</span>
-                            <span className="bg-stone-100 text-stone-600 text-[9px] px-2 py-0.5 rounded-none font-bold">
-                                {product.reviews?.length || 0}
-                            </span>
-                        </button>
-                    </div>
-
-                    {/* Tab content 1: Description */}
-                    {activeTab === 'description' && (
-                        <div className="max-w-4xl space-y-6 text-xs text-stone-500 leading-relaxed font-bold tracking-wide uppercase">
-                            <div className="prose prose-stone max-w-none text-stone-500 text-xs font-bold tracking-wide uppercase" dangerouslySetInnerHTML={{ __html: product.description || 'No detailed description specified.' }} />
-                            <div className="bg-stone-50 p-6 rounded-none border border-stone-200 grid grid-cols-1 sm:grid-cols-2 gap-4 text-[10px] font-black text-stone-600">
-                                <div>• Fabric Blend: 100% Organically Sourced Long-staple Combed Cotton</div>
-                                <div>• Cut/Sizing: Premium Italian Sartorial Slim Silhouette Fit</div>
-                                <div>• Country of Origin: Handcrafted in Florence, Italy</div>
-                                <div>• Wash Instruction: Dry clean or cold machine wash only</div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Tab content 2: Reviews */}
-                    {activeTab === 'reviews' && (
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-                            
-                            {/* Submit a Review Form */}
-                            <div className="lg:col-span-1 bg-white border border-stone-200 p-6 rounded-none shadow-sm space-y-4">
-                                <h3 className="text-[10px] font-black text-neutral-800 uppercase tracking-widest flex items-center space-x-1.5">
-                                    <MessageSquare size={12} className="text-stone-450" />
-                                    <span>WRITE A REVIEW</span>
-                                </h3>
-
-                                <form onSubmit={submitReview} className="space-y-4">
-                                    <div>
-                                        <label className="block text-[9px] font-black text-stone-400 uppercase tracking-wider mb-1.5">
-                                            RATING SCORE
-                                        </label>
-                                        <select
-                                            value={data.rating}
-                                            onChange={(e) => setData('rating', Number(e.target.value))}
-                                            className="w-full bg-stone-50 border border-stone-200 rounded-none py-2 px-3 text-[10px] font-bold"
-                                        >
-                                            <option value="5">★★★★★ - Excellent (5/5)</option>
-                                            <option value="4">★★★★☆ - Very Good (4/5)</option>
-                                            <option value="3">★★★☆☆ - Average (3/5)</option>
-                                            <option value="2">★★☆☆☆ - Disappointed (2/5)</option>
-                                            <option value="1">★☆☆☆☆ - Very Bad (1/5)</option>
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-[9px] font-black text-stone-400 uppercase tracking-wider mb-1.5">
-                                            COMMENTS
-                                        </label>
-                                        <textarea
-                                            placeholder="Write your review here..."
-                                            value={data.comment}
-                                            onChange={(e) => setData('comment', e.target.value)}
-                                            className="w-full bg-stone-50 border border-stone-200 rounded-none p-3 text-[10px] h-28 focus:bg-white focus:outline-none"
-                                            required
-                                        />
-                                    </div>
-
-                                    <button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="w-full bg-black hover:bg-neutral-850 text-white text-[10px] tracking-widest font-black py-3 rounded-none transition-all uppercase"
-                                    >
-                                        SUBMIT REVIEW
-                                    </button>
-                                </form>
+                        {/* Tab Sections (Description / Reviews) moved inside right column to fill space */}
+                        <div className="border-t border-stone-200/80 pt-8 mt-10 space-y-6">
+                            <div className="flex space-x-8 border-b border-stone-100 pb-4 mb-4 text-[11px] font-black tracking-widest uppercase">
+                                <button
+                                    onClick={() => setActiveTab('description')}
+                                    className={`pb-4 transition-all uppercase ${
+                                        activeTab === 'description' 
+                                            ? 'text-neutral-950 border-b-2 border-neutral-950 font-black' 
+                                            : 'text-stone-400 hover:text-stone-850'
+                                    }`}
+                                >
+                                    Garment Details
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('reviews')}
+                                    className={`pb-4 transition-all uppercase flex items-center space-x-2 ${
+                                        activeTab === 'reviews' 
+                                            ? 'text-neutral-950 border-b-2 border-neutral-950 font-black' 
+                                            : 'text-stone-400 hover:text-stone-850'
+                                    }`}
+                                >
+                                    <span>Reviews</span>
+                                    <span className="bg-stone-100 text-stone-600 text-[9px] px-2 py-0.5 rounded-none font-bold">
+                                        {product.reviews?.length || 0}
+                                    </span>
+                                </button>
                             </div>
 
-                            {/* Reviews list */}
-                            <div className="lg:col-span-2 space-y-6">
-                                {product.reviews && product.reviews.length > 0 ? (
-                                    product.reviews.map((rev) => (
-                                        <div key={rev.id} className="bg-white border border-stone-200 p-6 rounded-none shadow-sm space-y-3">
-                                            <div className="flex justify-between items-start">
-                                                <div>
-                                                    <h4 className="text-[10px] font-black text-stone-800 uppercase tracking-wide">{rev.user?.name}</h4>
-                                                    <p className="text-[9px] text-stone-450 font-bold">{new Date(rev.created_at).toLocaleDateString()}</p>
-                                                </div>
-                                                <div className="flex text-amber-400 space-x-0.5">
-                                                    {Array.from({ length: 5 }).map((_, i) => (
-                                                        <Star 
-                                                            key={i} 
-                                                            size={10} 
-                                                            fill={i < rev.rating ? 'currentColor' : 'none'} 
-                                                            className={i < rev.rating ? 'text-amber-400' : 'text-stone-200'}
-                                                        />
-                                                    ))}
-                                                </div>
+                            {/* Tab content 1: Description */}
+                            {activeTab === 'description' && (
+                                <div className="space-y-6 text-xs text-stone-500 leading-relaxed font-bold tracking-wide uppercase">
+                                    <div className="prose prose-stone max-w-none text-stone-500 text-xs font-bold tracking-wide uppercase" dangerouslySetInnerHTML={{ __html: product.description || 'No detailed description specified.' }} />
+                                    <div className="bg-stone-50 p-6 rounded-none border border-stone-200 grid grid-cols-1 gap-3 text-[10px] font-black text-stone-600">
+                                        <div>• Fabric Blend: 100% Organically Sourced Long-staple Combed Cotton</div>
+                                        <div>• Cut/Sizing: Premium Italian Sartorial Slim Silhouette Fit</div>
+                                        <div>• Country of Origin: Handcrafted in Florence, Italy</div>
+                                        <div>• Wash Instruction: Dry clean or cold machine wash only</div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Tab content 2: Reviews */}
+                            {activeTab === 'reviews' && (
+                                <div className="grid grid-cols-1 gap-8 items-start">
+                                    {/* Submit a Review Form */}
+                                    <div className="bg-white border border-stone-200 p-5 rounded-none shadow-sm space-y-4">
+                                        <h3 className="text-[10px] font-black text-neutral-800 uppercase tracking-widest flex items-center space-x-1.5">
+                                            <MessageSquare size={12} className="text-stone-450" />
+                                            <span>WRITE A REVIEW</span>
+                                        </h3>
+
+                                        <form onSubmit={submitReview} className="space-y-4">
+                                            <div>
+                                                <label className="block text-[9px] font-black text-stone-400 uppercase tracking-wider mb-1.5">
+                                                    RATING SCORE
+                                                </label>
+                                                <select
+                                                    value={data.rating}
+                                                    onChange={(e) => setData('rating', Number(e.target.value))}
+                                                    className="w-full bg-stone-50 border border-stone-200 rounded-none py-2 px-3 text-[10px] font-bold"
+                                                >
+                                                    <option value="5">★★★★★ - Excellent (5/5)</option>
+                                                    <option value="4">★★★★☆ - Very Good (4/5)</option>
+                                                    <option value="3">★★★☆☆ - Average (3/5)</option>
+                                                    <option value="2">★★☆☆☆ - Disappointed (2/5)</option>
+                                                    <option value="1">★☆☆☆☆ - Very Bad (1/5)</option>
+                                                </select>
                                             </div>
-                                            <p className="text-[11px] text-stone-550 leading-relaxed font-bold uppercase tracking-wide">
-                                                {rev.comment}
-                                            </p>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="bg-stone-50 border border-stone-200 rounded-none p-12 text-center text-stone-400 text-[10px] font-black uppercase tracking-wider">
-                                        No reviews have been written for this product yet. Be the first to share your thoughts!
-                                    </div>
-                                )}
-                            </div>
 
+                                            <div>
+                                                <label className="block text-[9px] font-black text-stone-400 uppercase tracking-wider mb-1.5">
+                                                    COMMENTS
+                                                </label>
+                                                <textarea
+                                                    placeholder="Write your review here..."
+                                                    value={data.comment}
+                                                    onChange={(e) => setData('comment', e.target.value)}
+                                                    className="w-full bg-stone-50 border border-stone-200 rounded-none p-3 text-[10px] h-28 focus:bg-white focus:outline-none"
+                                                    required
+                                                />
+                                            </div>
+
+                                            <button
+                                                type="submit"
+                                                disabled={processing}
+                                                className="w-full bg-black hover:bg-neutral-850 text-white text-[10px] tracking-widest font-black py-3 rounded-none transition-all uppercase"
+                                            >
+                                                SUBMIT REVIEW
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    {/* Reviews list */}
+                                    <div className="space-y-4">
+                                        {product.reviews && product.reviews.length > 0 ? (
+                                            product.reviews.map((rev) => (
+                                                <div key={rev.id} className="bg-white border border-stone-200 p-5 rounded-none shadow-sm space-y-3">
+                                                    <div className="flex justify-between items-start">
+                                                        <div>
+                                                            <h4 className="text-[10px] font-black text-stone-800 uppercase tracking-wide">{rev.user?.name}</h4>
+                                                            <p className="text-[9px] text-stone-450 font-bold">{new Date(rev.created_at).toLocaleDateString()}</p>
+                                                        </div>
+                                                        <div className="flex text-amber-400 space-x-0.5">
+                                                            {Array.from({ length: 5 }).map((_, i) => (
+                                                                <Star 
+                                                                    key={i} 
+                                                                    size={10} 
+                                                                    fill={i < rev.rating ? 'currentColor' : 'none'} 
+                                                                    className={i < rev.rating ? 'text-amber-400' : 'text-stone-200'}
+                                                                />
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-[11px] text-stone-550 leading-relaxed font-bold uppercase tracking-wide">
+                                                        {rev.comment}
+                                                    </p>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="bg-stone-50 border border-stone-200 rounded-none p-8 text-center text-stone-400 text-[10px] font-black uppercase tracking-wider">
+                                                No reviews have been written for this product yet. Be the first to share your thoughts!
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                    )}
+
+                    </div>
+
                 </div>
 
                 {/* Related Products Section */}
