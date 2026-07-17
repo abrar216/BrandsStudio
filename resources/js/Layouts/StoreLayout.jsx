@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
 import { ShoppingBag, Heart, Search, User, Menu, X, ChevronDown, Check, AlertCircle, Plus, Minus, Trash2, Loader2, ArrowRight } from 'lucide-react';
 import { getCartCount, getCart, removeFromCart, updateQuantity, getCartTotal } from '../Utils/cart';
@@ -13,6 +13,8 @@ export default function StoreLayout({ children }) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [userDropdownOpen, setUserDropdownOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [showHeader, setShowHeader] = useState(true);
+    const lastScrollY = useRef(0);
     const [toast, setToast] = useState(null);
 
     // Diners Style Interactive Panel States
@@ -88,11 +90,26 @@ export default function StoreLayout({ children }) {
 
         // Scroll event listener
         const handleScroll = () => {
-            if (window.scrollY > 20) {
+            const currentScrollY = window.scrollY;
+
+            if (currentScrollY > 20) {
                 setScrolled(true);
             } else {
                 setScrolled(false);
             }
+
+            // Hide header on scroll down, show immediately on scroll up
+            if (currentScrollY < 60) {
+                setShowHeader(true);
+            } else if (currentScrollY > lastScrollY.current) {
+                // Scrolling down
+                setShowHeader(false);
+            } else {
+                // Scrolling up
+                setShowHeader(true);
+            }
+
+            lastScrollY.current = currentScrollY;
         };
         window.addEventListener('scroll', handleScroll);
 
@@ -181,7 +198,9 @@ export default function StoreLayout({ children }) {
         <div className="min-h-screen bg-white text-neutral-900 flex flex-col font-sans overflow-x-hidden">
 
             {/* Sticky Header Wrapper */}
-            <header className={`sticky top-0 z-40 bg-white border-b border-stone-200/60 transition-all duration-300 ${scrolled ? 'shadow-sm' : ''}`}>
+            <header className={`sticky top-0 z-40 bg-white border-b border-stone-200/60 transition-transform duration-300 ease-in-out ${
+                showHeader ? 'translate-y-0' : '-translate-y-full'
+            } ${scrolled ? 'shadow-sm' : ''}`}>
                 
                 {/* Row 1: Logo and Action Icons */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
