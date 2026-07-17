@@ -55,19 +55,14 @@ abstract class Controller
                     imagecopyresampled($dst, $src, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
                     
                     ob_start();
-                    if ($mime === 'image/png') {
-                        imagepng($dst, null, 7);
-                    } elseif ($mime === 'image/gif') {
-                        imagegif($dst);
-                    } else {
-                        imagejpeg($dst, null, 70); // 70% quality for JPEG
-                    }
+                    // Always convert to high-compression JPEG with 60% quality to keep base64 strings tiny (< 30KB)
+                    imagejpeg($dst, null, 60);
                     $data = ob_get_clean();
                     
                     imagedestroy($src);
                     imagedestroy($dst);
                     
-                    return 'data:' . $mime . ';base64,' . base64_encode($data);
+                    return 'data:image/jpeg;base64,' . base64_encode($data);
                 }
             } catch (\Exception $e) {
                 // Fall back to original file content if exception occurs
