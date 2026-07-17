@@ -207,14 +207,14 @@ export default function StoreLayout({ children }) {
                             {/* Wishlist Icon */}
                             <Link 
                                 href={route('wishlist')} 
-                                className="text-stone-700 hover:text-black p-1 transition-colors duration-200"
+                                className="hidden sm:block text-stone-700 hover:text-black p-1 transition-colors duration-200"
                                 aria-label="Wishlist"
                             >
                                 <Heart size={20} className="stroke-[1.5]" />
                             </Link>
 
                             {/* User Account / Profile Icon */}
-                            <div className="relative">
+                            <div className="relative hidden sm:block">
                                 {auth?.user ? (
                                     <>
                                         <button 
@@ -268,7 +268,7 @@ export default function StoreLayout({ children }) {
                                 ) : (
                                     <button 
                                         onClick={() => setLoginModalOpen(true)}
-                                        className="text-stone-700 hover:text-black p-1 transition-colors duration-200 focus:outline-none"
+                                        className="hidden sm:block text-stone-700 hover:text-black p-1 transition-colors duration-200 focus:outline-none"
                                         aria-label="Account Login"
                                     >
                                         <User size={20} className="stroke-[1.5]" />

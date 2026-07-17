@@ -37,7 +37,7 @@ export default function Welcome({
 
             {/* 1. Diners Style Hero Image Slider */}
             {uniqueSliderProducts.length > 0 ? (
-                <div className="relative overflow-hidden bg-neutral-900 w-full aspect-[4/3] md:aspect-[21/9] min-h-[480px] md:min-h-[650px] border-b border-stone-200/60 group">
+                <div className="relative overflow-hidden bg-neutral-900 w-full aspect-[4/5] md:aspect-[21/9] min-h-[420px] md:min-h-[650px] border-b border-stone-200/60 group">
                     {uniqueSliderProducts.map((product, index) => (
                         <div 
                             key={product.id}
@@ -119,14 +119,14 @@ export default function Welcome({
             )}
 
             {/* 3. "WHAT WOULD YOU LIKE TO EXPLORE?" SECTION */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                <div className="text-center mb-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+                <div className="text-center mb-8">
                     <h2 className="text-xl sm:text-2xl font-black text-neutral-900 uppercase tracking-[0.25em]">
                         WHAT WOULD YOU LIKE TO EXPLORE?
                     </h2>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+                <div className="flex overflow-x-auto space-x-6 pb-4 md:grid md:grid-cols-6 md:gap-6 md:space-x-0 scrollbar-none snap-x snap-mandatory">
                     {[
                         { name: 'MEN POLOS', slug: 'menswear', image: 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?q=80&w=300&auto=format&fit=crop' },
                         { name: 'MEN WESTERN', slug: 'menswear', image: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=300&auto=format&fit=crop' },
@@ -138,7 +138,7 @@ export default function Welcome({
                         <Link 
                             key={i}
                             href={`/shop?category=${tile.slug}`}
-                            className="group flex flex-col items-center text-center space-y-3"
+                            className="group flex flex-col items-center text-center space-y-3 flex-shrink-0 snap-center w-28 md:w-auto"
                         >
                             {/* Circular Explore Tile Image */}
                             <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border border-stone-200 bg-stone-50 transition-all duration-300 group-hover:shadow-md">
@@ -158,10 +158,10 @@ export default function Welcome({
             </div>
 
             {/* 4. "BEST SELLER" PRODUCT GRID SECTION */}
-            <div className="bg-stone-50 border-t border-stone-200/50 py-16">
+            <div className="bg-stone-50 border-t border-stone-200/50 py-10 sm:py-16">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
-                    <div className="flex flex-col sm:flex-row justify-between items-center sm:items-end mb-10 space-y-2 sm:space-y-0 text-center sm:text-left">
+                    <div className="flex flex-col sm:flex-row justify-between items-center sm:items-end mb-8 space-y-2 sm:space-y-0 text-center sm:text-left">
                         <div>
                             <h2 className="text-xl sm:text-2xl font-black text-neutral-900 uppercase tracking-[0.2em]">
                                 BEST SELLER
@@ -178,7 +178,7 @@ export default function Welcome({
                         </Link>
                     </div>
 
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                         {(bestSellers.length > 0 ? bestSellers : featuredProducts).slice(0, 4).map((product) => (
                             <ProductCard key={product.id} product={product} />
                         ))}
@@ -339,22 +339,22 @@ export default function Welcome({
             </div>
 
             {/* 8. CUSTOMER TESTIMONIALS SECTION */}
-            <div className="bg-stone-50 border-t border-stone-200/50 py-16">
+            <div className="bg-stone-50 border-t border-stone-200/50 py-10 sm:py-16">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
-                    <div className="text-center mb-10">
+                    <div className="text-center mb-8">
                         <h2 className="text-xl sm:text-2xl font-black text-neutral-900 uppercase tracking-[0.2em]">
                             WE LOVE TRUSTING BRANDS STUDIO
                         </h2>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="flex overflow-x-auto space-x-6 pb-4 md:grid md:grid-cols-3 md:gap-6 md:space-x-0 scrollbar-none snap-x snap-mandatory">
                         {[
                             { name: 'Abrar Ahmed', text: 'Absolutely love the fabric quality of their kurta sets. Refined details, fits perfectly, and delivery was incredibly fast.', rating: 5 },
                             { name: 'Zainab Fatima', text: 'Brands Studio western wear collection is outstanding. The fabric is durable and stitches are premium quality. Highly recommended.', rating: 5 },
                             { name: 'Kamran Malik', text: 'Ordered formal signature shirts and chinos. Best price-to-quality ratio in Pakistan. Shopping experience was very smooth.', rating: 5 }
                         ].map((review, i) => (
-                            <div key={i} className="bg-white border border-stone-200/60 p-6 flex flex-col justify-between space-y-4 rounded-none shadow-sm">
+                            <div key={i} className="bg-white border border-stone-200/60 p-6 flex flex-col justify-between space-y-4 rounded-none shadow-sm flex-shrink-0 snap-center w-[280px] md:w-auto">
                                 <div className="space-y-2">
                                     <div className="flex space-x-0.5 text-amber-400">
                                         {[...Array(review.rating)].map((_, idx) => (
