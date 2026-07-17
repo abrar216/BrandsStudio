@@ -293,142 +293,60 @@ export default function StoreLayout({ children }) {
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-center items-center h-12 font-black tracking-[0.2em] text-[10px] lg:text-[11px] text-stone-700 space-x-6 lg:space-x-8">
                             
-                            {/* SALE - Highlighted in Red */}
+                            {/* CATEGORIES Mega Dropdown */}
                             <div className="relative group py-3">
-                                <Link href={route('shop', { sort: 'discount' })} className="text-red-650 hover:text-red-700 transition-colors uppercase font-black">
-                                    MID SEASON SALE
+                                <Link 
+                                    href="/shop" 
+                                    className="hover:text-black transition-colors uppercase font-black tracking-[0.2em] flex items-center space-x-1"
+                                >
+                                    <span>Categories</span>
+                                    <span className="text-[6px] text-stone-400 group-hover:text-black transition-colors ml-0.5">▼</span>
                                 </Link>
-                                {/* Dropdown panel */}
-                                <div className="absolute left-1/2 -translate-x-1/2 top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 w-[450px] bg-white border border-stone-200 shadow-2xl p-6 z-50 rounded-none">
-                                    <div className="grid grid-cols-2 gap-6">
-                                        <div>
-                                            <h5 className="font-black text-black border-b border-stone-200 pb-2 mb-3 uppercase tracking-wider">Men Sale</h5>
-                                            <ul className="space-y-2 text-stone-500 font-bold tracking-widest text-[9px] uppercase">
-                                                <li><Link href="/shop?category=menswear" className="hover:text-black">Polos & Tees</Link></li>
-                                                <li><Link href="/shop?category=menswear" className="hover:text-black">Casual Shirts</Link></li>
-                                                <li><Link href="/shop?category=menswear" className="hover:text-black">Formal Shirts</Link></li>
-                                                <li><Link href="/shop?category=menswear" className="hover:text-black">Denim & Trousers</Link></li>
-                                            </ul>
-                                        </div>
-                                        <div>
-                                            <h5 className="font-black text-black border-b border-stone-200 pb-2 mb-3 uppercase tracking-wider">Women Sale</h5>
-                                            <ul className="space-y-2 text-stone-500 font-bold tracking-widest text-[9px] uppercase">
-                                                <li><Link href="/shop?category=womenswear" className="hover:text-black">Ethnic Pret</Link></li>
-                                                <li><Link href="/shop?category=womenswear" className="hover:text-black">Western Tops</Link></li>
-                                                <li><Link href="/shop?category=womenswear" className="hover:text-black">Trousers</Link></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <Link href={route('shop')} className="hover:text-black py-3 transition-colors uppercase">Daily New In</Link>
-                            
-                            {/* Men Western */}
-                            <div className="relative group py-3">
-                                <Link href="/shop?category=menswear" className="hover:text-black transition-colors uppercase">Men Western</Link>
-                                <div className="absolute left-1/2 -translate-x-1/2 top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 w-[600px] bg-white border border-stone-200 shadow-2xl p-6 z-50 rounded-none">
+                                
+                                <div className="absolute left-1/2 -translate-x-1/2 top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 w-[650px] bg-white border border-stone-200 shadow-2xl p-6 z-50 rounded-none text-left">
                                     <div className="grid grid-cols-3 gap-6">
-                                        <div>
-                                            <h5 className="font-black text-black border-b border-stone-200 pb-2 mb-3 uppercase tracking-wider">Suiting & Blazers</h5>
-                                            <ul className="space-y-2 text-stone-500 font-bold tracking-widest text-[9px] uppercase">
-                                                <li><Link href="/shop?category=menswear" className="hover:text-black">Formal Suits</Link></li>
-                                                <li><Link href="/shop?category=menswear" className="hover:text-black">Blazers</Link></li>
-                                                <li><Link href="/shop?category=menswear" className="hover:text-black">Waistcoats</Link></li>
-                                            </ul>
-                                        </div>
-                                        <div>
-                                            <h5 className="font-black text-black border-b border-stone-200 pb-2 mb-3 uppercase tracking-wider">Shirts & Polos</h5>
-                                            <ul className="space-y-2 text-stone-500 font-bold tracking-widest text-[9px] uppercase">
-                                                <li><Link href="/shop?category=menswear" className="hover:text-black">Formal Shirts</Link></li>
-                                                <li><Link href="/shop?category=menswear" className="hover:text-black">Casual Shirts</Link></li>
-                                                <li><Link href="/shop?category=menswear" className="hover:text-black">Polo Shirts</Link></li>
-                                                <li><Link href="/shop?category=menswear" className="hover:text-black">T-Shirts</Link></li>
-                                            </ul>
-                                        </div>
-                                        <div>
-                                            <h5 className="font-black text-black border-b border-stone-200 pb-2 mb-3 uppercase tracking-wider">Trousers</h5>
-                                            <ul className="space-y-2 text-stone-500 font-bold tracking-widest text-[9px] uppercase">
-                                                <li><Link href="/shop?category=menswear" className="hover:text-black">Chinos</Link></li>
-                                                <li><Link href="/shop?category=menswear" className="hover:text-black">Denim Jeans</Link></li>
-                                                <li><Link href="/shop?category=menswear" className="hover:text-black">Formal Pants</Link></li>
-                                            </ul>
-                                        </div>
+                                        {categories.filter(c => !c.parent_id).map((parent) => {
+                                            const subs = categories.filter(c => c.parent_id === parent.id);
+                                            return (
+                                                <div key={parent.id} className="space-y-3">
+                                                    <Link 
+                                                        href={`/shop?category=${parent.slug}`}
+                                                        className="font-black text-black border-b border-stone-200 pb-2 block uppercase tracking-widest text-[10.5px] hover:text-red-650 transition-colors"
+                                                    >
+                                                        {parent.name}
+                                                    </Link>
+                                                    {subs.length > 0 ? (
+                                                        <ul className="space-y-2.5 text-stone-500 font-bold tracking-widest text-[9px] uppercase">
+                                                            {subs.map((sub) => (
+                                                                <li key={sub.id}>
+                                                                    <Link 
+                                                                        href={`/shop?category=${sub.slug}`}
+                                                                        className="hover:text-black transition-colors block"
+                                                                    >
+                                                                        {sub.name}
+                                                                    </Link>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    ) : (
+                                                        <p className="text-[8.5px] text-stone-400 font-bold tracking-widest uppercase">New Arrivals</p>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Men Ethnic */}
-                            <div className="relative group py-3">
-                                <Link href="/shop?category=menswear" className="hover:text-black transition-colors uppercase">Men Ethnic</Link>
-                                <div className="absolute left-1/2 -translate-x-1/2 top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 w-[400px] bg-white border border-stone-200 shadow-2xl p-6 z-50 rounded-none">
-                                    <div className="grid grid-cols-2 gap-6">
-                                        <div>
-                                            <h5 className="font-black text-black border-b border-stone-200 pb-2 mb-3 uppercase tracking-wider">Wear</h5>
-                                            <ul className="space-y-2 text-stone-500 font-bold tracking-widest text-[9px] uppercase">
-                                                <li><Link href="/shop?category=menswear" className="hover:text-black">Kurta Shalwar</Link></li>
-                                                <li><Link href="/shop?category=menswear" className="hover:text-black">Kameez Shalwar</Link></li>
-                                                <li><Link href="/shop?category=menswear" className="hover:text-black">Kurtas</Link></li>
-                                            </ul>
-                                        </div>
-                                        <div>
-                                            <h5 className="font-black text-black border-b border-stone-200 pb-2 mb-3 uppercase tracking-wider">Fabric</h5>
-                                            <ul className="space-y-2 text-stone-500 font-bold tracking-widest text-[9px] uppercase">
-                                                <li><Link href="/shop?category=menswear" className="hover:text-black">Unstitched Fabric</Link></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            {/* COLLECTIONS Direct Link */}
+                            <Link href="/shop" className="hover:text-black py-3 transition-colors uppercase font-black tracking-[0.2em]">
+                                Collections
+                            </Link>
 
-                            {/* Women */}
-                            <div className="relative group py-3">
-                                <Link href="/shop?category=womenswear" className="hover:text-black transition-colors uppercase">Women</Link>
-                                <div className="absolute left-1/2 -translate-x-1/2 top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 w-[400px] bg-white border border-stone-200 shadow-2xl p-6 z-50 rounded-none">
-                                    <div className="grid grid-cols-2 gap-6">
-                                        <div>
-                                            <h5 className="font-black text-black border-b border-stone-200 pb-2 mb-3 uppercase tracking-wider">Eastern Wear</h5>
-                                            <ul className="space-y-2 text-stone-500 font-bold tracking-widest text-[9px] uppercase">
-                                                <li><Link href="/shop?category=womenswear" className="hover:text-black">Kurta Pret</Link></li>
-                                                <li><Link href="/shop?category=womenswear" className="hover:text-black">Unstitched 3pc</Link></li>
-                                            </ul>
-                                        </div>
-                                        <div>
-                                            <h5 className="font-black text-black border-b border-stone-200 pb-2 mb-3 uppercase tracking-wider">Western Wear</h5>
-                                            <ul className="space-y-2 text-stone-500 font-bold tracking-widest text-[9px] uppercase">
-                                                <li><Link href="/shop?category=womenswear" className="hover:text-black">Tops & Shirts</Link></li>
-                                                <li><Link href="/shop?category=womenswear" className="hover:text-black">Jeans & Pants</Link></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Kids */}
-                            <div className="relative group py-3">
-                                <Link href="/shop?category=kids" className="hover:text-black transition-colors uppercase">Kids</Link>
-                                <div className="absolute left-1/2 -translate-x-1/2 top-full opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 w-[400px] bg-white border border-stone-200 shadow-2xl p-6 z-50 rounded-none">
-                                    <div className="grid grid-cols-2 gap-6">
-                                        <div>
-                                            <h5 className="font-black text-black border-b border-stone-200 pb-2 mb-3 uppercase tracking-wider">Boys</h5>
-                                            <ul className="space-y-2 text-stone-500 font-bold tracking-widest text-[9px] uppercase">
-                                                <li><Link href="/shop?category=kids" className="hover:text-black">Boys Eastern</Link></li>
-                                                <li><Link href="/shop?category=kids" className="hover:text-black">Boys Western</Link></li>
-                                            </ul>
-                                        </div>
-                                        <div>
-                                            <h5 className="font-black text-black border-b border-stone-200 pb-2 mb-3 uppercase tracking-wider">Girls</h5>
-                                            <ul className="space-y-2 text-stone-500 font-bold tracking-widest text-[9px] uppercase">
-                                                <li><Link href="/shop?category=kids" className="hover:text-black">Girls Eastern</Link></li>
-                                                <li><Link href="/shop?category=kids" className="hover:text-black">Girls Western</Link></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <Link href="/shop?category=winter-wear" className="hover:text-black py-3 transition-colors uppercase">Winter Wear</Link>
-                            <Link href={route('collections')} className="hover:text-black py-3 transition-colors uppercase">Lookbook</Link>
+                            {/* ABOUT US Direct Link */}
+                            <Link href="/faqs" className="hover:text-black py-3 transition-colors uppercase font-black tracking-[0.2em]">
+                                About Us
+                            </Link>
                         </div>
                     </div>
                 </div>
