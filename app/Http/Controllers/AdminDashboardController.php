@@ -269,12 +269,13 @@ class AdminDashboardController extends Controller
             'is_best_seller' => 'boolean',
             'is_new_arrival' => 'boolean',
             'status' => 'required|string|in:active,inactive',
+            'variants' => 'nullable|array',
             'image' => 'nullable|image|max:5120',
             'images' => 'nullable|array',
             'images.*' => 'image|max:5120',
         ]);
 
-        $data = $request->except(['image', 'images']);
+        $data = $request->except(['image', 'images', 'variants']);
         if ($request->hasFile('image')) {
             if ($product->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($product->image)) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);
@@ -283,7 +284,31 @@ class AdminDashboardController extends Controller
             $data['main_image'] = $data['image'];
         }
 
-        $product->update($data);
+        DB::transaction(function() use ($product, $data, $request) {
+            $product->update($data);
+
+            if ($request->has('variants')) {
+                // Delete existing variants
+                $product->variants()->delete();
+
+                // Recreate variants
+                $totalStock = 0;
+                foreach ($request->variants as $variant) {
+                    ProductVariant::create([
+                        'product_id' => $product->id,
+                        'size' => $variant['size'],
+                        'color' => $variant['color'],
+                        'sku' => $product->sku . '-' . strtoupper(substr($variant['color'], 0, 2)) . '-' . $variant['size'],
+                        'price' => $variant['price'] ?? null,
+                        'cost_price' => $variant['cost_price'] ?? null,
+                        'stock_quantity' => $variant['stock_quantity'],
+                    ]);
+                    $totalStock += $variant['stock_quantity'];
+                }
+                // Update total stock quantity to match sum of variants
+                $product->update(['stock_quantity' => $totalStock]);
+            }
+        });
 
         // Save multiple images
         if ($request->hasFile('images')) {

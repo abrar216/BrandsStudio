@@ -152,7 +152,8 @@ export default function Products({ products, categories }) {
         is_new_arrival: false,
         status: 'active',
         image: null,
-        images: []
+        images: [],
+        variants: []
     });
 
     // Form handlers
@@ -232,7 +233,8 @@ export default function Products({ products, categories }) {
             is_new_arrival: Boolean(product.is_new_arrival),
             status: product.status,
             image: null,
-            images: []
+            images: [],
+            variants: product.variants || []
         });
         setEditModalOpen(true);
     };
@@ -254,6 +256,25 @@ export default function Products({ products, categories }) {
         const currentVariants = [...addData.variants];
         currentVariants.splice(index, 1);
         setAddData('variants', currentVariants);
+    };
+
+    // Helper to dynamically manage variant fields in EDIT FORM
+    const editVariantRow = () => {
+        const currentVariants = [...(editData.variants || [])];
+        currentVariants.push({ size: 'M', color: 'Black', stock_quantity: 10, price: '', cost_price: '' });
+        setEditData('variants', currentVariants);
+    };
+
+    const updateEditVariantRow = (index, key, value) => {
+        const currentVariants = [...(editData.variants || [])];
+        currentVariants[index][key] = value;
+        setEditData('variants', currentVariants);
+    };
+
+    const removeEditVariantRow = (index) => {
+        const currentVariants = [...(editData.variants || [])];
+        currentVariants.splice(index, 1);
+        setEditData('variants', currentVariants);
     };
 
     // Toggle expand row
@@ -1215,6 +1236,138 @@ export default function Products({ products, categories }) {
                                     />
                                     <span className="text-slate-700">New Arrival</span>
                                 </label>
+                            </div>
+
+                            {/* Base stock if no variants, OR multi-variants interface */}
+                            <div className="space-y-4 pt-4 border-t border-slate-100">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h4 className="text-xs font-extrabold uppercase text-slate-800 tracking-wider flex items-center">
+                                            <Tag size={12} className="text-blue-600 mr-1.5" />
+                                            <span>Sizes & Colors Variations</span>
+                                        </h4>
+                                        <p className="text-[10px] text-slate-500 font-semibold mt-0.5">Define variants to activate granular inventory management</p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={editVariantRow}
+                                        className="flex items-center space-x-1.5 bg-slate-50 border border-slate-200 hover:border-blue-500/40 text-slate-600 hover:text-blue-600 px-3.5 py-1.5 rounded-lg text-[10px] font-black transition-colors"
+                                    >
+                                        <Plus size={12} />
+                                        <span>Add Variant Row</span>
+                                    </button>
+                                </div>
+
+                                {!editData.variants || editData.variants.length === 0 ? (
+                                    <div className="p-4 rounded-xl border border-dashed border-slate-200 bg-slate-50/50">
+                                        <div className="flex items-start space-x-3">
+                                            <Info size={14} className="text-blue-600 mt-0.5" />
+                                            <div className="text-xs">
+                                                <p className="font-bold text-slate-800 font-sans">Defaulting to Single Master Stock</p>
+                                                <p className="text-slate-500 font-semibold mt-0.5 mb-2.5">If you do not define variants, the master inventory stock value below will represent the entire size-less product.</p>
+                                                
+                                                <div className="max-w-[200px]">
+                                                    <label className="block text-[9px] uppercase font-bold text-slate-550 text-slate-500 mb-1">Master Net Stock *</label>
+                                                    <input
+                                                        type="number"
+                                                        required
+                                                        min="0"
+                                                        value={editData.stock_quantity}
+                                                        onChange={(e) => setEditData('stock_quantity', Number(e.target.value))}
+                                                        className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500/20"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
+                                        <table className="w-full text-left">
+                                            <thead>
+                                                <tr className="text-[9px] uppercase text-slate-500 tracking-wider font-bold">
+                                                    <th className="pb-2 w-1/5">Color *</th>
+                                                    <th className="pb-2 w-1/5">Size *</th>
+                                                    <th className="pb-2 w-1/5 text-center">Variant Stock *</th>
+                                                    <th className="pb-2 w-1/5 text-center">Cost Price (Rs.)</th>
+                                                    <th className="pb-2 w-1/5 text-center">Custom Price (Rs.)</th>
+                                                    <th className="pb-2 w-12 text-center">Remove</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="space-y-2">
+                                                {editData.variants.map((v, index) => (
+                                                    <tr key={index} className="align-middle">
+                                                        <td className="pr-2 pb-2">
+                                                            <input
+                                                                type="text"
+                                                                required
+                                                                placeholder="e.g. Navy, Khaki"
+                                                                value={v.color}
+                                                                onChange={(e) => updateEditVariantRow(index, 'color', e.target.value)}
+                                                                className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none"
+                                                            />
+                                                        </td>
+                                                        <td className="pr-2 pb-2">
+                                                            <select
+                                                                value={v.size}
+                                                                onChange={(e) => updateEditVariantRow(index, 'size', e.target.value)}
+                                                                className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-3 py-1.5 text-xs text-slate-850 focus:outline-none"
+                                                            >
+                                                                <option value="S">S (Small)</option>
+                                                                <option value="M">M (Medium)</option>
+                                                                <option value="L">L (Large)</option>
+                                                                <option value="XL">XL (Extra Large)</option>
+                                                                <option value="XXL">XXL (Double Extra)</option>
+                                                                <option value="Free">Free Size</option>
+                                                            </select>
+                                                        </td>
+                                                        <td className="pr-2 pb-2">
+                                                            <input
+                                                                type="number"
+                                                                required
+                                                                min="0"
+                                                                placeholder="Qty"
+                                                                value={v.stock_quantity}
+                                                                onChange={(e) => updateEditVariantRow(index, 'stock_quantity', Number(e.target.value))}
+                                                                className="w-full bg-white border border-slate-200 text-center focus:border-blue-500 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none"
+                                                            />
+                                                        </td>
+                                                        <td className="pr-2 pb-2">
+                                                            <input
+                                                                type="number"
+                                                                step="0.01"
+                                                                min="0"
+                                                                placeholder="Optional"
+                                                                value={v.cost_price || ''}
+                                                                onChange={(e) => updateEditVariantRow(index, 'cost_price', e.target.value)}
+                                                                className="w-full bg-white border border-slate-200 text-center focus:border-blue-500 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none"
+                                                            />
+                                                        </td>
+                                                        <td className="pr-2 pb-2">
+                                                            <input
+                                                                type="number"
+                                                                step="0.01"
+                                                                min="0"
+                                                                placeholder="MSRP fallback"
+                                                                value={v.price || ''}
+                                                                onChange={(e) => updateEditVariantRow(index, 'price', e.target.value)}
+                                                                className="w-full bg-white border border-slate-200 text-center focus:border-blue-500 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none"
+                                                            />
+                                                        </td>
+                                                        <td className="pb-2 text-center">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removeEditVariantRow(index)}
+                                                                className="text-slate-400 hover:text-red-500 p-1.5 bg-slate-50 hover:bg-red-50 border border-slate-200 rounded-lg transition-colors"
+                                                            >
+                                                                <X size={12} />
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Submit Buttons */}
