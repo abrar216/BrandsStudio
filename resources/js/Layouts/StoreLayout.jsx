@@ -197,8 +197,8 @@ export default function StoreLayout({ children }) {
     return (
         <div className="min-h-screen bg-white text-neutral-900 flex flex-col font-sans overflow-x-hidden">
 
-            {/* Sticky Header Wrapper */}
-            <header className={`sticky top-0 z-40 bg-white border-b border-stone-200/60 transition-transform duration-300 ease-in-out ${
+            {/* Fixed Header Wrapper */}
+            <header className={`fixed top-0 left-0 right-0 z-40 bg-white border-b border-stone-200/60 transition-transform duration-300 ease-in-out ${
                 showHeader ? 'translate-y-0' : '-translate-y-full'
             } ${scrolled ? 'shadow-sm' : ''}`}>
                 
@@ -379,6 +379,9 @@ export default function StoreLayout({ children }) {
                 </div>
 
             </header>
+
+            {/* Header Layout Spacer */}
+            <div className="h-16 md:h-28 flex-shrink-0"></div>
 
             {/* Main Content Area */}
             <main className="flex-grow">
