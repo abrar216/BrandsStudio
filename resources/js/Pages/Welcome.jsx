@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Head, Link, usePage } from '@inertiajs/react';
 import StoreLayout from '../Layouts/StoreLayout';
 import ProductCard from '../Components/ProductCard';
@@ -30,6 +30,52 @@ export default function Welcome({
         }, 5000); // 5 seconds interval for better slide viewing
         return () => clearInterval(interval);
     }, [uniqueSliderProducts.length]);
+
+    // Collections Carousel Logic
+    const subCategories = (categories || []).filter(c => c.parent_id);
+    const collectionsRef = useRef(null);
+
+    useEffect(() => {
+        if (subCategories.length <= 1) return;
+        const interval = setInterval(() => {
+            if (collectionsRef.current) {
+                const maxScroll = collectionsRef.current.scrollWidth - collectionsRef.current.clientWidth;
+                if (collectionsRef.current.scrollLeft >= maxScroll - 10) {
+                    collectionsRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+                } else {
+                    collectionsRef.current.scrollBy({ left: 280, behavior: 'smooth' });
+                }
+            }
+        }, 5000);
+        return () => clearInterval(interval);
+    }, [subCategories.length]);
+
+    const handleCollectionsScroll = (direction) => {
+        if (collectionsRef.current) {
+            const scrollAmount = direction === 'left' ? -280 : 280;
+            collectionsRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+    };
+
+    const getSubcategoryPlaceholder = (name) => {
+        const title = String(name || '').toLowerCase();
+        if (title.includes('polo')) {
+            return 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?q=80&w=500&auto=format&fit=crop';
+        }
+        if (title.includes('shirt')) {
+            return 'https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?q=80&w=500&auto=format&fit=crop';
+        }
+        if (title.includes('suit') || title.includes('coat') || title.includes('blazer')) {
+            return 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=500&auto=format&fit=crop';
+        }
+        if (title.includes('kurta') || title.includes('ethnic') || title.includes('eastern')) {
+            return 'https://images.unsplash.com/photo-1607990283143-e81e7a2c93ab?q=80&w=500&auto=format&fit=crop';
+        }
+        if (title.includes('denim') || title.includes('trouser') || title.includes('chino')) {
+            return 'https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=500&auto=format&fit=crop';
+        }
+        return 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=500&auto=format&fit=crop';
+    };
 
     return (
         <StoreLayout>
@@ -175,7 +221,7 @@ export default function Welcome({
             </div>
 
             {/* 5. "OUR NEW COLLECTIONS" CAROUSEL */}
-            <div className="py-16 border-t border-stone-200/50">
+            <div className="py-16 border-t border-stone-200/50 relative group/carousel">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
                     <div className="text-center mb-10 space-y-2">
@@ -192,33 +238,63 @@ export default function Welcome({
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {[
-                            { name: 'SHALWAR KAMEEZ COLLECTION', url: '/shop?category=menswear', image: 'https://images.unsplash.com/photo-1607990283143-e81e7a2c93ab?q=80&w=500&auto=format&fit=crop' },
-                            { name: 'POLO SHIRT SERIES', url: '/shop?category=menswear', image: 'https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?q=80&w=500&auto=format&fit=crop' },
-                            { name: 'FORMAL SUITING SETS', url: '/shop?category=menswear', image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=500&auto=format&fit=crop' }
-                        ].map((promo, idx) => (
-                            <Link 
-                                key={idx}
-                                href={promo.url}
-                                className="group relative overflow-hidden aspect-[4/5] bg-stone-100 flex flex-col justify-end p-6 border border-stone-200/50 rounded-none"
-                            >
-                                <img 
-                                    src={promo.image} 
-                                    alt={promo.name} 
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
-                                <div className="relative z-20 space-y-2">
-                                    <h3 className="text-xs sm:text-sm font-black uppercase tracking-widest text-white">
-                                        {promo.name}
-                                    </h3>
-                                    <span className="inline-flex items-center space-x-1.5 text-[8px] font-black uppercase tracking-widest text-white border-b border-white pb-0.5">
-                                        <span>EXPLORE NOW</span>
-                                    </span>
-                                </div>
-                            </Link>
-                        ))}
+                    <div className="relative">
+                        {/* Scroll Container */}
+                        <div 
+                            ref={collectionsRef}
+                            className="flex overflow-x-auto space-x-4 sm:space-x-6 pb-4 scrollbar-none snap-x snap-mandatory scroll-smooth"
+                        >
+                            {subCategories.map((sub, idx) => {
+                                const imgPath = getCategoryImageUrl(sub);
+                                const imgUrl = imgPath 
+                                    ? getAssetUrl(`storage/${imgPath}`) 
+                                    : getSubcategoryPlaceholder(sub.name);
+                                
+                                return (
+                                    <Link 
+                                        key={sub.id || idx}
+                                        href={`/shop?category=${sub.slug}`}
+                                        className="group relative overflow-hidden aspect-[4/5] bg-stone-150 flex flex-col justify-end p-5 sm:p-6 border border-stone-200/50 rounded-none flex-shrink-0 snap-center w-[72vw] sm:w-[42vw] md:w-[28vw] lg:w-[22vw]"
+                                    >
+                                        <img 
+                                            src={imgUrl} 
+                                            alt={sub.name} 
+                                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                            loading="lazy"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+                                        <div className="relative z-20 text-center pb-2">
+                                            <h3 className="text-xs sm:text-sm font-black uppercase tracking-[0.25em] text-white">
+                                                {sub.name}
+                                            </h3>
+                                            <span className="inline-block text-[8px] font-black uppercase tracking-[0.3em] text-stone-300 mt-1">
+                                                COLLECTION
+                                            </span>
+                                        </div>
+                                    </Link>
+                                );
+                            })}
+                        </div>
+
+                        {/* Navigation Arrows */}
+                        {subCategories.length > 3 && (
+                            <>
+                                <button
+                                    onClick={() => handleCollectionsScroll('left')}
+                                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 sm:-translate-x-4 z-30 w-10 h-10 bg-white/90 text-black border border-stone-200 shadow-md flex items-center justify-center rounded-none hover:bg-black hover:text-white transition-all opacity-0 group-hover/carousel:opacity-100 focus:outline-none"
+                                    aria-label="Scroll Left"
+                                >
+                                    <ChevronLeft size={18} />
+                                </button>
+                                <button
+                                    onClick={() => handleCollectionsScroll('right')}
+                                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 sm:translate-x-4 z-30 w-10 h-10 bg-white/90 text-black border border-stone-200 shadow-md flex items-center justify-center rounded-none hover:bg-black hover:text-white transition-all opacity-0 group-hover/carousel:opacity-100 focus:outline-none"
+                                    aria-label="Scroll Right"
+                                >
+                                    <ChevronRight size={18} />
+                                </button>
+                            </>
+                        )}
                     </div>
 
                 </div>
