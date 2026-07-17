@@ -1061,7 +1061,7 @@ export default function StoreLayout({ children }) {
                     <div className={`flex items-center space-x-3 px-6 py-3.5 rounded-none shadow-2xl border ${
                         toast.type === 'success' 
                             ? 'bg-neutral-900 text-white border-neutral-850' 
-                            : 'bg-red-650 text-white border-red-600'
+                            : 'bg-red-600 text-white border-red-600'
                     }`}>
                         {toast.type === 'success' ? <Check size={14} className="text-emerald-400" /> : <AlertCircle size={14} className="text-red-200" />}
                         <span className="text-[10px] font-black tracking-widest uppercase text-white">{toast.message}</span>

@@ -135,11 +135,11 @@ export default function Shop({
         if (name.includes('black')) return 'bg-black';
         if (name.includes('white')) return 'bg-white border border-slate-300';
         if (name.includes('grey')) return 'bg-slate-450';
-        if (name.includes('red')) return 'bg-red-650';
-        if (name.includes('blue')) return 'bg-blue-650';
-        if (name.includes('yellow')) return 'bg-yellow-450';
-        if (name.includes('brown')) return 'bg-amber-850';
-        if (name.includes('pink')) return 'bg-pink-450';
+        if (name.includes('red')) return 'bg-red-600';
+        if (name.includes('blue')) return 'bg-blue-600';
+        if (name.includes('yellow')) return 'bg-yellow-400';
+        if (name.includes('brown')) return 'bg-amber-800';
+        if (name.includes('pink')) return 'bg-pink-400';
         return 'bg-slate-250';
     };
 

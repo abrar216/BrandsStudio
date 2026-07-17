@@ -9,7 +9,7 @@ export default function ProductCard({ product, currency, inWishlist = false }) {
     
     const { props } = usePage();
     const currencySymbol = currency || props.settings?.currency || 'Rs.';
-    const isDiscounted = !!product.discount_price;
+    const isDiscounted = product.discount_price && Number(product.discount_price) > 0 && Number(product.discount_price) < Number(product.price);
     
     const [wishlisted, setWishlisted] = useState(inWishlist);
     const [isHovered, setIsHovered] = useState(false);
@@ -127,7 +127,7 @@ export default function ProductCard({ product, currency, inWishlist = false }) {
 
                 {/* Diners Style Left Red Tag */}
                 {isDiscounted && (
-                    <span className="absolute top-0 left-0 bg-red-650 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 z-10 rounded-none">
+                    <span className="absolute top-0 left-0 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 z-10 rounded-none">
                         -{Math.round(((product.price - product.discount_price) / product.price) * 100)}%
                     </span>
                 )}
