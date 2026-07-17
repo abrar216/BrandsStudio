@@ -29,7 +29,7 @@ function ZoomableImage({ src, alt }) {
 
     return (
         <div 
-            className="bg-stone-50 border border-stone-200/40 rounded-none overflow-hidden aspect-[3/4] relative w-full cursor-zoom-in"
+            className="bg-stone-50 border border-stone-200/40 rounded-none overflow-hidden aspect-[4/5] md:max-h-[580px] relative w-full cursor-zoom-in"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
         >
@@ -228,7 +228,7 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                                     );
                                 })
                             ) : (
-                                <div className="bg-stone-100 border border-stone-200/45 rounded-none overflow-hidden aspect-[3/4] flex flex-col justify-center items-center relative w-full">
+                                <div className="bg-stone-100 border border-stone-200/45 rounded-none overflow-hidden aspect-[4/5] md:max-h-[580px] flex flex-col justify-center items-center relative w-full">
                                     <span className="text-[140px] opacity-10 select-none font-black tracking-widest text-stone-800">BS</span>
                                     <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-stone-400">
                                         <span className="text-[10px] uppercase font-bold tracking-widest text-stone-500 bg-white border border-stone-200 px-5 py-2">
@@ -243,7 +243,7 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                         <div className="block md:hidden relative overflow-hidden rounded-none bg-stone-50 border border-stone-200/40">
                             {allImages.length > 0 ? (
                                 <div 
-                                    className="relative aspect-[3/4] w-full"
+                                    className="relative aspect-[4/5] max-h-[480px] w-full"
                                     onTouchStart={(e) => {
                                         setTouchEnd(null);
                                         setTouchStart(e.targetTouches[0].clientX);
@@ -287,7 +287,7 @@ export default function ProductDetail({ product, relatedProducts = [], inWishlis
                                     )}
                                 </div>
                             ) : (
-                                <div className="bg-stone-100 border border-stone-200/40 rounded-none overflow-hidden aspect-[3/4] flex flex-col justify-center items-center relative">
+                                <div className="bg-stone-100 border border-stone-200/40 rounded-none overflow-hidden aspect-[4/5] max-h-[480px] flex flex-col justify-center items-center relative">
                                     <span className="text-[100px] opacity-10 select-none font-black tracking-widest text-stone-800">BS</span>
                                 </div>
                             )}
