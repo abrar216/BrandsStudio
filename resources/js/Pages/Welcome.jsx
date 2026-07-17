@@ -107,34 +107,34 @@ export default function Welcome({
                     </h2>
                 </div>
 
-                <div className="flex overflow-x-auto space-x-6 pb-4 md:grid md:grid-cols-6 md:gap-6 md:space-x-0 scrollbar-none snap-x snap-mandatory">
-                    {[
-                        { name: 'MEN POLOS', slug: 'menswear', image: 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?q=80&w=300&auto=format&fit=crop' },
-                        { name: 'MEN WESTERN', slug: 'menswear', image: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=300&auto=format&fit=crop' },
-                        { name: 'MEN EASTERN', slug: 'menswear', image: 'https://images.unsplash.com/photo-1607990283143-e81e7a2c93ab?q=80&w=300&auto=format&fit=crop' },
-                        { name: 'WOMEN EASTERN', slug: 'womenswear', image: 'https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=300&auto=format&fit=crop' },
-                        { name: 'WOMEN WESTERN', slug: 'womenswear', image: 'https://images.unsplash.com/photo-1595959183075-c1d09e773636?q=80&w=300&auto=format&fit=crop' },
-                        { name: 'KIDS WEAR', slug: 'kids', image: 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?q=80&w=300&auto=format&fit=crop' }
-                    ].map((tile, i) => (
-                        <Link 
-                            key={i}
-                            href={`/shop?category=${tile.slug}`}
-                            className="group flex flex-col items-center text-center space-y-3 flex-shrink-0 snap-center w-28 md:w-auto"
-                        >
-                            {/* Circular Explore Tile Image */}
-                            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border border-stone-200 bg-stone-50 transition-all duration-300 group-hover:shadow-md">
-                                <img 
-                                    src={tile.image} 
-                                    alt={tile.name}
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                    loading="lazy"
-                                />
-                            </div>
-                            <span className="text-[10px] font-black tracking-widest text-stone-850 group-hover:text-black uppercase">
-                                {tile.name}
-                            </span>
-                        </Link>
-                    ))}
+                <div className="flex overflow-x-auto space-x-6 pb-4 md:flex md:flex-wrap md:justify-center md:space-x-8 lg:space-x-12 scrollbar-none snap-x snap-mandatory">
+                    {categories.map((category) => {
+                        const imgPath = getCategoryImageUrl(category);
+                        const imgUrl = imgPath 
+                            ? getAssetUrl(`storage/${imgPath}`) 
+                            : 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=300&auto=format&fit=crop';
+                        
+                        return (
+                            <Link 
+                                key={category.id}
+                                href={`/shop?category=${category.slug}`}
+                                className="group flex flex-col items-center text-center space-y-3 flex-shrink-0 snap-center w-28 md:w-auto"
+                            >
+                                {/* Circular Explore Tile Image */}
+                                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border border-stone-200 bg-stone-50 transition-all duration-300 group-hover:shadow-md">
+                                    <img 
+                                        src={imgUrl} 
+                                        alt={category.name}
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                        loading="lazy"
+                                    />
+                                </div>
+                                <span className="text-[10px] font-black tracking-widest text-stone-850 group-hover:text-black uppercase">
+                                    {category.name}
+                                </span>
+                            </Link>
+                        );
+                    })}
                 </div>
             </div>
 
