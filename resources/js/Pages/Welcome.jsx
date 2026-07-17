@@ -76,6 +76,23 @@ export default function Welcome({
         }
         return 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=500&auto=format&fit=crop';
     };
+    
+    // Kids Specials Dynamic Filter
+    const kidsCategory = categories.find(c => String(c.slug).toLowerCase() === 'kids');
+    const kidsCategoryIds = kidsCategory 
+        ? [kidsCategory.id, ...categories.filter(c => c.parent_id === kidsCategory.id).map(c => c.id)]
+        : [];
+    const kidsProducts = [
+        ...(featuredProducts || []),
+        ...(bestSellers || []),
+        ...(newArrivals || []),
+        ...(trendingProducts || [])
+    ].filter(product => {
+        return kidsCategoryIds.includes(product.category_id) || 
+               (product.category && kidsCategoryIds.includes(product.category.id)) ||
+               (product.category?.parent_id && kidsCategoryIds.includes(product.category.parent_id));
+    });
+    const uniqueKidsProducts = Array.from(new Map(kidsProducts.map(p => [p.id, p])).values()).slice(0, 4);
 
     return (
         <StoreLayout>
@@ -301,42 +318,36 @@ export default function Welcome({
             </div>
 
             {/* 6. KIDS CATEGORY BANNER GRID */}
-            <div className="bg-stone-50 border-t border-stone-200/50 py-16">
+            <div className="bg-stone-50 border-t border-stone-200/50 py-10 sm:py-16">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
-                    <div className="text-center mb-10">
+                    <div className="text-center mb-10 space-y-2">
                         <h2 className="text-xl sm:text-2xl font-black text-neutral-900 uppercase tracking-[0.2em]">
                             KIDS SPECIALS
                         </h2>
+                        <div>
+                            <Link 
+                                href="/shop?category=kids" 
+                                className="inline-block text-[10px] font-bold tracking-widest text-stone-400 border-b border-stone-300 pb-0.5 hover:text-black hover:border-black uppercase transition-all"
+                            >
+                                Shop Kids Collection
+                            </Link>
+                        </div>
                     </div>
 
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                        {[
-                            { title: 'BOYS EASTERN', image: 'https://images.unsplash.com/photo-1519457431-44ccd64a579b?q=80&w=300&auto=format&fit=crop' },
-                            { title: 'BOYS WESTERN', image: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?q=80&w=300&auto=format&fit=crop' },
-                            { title: 'GIRLS EASTERN', image: 'https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=300&auto=format&fit=crop' },
-                            { title: 'GIRLS WESTERN', image: 'https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?q=80&w=300&auto=format&fit=crop' }
-                        ].map((kids, i) => (
-                            <div key={i} className="group relative aspect-[3/4] bg-stone-100 border border-stone-200 overflow-hidden">
-                                <img 
-                                    src={kids.image} 
-                                    alt={kids.title} 
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
-                                <div className="absolute inset-0 bg-black/35 z-10 flex flex-col justify-end p-4 text-center">
-                                    <h4 className="text-[10px] font-black tracking-widest text-white mb-3 uppercase">
-                                        {kids.title}
-                                    </h4>
-                                    <Link 
-                                        href="/shop?category=kids"
-                                        className="w-full bg-white hover:bg-neutral-900 hover:text-white text-black text-[8px] font-black tracking-widest py-2 rounded-none uppercase transition-all"
-                                    >
-                                        SHOP NOW
-                                    </Link>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    {uniqueKidsProducts.length > 0 ? (
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-8">
+                            {uniqueKidsProducts.map((product) => (
+                                <ProductCard key={product.id} product={product} />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-12 bg-white border border-stone-200/40 mb-8">
+                            <p className="text-[11px] text-stone-400 font-bold uppercase tracking-widest">
+                                No kids products currently in stock. Check back soon!
+                            </p>
+                        </div>
+                    )}
 
                     <div className="text-center">
                         <Link 
