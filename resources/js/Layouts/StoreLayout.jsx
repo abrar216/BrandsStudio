@@ -49,7 +49,11 @@ export default function StoreLayout({ children }) {
         const handleCartUpdate = (e) => {
             refreshCartData();
             // Automatically open cart drawer on item addition (premium Shopify feel)
-            setCartDrawerOpen(true);
+            // DO NOT open if the user is already on the main cart page or checkout page
+            const isOnCartPage = window.location.pathname === '/cart' || window.location.pathname === '/checkout';
+            if (!isOnCartPage) {
+                setCartDrawerOpen(true);
+            }
 
             if (e.detail && e.detail.product) {
                 setToast({
