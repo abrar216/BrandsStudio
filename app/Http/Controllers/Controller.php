@@ -16,8 +16,8 @@ abstract class Controller
             try {
                 list($width, $height) = getimagesize($path);
                 
-                // Maximum dimension limit (400px) for thumbnails and lists
-                $maxDim = 400;
+                // Maximum dimension limit (1400px) for sharp HD presentation
+                $maxDim = 1400;
                 if ($width > $maxDim || $height > $maxDim) {
                     if ($width > $height) {
                         $newWidth = $maxDim;
@@ -55,8 +55,8 @@ abstract class Controller
                     imagecopyresampled($dst, $src, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
                     
                     ob_start();
-                    // Always convert to high-compression JPEG with 60% quality to keep base64 strings tiny (< 30KB)
-                    imagejpeg($dst, null, 60);
+                    // Convert to high-quality JPEG with 85% quality
+                    imagejpeg($dst, null, 85);
                     $data = ob_get_clean();
                     
                     imagedestroy($src);

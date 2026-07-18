@@ -742,7 +742,7 @@ class AdminDashboardController extends Controller
         ]);
     }
 
-    private function compressBase64Image($base64Str, $maxDim = 400, $quality = 60)
+    private function compressBase64Image($base64Str, $maxDim = 1400, $quality = 85)
     {
         try {
             $parts = explode(',', $base64Str);
