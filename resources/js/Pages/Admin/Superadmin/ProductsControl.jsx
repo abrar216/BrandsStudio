@@ -213,6 +213,16 @@ export default function ProductsControl({ products = [], categories = [] }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if (!editProduct && !data.main_image_file) {
+            alert("Product Image Cover is required to create a product.");
+            return;
+        }
+
+        if (!data.category_id) {
+            alert("Subcategory classification is required.");
+            return;
+        }
         
         if (editProduct) {
             // Using POST with multipart files to model update route
@@ -480,10 +490,15 @@ export default function ProductsControl({ products = [], categories = [] }) {
                                             onChange={e => setData('category_id', e.target.value)}
                                             className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-blue-500"
                                         >
-                                            <option value="">Select Category</option>
-                                            {categories.map(cat => (
-                                                <option key={cat.id} value={cat.id}>{cat.name}</option>
-                                            ))}
+                                            <option value="">Select Subcategory</option>
+                                            {categories.filter(cat => cat.parent_id).map(cat => {
+                                                const parent = categories.find(p => p.id === cat.parent_id);
+                                                return (
+                                                    <option key={cat.id} value={cat.id}>
+                                                        {parent ? `${parent.name} → ` : ''}{cat.name}
+                                                    </option>
+                                                );
+                                            })}
                                         </select>
                                     </div>
 

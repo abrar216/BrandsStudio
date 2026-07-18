@@ -82,7 +82,7 @@ export default function Products({ products, categories }) {
     const defaultParentId = parentCategories[0]?.id || '';
     const defaultSubId = categories.find(c => c.parent_id === defaultParentId)?.id || defaultParentId;
 
-    const [selectedAddMainCatId, setSelectedAddMainCatId] = useState(defaultParentId);
+    const [selectedAddMainCatId, setSelectedAddMainCatId] = useState('');
     const [selectedEditMainCatId, setSelectedEditMainCatId] = useState('');
 
     const [searchQuery, setSearchQuery] = useState('');
@@ -113,7 +113,7 @@ export default function Products({ products, categories }) {
         discount_price: '',
         cost_price: '',
         gst_rate: '0.00',
-        category_id: defaultSubId,
+        category_id: '',
         description: '',
         short_description: '',
         stock_quantity: 0,
@@ -159,6 +159,20 @@ export default function Products({ products, categories }) {
     // Form handlers
     const handleAddProductSubmit = (e) => {
         e.preventDefault();
+
+        if (!selectedAddMainCatId) {
+            alert("Please select a Main Category.");
+            return;
+        }
+        if (!addData.category_id) {
+            alert("Please select a Subcategory.");
+            return;
+        }
+        if (!addData.image) {
+            alert("Product Image Cover is required.");
+            return;
+        }
+
         postAddProduct(route('admin.products.store'), {
             onSuccess: () => {
                 setAddModalOpen(false);
@@ -169,6 +183,16 @@ export default function Products({ products, categories }) {
 
     const handleEditProductSubmit = (e) => {
         e.preventDefault();
+
+        if (!selectedEditMainCatId) {
+            alert("Please select a Main Category.");
+            return;
+        }
+        if (!editData.category_id) {
+            alert("Please select a Subcategory.");
+            return;
+        }
+
         // Spoof PATCH via POST to allow file uploads to parse correctly in PHP
         postEditProduct(route('admin.products.update', editingProduct.id), {
             onSuccess: () => {
@@ -189,6 +213,10 @@ export default function Products({ products, categories }) {
     };
     const handleAddMainCatChange = (mainCatId) => {
         setSelectedAddMainCatId(mainCatId);
+        if (!mainCatId) {
+            setAddData('category_id', '');
+            return;
+        }
         const subs = categories.filter(c => c.parent_id === Number(mainCatId));
         if (subs.length > 0) {
             setAddData('category_id', subs[0].id);
@@ -199,6 +227,10 @@ export default function Products({ products, categories }) {
 
     const handleEditMainCatChange = (mainCatId) => {
         setSelectedEditMainCatId(mainCatId);
+        if (!mainCatId) {
+            setEditData('category_id', '');
+            return;
+        }
         const subs = categories.filter(c => c.parent_id === Number(mainCatId));
         if (subs.length > 0) {
             setEditData('category_id', subs[0].id);
@@ -711,6 +743,7 @@ export default function Products({ products, categories }) {
                                         onChange={(e) => handleAddMainCatChange(e.target.value)}
                                         className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2.5 text-xs text-slate-850 focus:outline-none focus:ring-1 focus:ring-blue-500/20"
                                     >
+                                        <option value="">Select Main Category</option>
                                         {parentCategories.map((c) => (
                                             <option key={c.id} value={c.id}>{c.name}</option>
                                         ))}
@@ -723,9 +756,7 @@ export default function Products({ products, categories }) {
                                         onChange={(e) => setAddData('category_id', e.target.value)}
                                         className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2.5 text-xs text-slate-850 focus:outline-none focus:ring-1 focus:ring-blue-500/20"
                                     >
-                                        {categories.filter(c => c.parent_id === Number(selectedAddMainCatId)).length === 0 && (
-                                            <option value={selectedAddMainCatId}>Assign directly to Main Category</option>
-                                        )}
+                                        <option value="">Select Subcategory</option>
                                         {categories.filter(c => c.parent_id === Number(selectedAddMainCatId)).map((c) => (
                                             <option key={c.id} value={c.id}>{c.name}</option>
                                         ))}
@@ -1094,6 +1125,7 @@ export default function Products({ products, categories }) {
                                         onChange={(e) => handleEditMainCatChange(e.target.value)}
                                         className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2.5 text-xs text-slate-850 focus:outline-none focus:ring-1 focus:ring-blue-500/20"
                                     >
+                                        <option value="">Select Main Category</option>
                                         {parentCategories.map((c) => (
                                             <option key={c.id} value={c.id}>{c.name}</option>
                                         ))}
@@ -1106,9 +1138,7 @@ export default function Products({ products, categories }) {
                                         onChange={(e) => setEditData('category_id', e.target.value)}
                                         className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2.5 text-xs text-slate-850 focus:outline-none focus:ring-1 focus:ring-blue-500/20"
                                     >
-                                        {categories.filter(c => c.parent_id === Number(selectedEditMainCatId)).length === 0 && (
-                                            <option value={selectedEditMainCatId}>Assign directly to Main Category</option>
-                                        )}
+                                        <option value="">Select Subcategory</option>
                                         {categories.filter(c => c.parent_id === Number(selectedEditMainCatId)).map((c) => (
                                             <option key={c.id} value={c.id}>{c.name}</option>
                                         ))}

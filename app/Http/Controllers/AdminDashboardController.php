@@ -182,10 +182,15 @@ class AdminDashboardController extends Controller
             'is_best_seller' => 'boolean',
             'is_new_arrival' => 'boolean',
             'variants' => 'nullable|array',
-            'image' => 'nullable|image|max:5120',
+            'image' => 'required|image|max:5120',
             'images' => 'nullable|array',
             'images.*' => 'image|max:5120',
         ]);
+
+        $category = \App\Models\Category::find($request->category_id);
+        if (!$category || !$category->parent_id) {
+            return back()->withErrors(['category_id' => 'Please select a valid subcategory.']);
+        }
 
         $imagePath = null;
         if ($request->hasFile('image')) {
@@ -274,6 +279,15 @@ class AdminDashboardController extends Controller
             'images' => 'nullable|array',
             'images.*' => 'image|max:5120',
         ]);
+
+        $category = \App\Models\Category::find($request->category_id);
+        if (!$category || !$category->parent_id) {
+            return back()->withErrors(['category_id' => 'Please select a valid subcategory.']);
+        }
+
+        if (!$product->image && !$request->hasFile('image')) {
+            return back()->withErrors(['image' => 'The product image is required.']);
+        }
 
         $data = $request->except(['image', 'images', 'variants']);
         if ($request->hasFile('image')) {

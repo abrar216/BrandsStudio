@@ -169,10 +169,15 @@ class SuperAdminController extends Controller
             'show_in_collections' => 'boolean',
             'sizes' => 'nullable|string', // Comma separated sizes (e.g. S,M,L)
             'colors' => 'nullable|string', // Comma separated colors (e.g. Navy,Khaki)
-            'main_image_file' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:20480',
+            'main_image_file' => 'required|image|mimes:jpg,jpeg,png,webp|max:20480',
             'gallery_image_files' => 'nullable|array',
             'gallery_image_files.*' => 'required|image|mimes:jpg,jpeg,png,webp|max:20480',
         ]);
+
+        $category = \App\Models\Category::find($request->category_id);
+        if (!$category || !$category->parent_id) {
+            return back()->withErrors(['category_id' => 'Please select a valid subcategory.']);
+        }
 
         $mainImagePath = null;
         if ($request->hasFile('main_image_file')) {
@@ -272,6 +277,15 @@ class SuperAdminController extends Controller
             'gallery_image_files' => 'nullable|array',
             'gallery_image_files.*' => 'required|image|mimes:jpg,jpeg,png,webp|max:20480',
         ]);
+
+        $category = \App\Models\Category::find($request->category_id);
+        if (!$category || !$category->parent_id) {
+            return back()->withErrors(['category_id' => 'Please select a valid subcategory.']);
+        }
+
+        if (!$product->image && !$request->hasFile('main_image_file')) {
+            return back()->withErrors(['main_image_file' => 'The product image is required.']);
+        }
 
         $updateData = [
             'name' => $request->name,
