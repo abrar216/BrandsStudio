@@ -14,14 +14,18 @@ class ProductController extends Controller
     public function welcome()
     {
         // 1. Explore Collections: categories marked as show_on_homepage = true, ordered by display_order
-        $categories = Category::where('show_on_homepage', true)
+        $categories = Category::select(['id', 'name', 'slug', 'parent_id', 'image', 'display_order', 'show_on_homepage'])
+            ->where('show_on_homepage', true)
             ->orderBy('display_order', 'asc')
             ->orderBy('id', 'asc')
             ->withCount('products')
             ->get();
             
         if ($categories->isEmpty()) {
-            $categories = Category::withCount('products')->orderBy('id', 'asc')->get();
+            $categories = Category::select(['id', 'name', 'slug', 'parent_id', 'image', 'display_order', 'show_on_homepage'])
+                ->withCount('products')
+                ->orderBy('id', 'asc')
+                ->get();
         }
 
         $cardFields = [
@@ -248,7 +252,7 @@ class ProductController extends Controller
         }
 
         $products = $query->paginate(9)->withQueryString();
-        $categories = Category::all();
+        $categories = Category::select(['id', 'name', 'slug', 'parent_id'])->get();
 
         // Get unique colors and sizes for filter sidebar
         $allColors = \App\Models\ProductVariant::distinct()->pluck('color')->filter()->values();
@@ -265,7 +269,7 @@ class ProductController extends Controller
 
     public function collections(Request $request)
     {
-        $categories = Category::withCount('products')->get();
+        $categories = Category::select(['id', 'name', 'slug', 'parent_id', 'image'])->withCount('products')->get();
         
         $cardFields = [
             'id', 'name', 'slug', 'sku', 'price', 'discount_price', 

@@ -51,7 +51,7 @@ class POSController extends Controller
             });
 
         // 2. Fetch categories for filtering
-        $categories = Category::all();
+        $categories = Category::select(['id', 'name', 'slug', 'parent_id'])->get();
 
         // 3. Fetch registered customers (users with role = customer)
         $customers = User::where('role', 'customer')

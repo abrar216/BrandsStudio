@@ -156,7 +156,7 @@ class AdminDashboardController extends Controller
         ->with(['variants', 'category'])
         ->orderBy('created_at', 'desc')
         ->get();
-        $categories = Category::all();
+        $categories = Category::select(['id', 'name', 'slug', 'parent_id'])->get();
 
         return Inertia::render('Admin/Products', [
             'products' => $products,
