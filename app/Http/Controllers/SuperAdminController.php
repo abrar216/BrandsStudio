@@ -343,9 +343,14 @@ class SuperAdminController extends Controller
      */
     public function collectionsControl()
     {
-        $products = Product::orderBy('display_order', 'asc')
-            ->orderBy('id', 'desc')
-            ->get();
+        $products = Product::select([
+            'id', 'name', 'slug', 'sku', 'price', 'discount_price', 
+            'category_id', 'stock_quantity', 'display_order', 'show_in_collections', 
+            'image', 'main_image', 'status'
+        ])
+        ->orderBy('display_order', 'asc')
+        ->orderBy('id', 'desc')
+        ->get();
 
         return Inertia::render('Admin/Superadmin/CollectionsControl', [
             'products' => $products,

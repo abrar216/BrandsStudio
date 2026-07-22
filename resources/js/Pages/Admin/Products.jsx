@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { getAssetUrl, getProductImageUrl } from '../../Utils/asset';
 
-const compressImageFile = (file, maxDim = 1400, quality = 0.85) => {
+const compressImageFile = (file, maxDim = 700, quality = 0.70) => {
     return new Promise((resolve) => {
         if (!file || !file.type.startsWith('image/')) {
             resolve(file);

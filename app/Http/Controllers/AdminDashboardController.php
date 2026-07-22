@@ -674,7 +674,7 @@ class AdminDashboardController extends Controller
                 $needsUpdate = false;
                 $updateData = [];
 
-                if ($p->image && strpos($p->image, 'data:') === 0 && strlen($p->image) > 100000) {
+                if ($p->image && strpos($p->image, 'data:') === 0 && strlen($p->image) > 40000) {
                     $compressed = $this->compressBase64Image($p->image);
                     if ($compressed && $compressed !== $p->image) {
                         $updateData['image'] = $compressed;
@@ -690,7 +690,7 @@ class AdminDashboardController extends Controller
                         $updatedGallery = [];
                         $galleryChanged = false;
                         foreach ($gallery as $img) {
-                            if (strpos($img, 'data:') === 0 && strlen($img) > 100000) {
+                            if (strpos($img, 'data:') === 0 && strlen($img) > 40000) {
                                 $compressedImg = $this->compressBase64Image($img);
                                 if ($compressedImg && $compressedImg !== $img) {
                                     $galleryChanged = true;
@@ -715,7 +715,7 @@ class AdminDashboardController extends Controller
 
             $galleryImages = \App\Models\ProductImage::all();
             foreach ($galleryImages as $gi) {
-                if ($gi->image_path && strpos($gi->image_path, 'data:') === 0 && strlen($gi->image_path) > 100000) {
+                if ($gi->image_path && strpos($gi->image_path, 'data:') === 0 && strlen($gi->image_path) > 40000) {
                     $compressed = $this->compressBase64Image($gi->image_path);
                     if ($compressed && $compressed !== $gi->image_path) {
                         $gi->update(['image_path' => $compressed]);
@@ -726,7 +726,7 @@ class AdminDashboardController extends Controller
 
             $categories = Category::all();
             foreach ($categories as $c) {
-                if ($c->image && strpos($c->image, 'data:') === 0 && strlen($c->image) > 100000) {
+                if ($c->image && strpos($c->image, 'data:') === 0 && strlen($c->image) > 40000) {
                     $compressed = $this->compressBase64Image($c->image);
                     if ($compressed && $compressed !== $c->image) {
                         $c->update(['image' => $compressed]);
@@ -742,7 +742,7 @@ class AdminDashboardController extends Controller
         ]);
     }
 
-    private function compressBase64Image($base64Str, $maxDim = 1400, $quality = 85)
+    private function compressBase64Image($base64Str, $maxDim = 700, $quality = 70)
     {
         try {
             $parts = explode(',', $base64Str);

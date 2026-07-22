@@ -24,9 +24,16 @@ class ProductController extends Controller
             $categories = Category::withCount('products')->orderBy('id', 'asc')->get();
         }
 
+        $cardFields = [
+            'id', 'name', 'slug', 'sku', 'price', 'discount_price', 
+            'category_id', 'is_featured', 'is_trending', 'is_best_seller', 
+            'is_new_arrival', 'image', 'main_image', 'status', 'display_order', 'created_at'
+        ];
+
         // 2. Featured Couture: show_in_featured_couture = true
         $featured = Product::where('status', 'active')
             ->where('show_in_featured_couture', true)
+            ->select($cardFields)
             ->orderBy('display_order', 'asc')
             ->with(['variants', 'category'])
             ->get();
@@ -34,6 +41,7 @@ class ProductController extends Controller
         if ($featured->isEmpty()) {
             $featured = Product::where('status', 'active')
                 ->where('is_featured', true)
+                ->select($cardFields)
                 ->with(['variants', 'category'])
                 ->limit(8)
                 ->get();
@@ -42,6 +50,7 @@ class ProductController extends Controller
         // 3. Trending Apparel / Viral Clothing: show_in_trending_apparel = true
         $trending = Product::where('status', 'active')
             ->where('show_in_trending_apparel', true)
+            ->select($cardFields)
             ->orderBy('display_order', 'asc')
             ->with(['variants', 'category'])
             ->get();
@@ -58,6 +67,7 @@ class ProductController extends Controller
             $fallbackTrending = Product::where('status', 'active')
                 ->whereIn('id', $trendingProductIds)
                 ->whereNotIn('id', $trending->pluck('id')->toArray())
+                ->select($cardFields)
                 ->with(['variants', 'category'])
                 ->get()
                 ->sortBy(function ($product) use ($trendingProductIds) {
@@ -70,6 +80,7 @@ class ProductController extends Controller
                 $fallbackIsTrending = Product::where('status', 'active')
                     ->where('is_trending', true)
                     ->whereNotIn('id', $trending->pluck('id')->toArray())
+                    ->select($cardFields)
                     ->with(['variants', 'category'])
                     ->limit(4 - $trending->count())
                     ->get();
@@ -83,6 +94,7 @@ class ProductController extends Controller
         // 4. Best Sellers: show_in_best_sellers = true
         $bestSellers = Product::where('status', 'active')
             ->where('show_in_best_sellers', true)
+            ->select($cardFields)
             ->orderBy('display_order', 'asc')
             ->with(['variants', 'category'])
             ->get();
@@ -99,6 +111,7 @@ class ProductController extends Controller
             $fallbackBest = Product::where('status', 'active')
                 ->whereIn('id', $mostWantedIds)
                 ->whereNotIn('id', $bestSellers->pluck('id')->toArray())
+                ->select($cardFields)
                 ->with(['variants', 'category'])
                 ->get()
                 ->sortBy(function ($product) use ($mostWantedIds) {
@@ -111,6 +124,7 @@ class ProductController extends Controller
                 $fallbackIsBest = Product::where('status', 'active')
                     ->where('is_best_seller', true)
                     ->whereNotIn('id', $bestSellers->pluck('id')->toArray())
+                    ->select($cardFields)
                     ->with(['variants', 'category'])
                     ->limit(4 - $bestSellers->count())
                     ->get();
@@ -124,6 +138,7 @@ class ProductController extends Controller
         // 5. New Arrivals: show_in_new_arrivals = true
         $newArrivals = Product::where('status', 'active')
             ->where('show_in_new_arrivals', true)
+            ->select($cardFields)
             ->orderBy('display_order', 'asc')
             ->with(['variants', 'category'])
             ->get();
@@ -131,6 +146,7 @@ class ProductController extends Controller
         if ($newArrivals->isEmpty()) {
             $newArrivals = Product::where('status', 'active')
                 ->where('is_new_arrival', true)
+                ->select($cardFields)
                 ->with(['variants', 'category'])
                 ->limit(8)
                 ->get();
@@ -160,7 +176,13 @@ class ProductController extends Controller
 
     public function shop(Request $request)
     {
-        $query = Product::where('status', 'active')->with(['category', 'variants']);
+        $cardFields = [
+            'id', 'name', 'slug', 'sku', 'price', 'discount_price', 
+            'category_id', 'is_featured', 'is_trending', 'is_best_seller', 
+            'is_new_arrival', 'image', 'main_image', 'status', 'created_at'
+        ];
+
+        $query = Product::where('status', 'active')->select($cardFields)->with(['category', 'variants']);
 
         // Filter by category
         if ($request->filled('category')) {
@@ -245,8 +267,14 @@ class ProductController extends Controller
     {
         $categories = Category::withCount('products')->get();
         
+        $cardFields = [
+            'id', 'name', 'slug', 'sku', 'price', 'discount_price', 
+            'category_id', 'image', 'main_image', 'status', 'display_order'
+        ];
+
         $products = Product::where('status', 'active')
             ->where('show_in_collections', true)
+            ->select($cardFields)
             ->with(['category', 'variants'])
             ->orderBy('display_order', 'asc')
             ->orderBy('created_at', 'desc')
@@ -265,9 +293,15 @@ class ProductController extends Controller
             ->with(['category', 'variants', 'reviews.user', 'images'])
             ->firstOrFail();
 
+        $cardFields = [
+            'id', 'name', 'slug', 'sku', 'price', 'discount_price', 
+            'category_id', 'image', 'main_image', 'status'
+        ];
+
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->where('status', 'active')
+            ->select($cardFields)
             ->limit(4)
             ->get();
 
