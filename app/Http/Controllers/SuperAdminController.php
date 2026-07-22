@@ -130,7 +130,7 @@ class SuperAdminController extends Controller
         $products = Product::select([
             'id', 'name', 'slug', 'sku', 'price', 'discount_price', 
             'cost_price', 'gst_rate', 'category_id', 'stock_quantity', 
-            'status', 'image', 'main_image', 'description', 'short_description', 
+            'status', 'image', 'description', 'short_description', 
             'display_order', 'show_in_featured_couture', 'show_in_new_arrivals', 
             'show_in_trending_apparel', 'show_in_best_sellers', 'show_in_explore_collections', 
             'show_in_collections', 'created_at'
@@ -346,7 +346,7 @@ class SuperAdminController extends Controller
         $products = Product::select([
             'id', 'name', 'slug', 'sku', 'price', 'discount_price', 
             'category_id', 'stock_quantity', 'display_order', 'show_in_collections', 
-            'image', 'main_image', 'status'
+            'image', 'status'
         ])
         ->orderBy('display_order', 'asc')
         ->orderBy('id', 'desc')

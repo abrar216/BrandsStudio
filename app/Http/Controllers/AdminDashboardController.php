@@ -144,11 +144,13 @@ class AdminDashboardController extends Controller
     {
         $this->checkAccess();
 
+        $this->autoSelfHealOversizedProducts();
+
         $products = Product::select([
             'id', 'name', 'slug', 'sku', 'price', 'discount_price', 
             'cost_price', 'gst_rate', 'category_id', 'stock_quantity', 
             'is_featured', 'is_trending', 'is_best_seller', 'is_new_arrival', 
-            'status', 'image', 'main_image', 'description', 'short_description', 
+            'status', 'image', 'description', 'short_description', 
             'created_at'
         ])
         ->with(['variants', 'category'])
@@ -160,6 +162,54 @@ class AdminDashboardController extends Controller
             'products' => $products,
             'categories' => $categories,
         ]);
+    }
+
+    private function autoSelfHealOversizedProducts()
+    {
+        try {
+            $rows = DB::table('products')
+                ->where(function($q) {
+                    $q->where('image', 'LIKE', 'data:image%')
+                      ->orWhere('gallery_images', 'LIKE', '%data:image%');
+                })
+                ->get();
+
+            foreach ($rows as $row) {
+                $updates = [];
+                if ($row->image && str_starts_with($row->image, 'data:image/') && strlen($row->image) > 40000) {
+                    $comp = Product::compressBase64String($row->image);
+                    if ($comp && $comp !== $row->image) {
+                        $updates['image'] = $comp;
+                        $updates['main_image'] = $comp;
+                    }
+                }
+                if ($row->gallery_images) {
+                    $gallery = json_decode($row->gallery_images, true);
+                    if (is_array($gallery)) {
+                        $changed = false;
+                        $newGallery = [];
+                        foreach ($gallery as $img) {
+                            if (is_string($img) && str_starts_with($img, 'data:image/') && strlen($img) > 40000) {
+                                $comp = Product::compressBase64String($img);
+                                $newGallery[] = $comp;
+                                $changed = true;
+                            } else {
+                                $newGallery[] = $img;
+                            }
+                        }
+                        if ($changed) {
+                            $updates['gallery_images'] = json_encode($newGallery);
+                        }
+                    }
+                }
+
+                if (!empty($updates)) {
+                    DB::table('products')->where('id', $row->id)->update($updates);
+                }
+            }
+        } catch (\Exception $e) {
+            // Ignore DB locks
+        }
     }
 
     public function storeProduct(Request $request)

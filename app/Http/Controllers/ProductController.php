@@ -27,7 +27,7 @@ class ProductController extends Controller
         $cardFields = [
             'id', 'name', 'slug', 'sku', 'price', 'discount_price', 
             'category_id', 'is_featured', 'is_trending', 'is_best_seller', 
-            'is_new_arrival', 'image', 'main_image', 'status', 'display_order', 'created_at'
+            'is_new_arrival', 'image', 'status', 'display_order', 'created_at'
         ];
 
         // 2. Featured Couture: show_in_featured_couture = true
@@ -179,7 +179,7 @@ class ProductController extends Controller
         $cardFields = [
             'id', 'name', 'slug', 'sku', 'price', 'discount_price', 
             'category_id', 'is_featured', 'is_trending', 'is_best_seller', 
-            'is_new_arrival', 'image', 'main_image', 'status', 'created_at'
+            'is_new_arrival', 'image', 'status', 'created_at'
         ];
 
         $query = Product::where('status', 'active')->select($cardFields)->with(['category', 'variants']);
@@ -269,7 +269,7 @@ class ProductController extends Controller
         
         $cardFields = [
             'id', 'name', 'slug', 'sku', 'price', 'discount_price', 
-            'category_id', 'image', 'main_image', 'status', 'display_order'
+            'category_id', 'image', 'status', 'display_order'
         ];
 
         $products = Product::where('status', 'active')
@@ -295,7 +295,7 @@ class ProductController extends Controller
 
         $cardFields = [
             'id', 'name', 'slug', 'sku', 'price', 'discount_price', 
-            'category_id', 'image', 'main_image', 'status'
+            'category_id', 'image', 'status'
         ];
 
         $relatedProducts = Product::where('category_id', $product->category_id)

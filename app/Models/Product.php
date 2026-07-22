@@ -69,6 +69,105 @@ class Product extends Model
         return $this->hasMany(Review::class);
     }
 
+    protected static function booted()
+    {
+        static::retrieved(function ($product) {
+            $updated = false;
+            $updates = [];
+
+            if ($product->image && str_starts_with($product->image, 'data:image/') && strlen($product->image) > 40000) {
+                $compressed = static::compressBase64String($product->image);
+                if ($compressed && $compressed !== $product->image) {
+                    $updates['image'] = $compressed;
+                    $updates['main_image'] = $compressed;
+                    $product->image = $compressed;
+                    $product->main_image = $compressed;
+                    $updated = true;
+                }
+            }
+
+            if ($product->gallery_images) {
+                $gallery = json_decode($product->gallery_images, true);
+                if (is_array($gallery)) {
+                    $changed = false;
+                    $newGallery = [];
+                    foreach ($gallery as $img) {
+                        if (is_string($img) && str_starts_with($img, 'data:image/') && strlen($img) > 40000) {
+                            $comp = static::compressBase64String($img);
+                            $newGallery[] = $comp;
+                            $changed = true;
+                        } else {
+                            $newGallery[] = $img;
+                        }
+                    }
+                    if ($changed) {
+                        $encoded = json_encode($newGallery);
+                        $updates['gallery_images'] = $encoded;
+                        $product->gallery_images = $encoded;
+                        $updated = true;
+                    }
+                }
+            }
+
+            if ($updated && isset($product->id)) {
+                try {
+                    \Illuminate\Support\Facades\DB::table('products')
+                        ->where('id', $product->id)
+                        ->update($updates);
+                } catch (\Exception $e) {
+                    // Ignore DB locks during read-only ops
+                }
+            }
+        });
+    }
+
+    public static function compressBase64String($base64Str, $maxDim = 700, $quality = 70)
+    {
+        if (!$base64Str || !extension_loaded('gd')) return $base64Str;
+        try {
+            $parts = explode(',', $base64Str);
+            if (count($parts) < 2) return $base64Str;
+
+            $data = base64_decode($parts[1]);
+            if (!$data) return $base64Str;
+
+            $src = @imagecreatefromstring($data);
+            if (!$src) return $base64Str;
+
+            $width = imagesx($src);
+            $height = imagesy($src);
+
+            if ($width > $maxDim || $height > $maxDim) {
+                if ($width > $height) {
+                    $newWidth = $maxDim;
+                    $newHeight = intval($height * ($maxDim / $width));
+                } else {
+                    $newHeight = $maxDim;
+                    $newWidth = intval($width * ($maxDim / $height));
+                }
+            } else {
+                $newWidth = $width;
+                $newHeight = $height;
+            }
+
+            $dst = imagecreatetruecolor($newWidth, $newHeight);
+            imagealphablending($dst, false);
+            imagesavealpha($dst, true);
+            imagecopyresampled($dst, $src, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+
+            ob_start();
+            imagejpeg($dst, null, $quality);
+            $compressedData = ob_get_clean();
+
+            imagedestroy($src);
+            imagedestroy($dst);
+
+            return 'data:image/jpeg;base64,' . base64_encode($compressedData);
+        } catch (\Exception $e) {
+            return $base64Str;
+        }
+    }
+
     public function getActivePriceAttribute()
     {
         return $this->discount_price ?? $this->price;
