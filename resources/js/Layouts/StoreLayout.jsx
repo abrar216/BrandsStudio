@@ -405,21 +405,22 @@ export default function StoreLayout({ children }) {
                             </p>
                             
                             {/* Social Media Row */}
-                            <div className="flex space-x-4 pt-2">
-                                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors" aria-label="Facebook">
+                            <div className="flex items-center space-x-4 pt-2">
+                                <a href="https://www.facebook.com/share/19BpBCDPp4/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors" aria-label="Facebook" title="Facebook">
                                     <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M9 8H7v3h2v9h3v-9h3.6l.4-3H12V6c0-.88.39-1 1-1h2V2h-3c-2.9 0-5 1.55-5 4.5V8z"/></svg>
                                 </a>
-                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors" aria-label="Instagram">
+                                <a href="https://www.instagram.com/brandsstudio29?igsh=Y3FkNWozMDdiYndt" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors" aria-label="Instagram" title="Instagram">
                                     <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
                                 </a>
-                                <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors" aria-label="YouTube">
-                                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.163a3.003 3.003 0 00-2.11-2.11C19.518 3.545 12 3.545 12 3.545s-7.519 0-9.388.508a3.003 3.003 0 00-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 002.11 2.11c1.869.508 9.388.508 9.388.508s7.519 0 9.388-.508a3.003 3.003 0 002.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                                <a href="https://www.tiktok.com/@brands.studio?_r=1&_t=ZS-98GvoSJ2Cof" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors" aria-label="TikTok" title="TikTok">
+                                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 1 1-5.2-1.74 2.89 2.89 0 0 1 2.31-1.29V9.16a6.34 6.34 0 0 0-5.18 6.17 6.34 6.34 0 0 0 10.83 4.48A6.32 6.32 0 0 0 15.82 15V8.65a8.28 8.28 0 0 0 4.77 1.49V6.69z"/></svg>
                                 </a>
                             </div>
 
                             <p className="text-[10px] text-stone-500 font-bold uppercase tracking-wider pt-2">
                                 How can we help you?<br />
-                                Let us know at <span className="text-stone-300">info@brandsstudio.com</span>
+                                Email: <a href="mailto:Brandstudiodik29@gmail.com" className="text-stone-300 hover:text-white transition-colors underline lowercase">Brandstudiodik29@gmail.com</a><br />
+                                Phone / WhatsApp: <a href="tel:03356101234" className="text-stone-300 hover:text-white transition-colors font-mono">03356101234</a>
                             </p>
                         </div>
 

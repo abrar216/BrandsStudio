@@ -30,8 +30,8 @@ export default function Settings({ settings }) {
         currency_code: settings.currency_code || 'USD',
         tax_rate: settings.tax_rate || '10',
         shipping_charges: settings.shipping_charges || '5.99',
-        contact_email: settings.contact_email || 'support@brandsstudio.com',
-        contact_phone: settings.contact_phone || '',
+        contact_email: settings.contact_email || 'Brandstudiodik29@gmail.com',
+        contact_phone: settings.contact_phone || '03356101234',
         contact_address: settings.contact_address || ''
     });
 

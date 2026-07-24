@@ -60,6 +60,8 @@ class HandleInertiaRequests extends Middleware
                 'currency_symbol' => Setting::get('currency', 'Rs.'),
                 'tax_rate' => Setting::get('tax_rate', '0'),
                 'shipping_charges' => Setting::get('shipping_charges', '0'),
+                'contact_email' => Setting::get('contact_email', 'Brandstudiodik29@gmail.com'),
+                'contact_phone' => Setting::get('contact_phone', '03356101234'),
             ],
             'flash' => [
                 'success' => $request->session()->get('success'),

@@ -333,9 +333,9 @@ class DatabaseSeeder extends Seeder
             'currency_code' => 'PKR',
             'tax_rate' => '10', // 10% tax
             'shipping_charges' => '250',
-            'contact_email' => 'support@brandsstudio.com',
-            'contact_phone' => '+92 (21) 111-272-637',
-            'contact_address' => 'Plot 43-C, Bukhari Commercial Lane 5, Phase 6, DHA, Karachi, Pakistan',
+            'contact_email' => 'Brandstudiodik29@gmail.com',
+            'contact_phone' => '03356101234',
+            'contact_address' => 'Pakistan',
         ];
 
         foreach ($settings as $key => $val) {

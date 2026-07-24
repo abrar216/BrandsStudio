@@ -1552,7 +1552,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                 <h3 className="brand-title text-black text-center font-bold">BRANDS STUDIO</h3>
                                 <p style={{ fontSize: '9px', margin: '2px 0' }} className="text-center">PREMIUM DESIGNER CLOTHING</p>
                                 <p style={{ fontSize: '8px', margin: '1px 0' }} className="text-center">{settings.contact_address || 'Zamzama Commercial, Karachi'}</p>
-                                <p style={{ fontSize: '8px', margin: '1px 0' }} className="text-center">TEL: {settings.contact_phone || '+92 (21) 3583-0941'}</p>
+                                <p style={{ fontSize: '8px', margin: '1px 0' }} className="text-center">TEL: {settings.contact_phone || '03356101234'}</p>
                             </div>
 
                             {/* Details */}

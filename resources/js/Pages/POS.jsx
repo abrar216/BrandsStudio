@@ -585,7 +585,7 @@ export default function POS({ products, categories }) {
                                 <h3 className="text-sm font-black font-serif tracking-widest text-black uppercase">BRANDS STUDIO</h3>
                                 <p className="text-[9px] text-slate-500 font-sans font-semibold">PREMIUM DESIGNER CLOTHING</p>
                                 <p className="text-[9px] text-slate-500 font-sans font-semibold">{settings.contact_address || '789 Fashion Avenue, NYC'}</p>
-                                <p className="text-[9px] text-slate-500 font-sans font-semibold">{settings.contact_phone || '+1 (555) 019-2834'}</p>
+                                <p className="text-[9px] text-slate-500 font-sans font-semibold">{settings.contact_phone || '03356101234'}</p>
                             </div>
 
                             {/* Transaction details */}

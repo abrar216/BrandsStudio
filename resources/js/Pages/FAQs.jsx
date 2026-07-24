@@ -153,7 +153,7 @@ export default function FAQs() {
                             Need a custom size advice or having payment concerns? Email us directly.
                         </p>
                         <p className="text-xs font-black text-slate-900 pt-1">
-                            support@brandsstudio.pk
+                            <a href="mailto:Brandstudiodik29@gmail.com" className="hover:text-amber-600 transition-colors">Brandstudiodik29@gmail.com</a>
                         </p>
                     </div>
 
@@ -165,10 +165,10 @@ export default function FAQs() {
                             LIVE CHAT DESK
                         </h4>
                         <p className="text-[11px] text-slate-500 font-semibold leading-relaxed">
-                            Speak with our premium stylist regarding bespoke selections and active tracking.
+                            Speak with our premium stylist regarding bespoke selections, orders & tracking.
                         </p>
-                        <p className="text-xs font-black text-amber-600 pt-1">
-                            Active 10:00 AM - 7:00 PM PKT
+                        <p className="text-xs font-black text-amber-600 pt-1 font-mono">
+                            WhatsApp / Helpline: 03356101234
                         </p>
                     </div>
                 </div>
