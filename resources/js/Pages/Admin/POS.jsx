@@ -934,9 +934,9 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                             })}
                                         </div>
 
-                                        {/* Cash Details with Quick Cash Buttons */}
+                                        {/* Cash Details */}
                                         {paymentMethod === 'cash' && (
-                                            <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2">
+                                            <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
                                                 <div className="grid grid-cols-2 gap-2 items-center">
                                                     <div>
                                                         <label className="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1">Cash Received</label>
@@ -954,39 +954,6 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                                             {currency}{changeReturn.toFixed(2)}
                                                         </span>
                                                     </div>
-                                                </div>
-
-                                                {/* Quick Cash Shortcuts */}
-                                                <div className="flex items-center gap-1 pt-1 border-t border-slate-100 dark:border-slate-800">
-                                                    <span className="text-[9px] font-bold text-slate-400 uppercase mr-1">Quick:</span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setCashReceived(grandTotal.toFixed(2))}
-                                                        className="px-2 py-1 text-[10px] font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-md transition-colors"
-                                                    >
-                                                        Exact
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setCashReceived((Math.ceil(grandTotal / 500) * 500 || 500).toString())}
-                                                        className="px-2 py-1 text-[10px] font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-md transition-colors"
-                                                    >
-                                                        +500
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setCashReceived((Math.ceil(grandTotal / 1000) * 1000 || 1000).toString())}
-                                                        className="px-2 py-1 text-[10px] font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-md transition-colors"
-                                                    >
-                                                        +1000
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setCashReceived((Math.ceil(grandTotal / 5000) * 5000 || 5000).toString())}
-                                                        className="px-2 py-1 text-[10px] font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-md transition-colors"
-                                                    >
-                                                        +5000
-                                                    </button>
                                                 </div>
                                             </div>
                                         )}
