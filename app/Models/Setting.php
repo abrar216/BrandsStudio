@@ -16,6 +16,16 @@ class Setting extends Model
 
     public static function get($key, $default = null)
     {
+        if ($key === 'contact_address') {
+            return 'North Circular Road, Leeds College Opposite Byco Pertrol Pump, Dera Ismail Khan';
+        }
+        if ($key === 'contact_phone') {
+            return '03356101234';
+        }
+        if ($key === 'contact_email') {
+            return 'Brandstudiodik29@gmail.com';
+        }
+
         $setting = self::where('key', $key)->first();
         return $setting ? $setting->value : $default;
     }
