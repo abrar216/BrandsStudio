@@ -405,7 +405,7 @@ export default function Products({ products, categories }) {
                                 <th className="py-4 px-4 font-bold">Product Model</th>
                                 <th className="py-4 px-4 font-bold">SKU</th>
                                 <th className="py-4 px-4 font-bold">Category</th>
-                                <th className="py-4 px-4 font-bold text-right">MSRP Price</th>
+                                <th className="py-4 px-4 font-bold text-right">Retail Price</th>
                                 <th className="py-4 px-4 font-bold text-center">Net Inventory</th>
                                 <th className="py-4 px-4 font-bold text-center">Badges</th>
                                 <th className="py-4 px-4 font-bold text-center">Status</th>
@@ -680,7 +680,7 @@ export default function Products({ products, categories }) {
 
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                                 <div>
-                                    <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1.5 font-sans">MSRP Price (Rs.) *</label>
+                                    <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1.5 font-sans">Retail Price (Rs.) *</label>
                                     <input
                                         type="number"
                                         required
@@ -1066,7 +1066,7 @@ export default function Products({ products, categories }) {
 
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                                 <div>
-                                    <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1.5 font-sans">MSRP Price (Rs.) *</label>
+                                    <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1.5 font-sans">Retail Price (Rs.) *</label>
                                     <input
                                         type="number"
                                         required
