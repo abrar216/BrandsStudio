@@ -363,6 +363,12 @@ export default function POS({ products, categories, customers, recentOrders, rep
             if (response.data.success) {
                 setPrintedReceipt(response.data.receipt);
                 setReceiptModalOpen(true);
+                
+                // Automatically trigger thermal print popup immediately on checkout
+                setTimeout(() => {
+                    handlePrintReceipt();
+                }, 250);
+
                 // Reset checkout form
                 setCart([]);
                 setSelectedCustomerId('');
@@ -429,39 +435,85 @@ export default function POS({ products, categories, customers, recentOrders, rep
     });
 
     const handlePrintReceipt = () => {
-        const printContent = document.getElementById('thermal-receipt').innerHTML;
+        const printElement = document.getElementById('thermal-receipt');
+        if (!printElement) return;
+        const printContent = printElement.innerHTML;
         const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
+        iframe.style.position = 'fixed';
+        iframe.style.right = '0';
+        iframe.style.bottom = '0';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = '0';
         document.body.appendChild(iframe);
         
         const doc = iframe.contentWindow.document;
         doc.open();
         doc.write(`
+            <!DOCTYPE html>
             <html>
                 <head>
-                    <title>Thermal Receipt</title>
+                    <title>Brands Studio POS Receipt</title>
                     <style>
-                        body { font-family: monospace; padding: 10px; font-size: 11px; width: 80mm; color: #000; margin: 0; }
+                        @page {
+                            size: auto;
+                            margin: 0mm;
+                        }
+                        * {
+                            box-sizing: border-box;
+                        }
+                        body {
+                            font-family: 'Courier New', Courier, monospace;
+                            width: 76mm;
+                            margin: 0 auto;
+                            padding: 4mm 3mm;
+                            font-size: 10px;
+                            color: #000;
+                            background: #fff;
+                            line-height: 1.3;
+                        }
                         .text-center { text-align: center; }
                         .text-right { text-align: right; }
-                        .border-b { border-bottom: 1px dashed #000; }
-                        .py-2 { padding-top: 5px; padding-bottom: 5px; }
-                        .my-2 { margin-top: 5px; margin-bottom: 5px; }
                         .font-bold { font-weight: bold; }
-                        .flex { display: flex; justify-content: space-between; }
-                        .items-table { width: 100%; border-collapse: collapse; margin: 10px 0; }
-                        .items-table th, .items-table td { font-size: 10px; text-align: left; }
-                        .items-table td.total { text-align: right; }
-                        .items-table th.total { text-align: right; }
-                        .brand-title { font-size: 16px; font-weight: 900; letter-spacing: 2px; }
+                        .uppercase { text-transform: uppercase; }
+                        .flex { display: flex; justify-content: space-between; align-items: center; }
+                        .border-b { border-bottom: 1px dashed #000; }
+                        .border-t { border-top: 1px dashed #000; }
+                        .py-1 { padding-top: 4px; padding-bottom: 4px; }
+                        .my-1 { margin-top: 4px; margin-bottom: 4px; }
+                        table.items-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin: 6px 0;
+                            table-layout: fixed;
+                        }
+                        table.items-table th, table.items-table td {
+                            font-size: 9.5px;
+                            padding: 2px 0;
+                            vertical-align: top;
+                            word-wrap: break-word;
+                        }
+                        table.items-table th {
+                            font-weight: bold;
+                            border-bottom: 1px dashed #000;
+                        }
+                        .col-item { width: 44%; text-align: left; }
+                        .col-qty { width: 14%; text-align: center; }
+                        .col-price { width: 21%; text-align: right; }
+                        .col-total { width: 21%; text-align: right; font-weight: bold; }
                     </style>
                 </head>
                 <body>
                     ${printContent}
                     <script>
                         window.onload = function() {
+                            window.focus();
                             window.print();
-                            setTimeout(function() { window.frameElement.remove(); }, 100);
+                            setTimeout(function() {
+                                if (window.frameElement) {
+                                    window.frameElement.remove();
+                                }
+                            }, 500);
                         }
                     </script>
                 </body>
@@ -1598,80 +1650,95 @@ export default function POS({ products, categories, customers, recentOrders, rep
                         {/* Receipt Container formatted for thermal print standards */}
                         <div 
                             id="thermal-receipt" 
-                            className="bg-white p-4 border border-dashed border-slate-350 rounded-xl max-h-[400px] overflow-y-auto text-xs font-mono space-y-6 text-black leading-snug"
+                            className="bg-white p-3 border border-dashed border-slate-300 rounded-xl max-h-[420px] overflow-y-auto text-xs font-mono space-y-3 text-black leading-snug"
                         >
-                            {/* Logo & Info */}
-                            <div className="text-center space-y-0.5 border-b border-dashed border-black pb-3">
-                                <h3 className="brand-title text-black text-center font-bold">BRANDS STUDIO</h3>
-                                <p style={{ fontSize: '9px', margin: '2px 0' }} className="text-center">PREMIUM DESIGNER CLOTHING</p>
-                                <p style={{ fontSize: '8px', margin: '1px 0' }} className="text-center">{settings.contact_address || 'Zamzama Commercial, Karachi'}</p>
-                                <p style={{ fontSize: '8px', margin: '1px 0' }} className="text-center">TEL: {settings.contact_phone || '03356101234'}</p>
+                            {/* Logo & Header Info */}
+                            <div className="text-center space-y-0.5 border-b border-dashed border-black pb-2">
+                                <h3 className="text-base font-black text-center text-black uppercase tracking-widest" style={{ margin: '0', fontSize: '15px' }}>BRANDS STUDIO</h3>
+                                <p style={{ fontSize: '9px', fontWeight: 'bold', margin: '2px 0' }} className="text-center text-black uppercase">PREMIUM DESIGNER CLOTHING</p>
+                                <p style={{ fontSize: '8.5px', margin: '1px 0' }} className="text-center text-black">
+                                    {settings.contact_address || 'Near Civil Hospital, Dera Ismail Khan (D.I. Khan), KPK, Pakistan'}
+                                </p>
+                                <p style={{ fontSize: '8.5px', fontWeight: 'bold', margin: '1px 0' }} className="text-center text-black">
+                                    TEL / WHATSAPP: {settings.contact_phone || '03356101234'}
+                                </p>
+                                <p style={{ fontSize: '8px', margin: '1px 0' }} className="text-center text-black">
+                                    Email: Brandstudiodik29@gmail.com
+                                </p>
                             </div>
 
-                            {/* Details */}
+                            {/* Order Details */}
                             <div style={{ fontSize: '9px' }} className="space-y-0.5 text-black">
-                                <div className="flex justify-between"><span>INVOICE:</span><span className="font-bold">{printedReceipt.order_number}</span></div>
+                                <div className="flex justify-between"><span>INVOICE #:</span><span className="font-bold">{printedReceipt.order_number}</span></div>
                                 <div className="flex justify-between"><span>CASHIER:</span><span>{printedReceipt.cashier?.name || 'Admin'}</span></div>
-                                <div className="flex justify-between"><span>DATE:</span><span>{new Date(printedReceipt.created_at).toLocaleString()}</span></div>
-                                <div className="flex justify-between"><span>CUSTOMER:</span><span className="font-bold uppercase">{printedReceipt.customer_name}</span></div>
-                                {printedReceipt.customer_phone && <div className="flex justify-between"><span>CONTACT:</span><span>{printedReceipt.customer_phone}</span></div>}
+                                <div className="flex justify-between"><span>DATE:</span><span>{new Date(printedReceipt.created_at).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'medium' })}</span></div>
+                                <div className="flex justify-between"><span>CUSTOMER:</span><span className="font-bold uppercase">{printedReceipt.customer_name || 'Walk-in Guest'}</span></div>
+                                {printedReceipt.customer_phone && <div className="flex justify-between"><span>CONTACT #:</span><span>{printedReceipt.customer_phone}</span></div>}
                             </div>
 
-                            {/* Table */}
-                            <div className="border-b border-t border-dashed border-black py-2 my-2 text-black">
-                                <table className="items-table">
+                            {/* Items Table */}
+                            <div className="border-b border-t border-dashed border-black py-1.5 my-1 text-black">
+                                <table className="items-table" style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
                                     <thead>
-                                        <tr className="font-bold border-b border-black">
-                                            <th>ITEM</th>
-                                            <th className="text-center">QTY</th>
-                                            <th className="text-right">PRICE</th>
-                                            <th className="total">TOTAL</th>
+                                        <tr className="font-bold border-b border-black text-black">
+                                            <th className="col-item text-left" style={{ width: '44%' }}>ITEM</th>
+                                            <th className="col-qty text-center" style={{ width: '14%' }}>QTY</th>
+                                            <th className="col-price text-right" style={{ width: '21%' }}>PRICE</th>
+                                            <th className="col-total text-right" style={{ width: '21%' }}>TOTAL</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {printedReceipt.items?.map((item) => (
-                                            <tr key={item.id}>
-                                                <td>
-                                                    <span className="font-bold uppercase">{item.product?.name}</span>
-                                                    {item.variant && <span style={{ fontSize: '8px', display: 'block' }}>({item.variant.size} / {item.variant.color})</span>}
+                                            <tr key={item.id} className="text-black">
+                                                <td className="col-item text-left" style={{ width: '44%', wordBreak: 'break-word' }}>
+                                                    <span className="font-bold uppercase block">{item.product?.name}</span>
+                                                    {item.variant && (
+                                                        <span style={{ fontSize: '8px', display: 'block', color: '#333' }}>
+                                                            ({item.variant.size || ''}{item.variant.size && item.variant.color ? ' / ' : ''}{item.variant.color || ''})
+                                                        </span>
+                                                    )}
                                                 </td>
-                                                <td className="text-center">{item.quantity}</td>
-                                                <td className="text-right">{currency}{Number(item.price).toFixed(2)}</td>
-                                                <td className="total font-bold">{currency}{Number(item.total).toFixed(2)}</td>
+                                                <td className="col-qty text-center" style={{ width: '14%' }}>{item.quantity}</td>
+                                                <td className="col-price text-right" style={{ width: '21%' }}>{currency}{Number(item.price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                                <td className="col-total text-right font-bold" style={{ width: '21%' }}>{currency}{Number(item.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
                             </div>
 
-                            {/* Breaks */}
-                            <div style={{ fontSize: '9px' }} className="space-y-1 text-black">
-                                <div className="flex justify-between"><span>SUBTOTAL</span><span>{currency}{Number(printedReceipt.subtotal).toFixed(2)}</span></div>
+                            {/* Order Totals */}
+                            <div style={{ fontSize: '9px' }} className="space-y-0.5 text-black">
+                                <div className="flex justify-between"><span>SUBTOTAL:</span><span>{currency}{Number(printedReceipt.subtotal).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
                                 {Number(printedReceipt.discount) > 0 && (
                                     <div className="flex justify-between" style={{ color: 'red' }}>
-                                        <span>DISCOUNT DEDUCTION</span>
-                                        <span>-{currency}{Number(printedReceipt.discount).toFixed(2)}</span>
+                                        <span>DISCOUNT DEDUCTION:</span>
+                                        <span>-{currency}{Number(printedReceipt.discount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                     </div>
                                 )}
-                                <div className="flex justify-between"><span>TAX GST ({taxRate}%)</span><span>{currency}{Number(printedReceipt.tax).toFixed(2)}</span></div>
-                                <div className="flex justify-between font-bold border-t border-dashed border-black pt-1.5" style={{ fontSize: '10px' }}>
-                                    <span>GRAND TOTAL INVOICE</span>
-                                    <span>{currency}{Number(printedReceipt.total).toFixed(2)}</span>
+                                <div className="flex justify-between"><span>TAX GST ({taxRate}%):</span><span>{currency}{Number(printedReceipt.tax).toFixed(2)}</span></div>
+                                <div className="flex justify-between font-bold border-t border-dashed border-black pt-1.5 mt-1" style={{ fontSize: '10px' }}>
+                                    <span>GRAND TOTAL INVOICE:</span>
+                                    <span>{currency}{Number(printedReceipt.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                 </div>
                             </div>
 
-                            {/* Payment breakdowns if Cash */}
+                            {/* Cash Received & Change Return */}
                             {Number(printedReceipt.cash_received) > 0 && (
-                                <div style={{ fontSize: '8px' }} className="bg-slate-100 p-1.5 rounded space-y-0.5 mt-1 border text-black">
-                                    <div className="flex justify-between"><span>CASH HANDED:</span><span>{currency}{Number(printedReceipt.cash_received).toFixed(2)}</span></div>
-                                    <div className="flex justify-between font-bold"><span>CHANGE RETURN:</span><span>{currency}{Number(printedReceipt.change_returned).toFixed(2)}</span></div>
+                                <div style={{ fontSize: '8.5px' }} className="bg-slate-50 p-1.5 rounded space-y-0.5 mt-1 border border-slate-200 text-black">
+                                    <div className="flex justify-between"><span>CASH HANDED:</span><span>{currency}{Number(printedReceipt.cash_received).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+                                    <div className="flex justify-between font-bold"><span>CHANGE RETURN:</span><span>{currency}{Number(printedReceipt.change_returned).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
                                 </div>
                             )}
 
-                            {/* Greet */}
-                            <div style={{ fontSize: '8px' }} className="text-center pt-3 border-t border-dashed border-black text-black">
-                                <p className="font-bold">♥ WEAR YOUR SIGNATURE. THANK YOU! ♥</p>
-                                <p>Exchange and Return within 3 days.</p>
+                            {/* Exchange & Return Policy Footer */}
+                            <div style={{ fontSize: '8.5px' }} className="text-center pt-2 border-t border-dashed border-black text-black space-y-1">
+                                <p className="font-black tracking-wider uppercase" style={{ fontSize: '9.5px', margin: '2px 0' }}>★ WEAR YOUR SIGNATURE ★</p>
+                                <div style={{ border: '1px solid black', padding: '2px 6px', margin: '3px auto', display: 'inline-block', fontWeight: 'bold', borderRadius: '3px' }}>
+                                    ★ EXCHANGE & RETURN WITHIN 3 DAYS ★
+                                </div>
+                                <p style={{ fontSize: '8px', margin: '1px 0' }}>Original price tag & receipt required for exchange or return.</p>
+                                <p style={{ fontWeight: 'bold', fontSize: '8.5px', marginTop: '3px' }}>Thank you for shopping at Brands Studio!</p>
                             </div>
 
                         </div>
