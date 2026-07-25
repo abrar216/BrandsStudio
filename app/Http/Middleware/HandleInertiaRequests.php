@@ -62,6 +62,7 @@ class HandleInertiaRequests extends Middleware
                 'shipping_charges' => Setting::get('shipping_charges', '0'),
                 'contact_email' => Setting::get('contact_email', 'Brandstudiodik29@gmail.com'),
                 'contact_phone' => Setting::get('contact_phone', '03356101234'),
+                'contact_address' => Setting::get('contact_address', 'North Circular Road, Leeds College Opposite Byco Pertrol Pump, Dera Ismail Khan'),
             ],
             'flash' => [
                 'success' => $request->session()->get('success'),

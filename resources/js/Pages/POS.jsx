@@ -584,7 +584,7 @@ export default function POS({ products, categories }) {
                             <div className="text-center space-y-0.5 border-b border-dashed pb-3.5">
                                 <h3 className="text-sm font-black font-serif tracking-widest text-black uppercase">BRANDS STUDIO</h3>
                                 <p className="text-[9px] text-slate-500 font-sans font-semibold">PREMIUM DESIGNER CLOTHING</p>
-                                <p className="text-[9px] text-slate-500 font-sans font-semibold">{settings.contact_address || '789 Fashion Avenue, NYC'}</p>
+                                <p className="text-[9px] text-slate-500 font-sans font-semibold">{settings.contact_address || 'North Circular Road, Leeds College Opposite Byco Pertrol Pump, Dera Ismail Khan'}</p>
                                 <p className="text-[9px] text-slate-500 font-sans font-semibold">{settings.contact_phone || '03356101234'}</p>
                             </div>
 
@@ -646,8 +646,8 @@ export default function POS({ products, categories }) {
 
                             {/* Footer greeting card */}
                             <div className="text-center text-[9px] text-slate-500 pt-3 border-t border-dashed leading-snug">
-                                <p className="font-sans font-bold">♥ WEAR YOUR SIGNATURE. THANK YOU! ♥</p>
-                                <p className="font-sans">Exchange claims valid within 30 days with receipt.</p>
+                                <p className="font-sans font-bold">★ WEAR YOUR SIGNATURE ★</p>
+                                <p className="font-sans font-bold">★ EXCHANGE & RETURN WITHIN 3 DAYS ★</p>
                             </div>
 
                         </div>

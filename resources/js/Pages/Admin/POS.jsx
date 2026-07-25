@@ -1657,7 +1657,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                 <h3 className="text-base font-black text-center text-black uppercase tracking-widest" style={{ margin: '0', fontSize: '15px' }}>BRANDS STUDIO</h3>
                                 <p style={{ fontSize: '9px', fontWeight: 'bold', margin: '2px 0' }} className="text-center text-black uppercase">PREMIUM DESIGNER CLOTHING</p>
                                 <p style={{ fontSize: '8.5px', margin: '1px 0' }} className="text-center text-black">
-                                    {settings.contact_address || 'Near Civil Hospital, Dera Ismail Khan (D.I. Khan), KPK, Pakistan'}
+                                    {settings.contact_address || 'North Circular Road, Leeds College Opposite Byco Pertrol Pump, Dera Ismail Khan'}
                                 </p>
                                 <p style={{ fontSize: '8.5px', fontWeight: 'bold', margin: '1px 0' }} className="text-center text-black">
                                     TEL / WHATSAPP: {settings.contact_phone || '03356101234'}
