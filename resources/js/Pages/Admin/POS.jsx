@@ -518,11 +518,11 @@ export default function POS({ products, categories, customers, recentOrders, rep
             <Head title="POS Cashier Terminal" />
 
             {/* TAB CONTAINER */}
-            <div className="pos-system flex-grow flex flex-col min-h-0 h-auto md:h-full space-y-2.5 p-2.5 overflow-y-auto md:overflow-hidden bg-[#F8FAFC] dark:bg-slate-900/40">
+            <div className="pos-system flex-grow flex flex-col min-h-0 h-auto md:h-full space-y-2.5 p-2.5 overflow-y-auto bg-[#F8FAFC] dark:bg-slate-900/40">
 
                 {/* 2. TAB CONTENT: TERMINAL */}
                 {activeTab === 'terminal' && (
-                    <div className="flex-grow flex flex-col md:flex-row gap-3 min-h-0 h-auto md:h-full overflow-y-auto md:overflow-hidden">
+                    <div className="flex-grow flex flex-col md:flex-row gap-3 min-h-0 h-auto md:h-full overflow-y-auto">
                         
                         {/* LEFT: Products Grid (65% width) */}
                         <div className="w-full md:w-[65%] flex flex-col min-h-0 h-auto md:h-full space-y-3">
@@ -628,14 +628,14 @@ export default function POS({ products, categories, customers, recentOrders, rep
                             </div>
                         </div>
 
-                         {/* RIGHT: Cart and Payment Panels (Redesigned POS Terminal Sidebar) */}
-                         <div className="w-full md:w-[38%] lg:w-[35%] flex flex-col min-h-0 h-auto md:h-full space-y-2.5">
+                         {/* RIGHT: Cart and Payment Panels (Scrollable POS Terminal Sidebar) */}
+                         <div className="w-full md:w-[38%] lg:w-[35%] flex flex-col min-h-0 h-auto md:h-full">
                             
                             {/* Panel Container */}
-                            <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden flex flex-col h-full">
+                            <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden flex flex-col h-full max-h-full">
                                 
-                                {/* 1. Cart Header Bar */}
-                                <div className="bg-slate-900 text-white p-3 sm:p-3.5 flex items-center justify-between flex-shrink-0">
+                                {/* 1. Cart Header Bar (Fixed) */}
+                                <div className="bg-slate-900 text-white p-3 sm:p-3.5 flex items-center justify-between flex-shrink-0 z-10 border-b border-slate-800">
                                     <div className="flex items-center space-x-2.5">
                                         <div className="p-1.5 bg-blue-600/30 text-blue-400 rounded-lg">
                                             <ShoppingCart size={16} />
@@ -665,8 +665,8 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                     </div>
                                 </div>
 
-                                {/* 2. Barcode Scan Input Bar */}
-                                <div className="p-2.5 bg-slate-50 dark:bg-slate-950/50 border-b border-slate-200/70 dark:border-slate-800 flex-shrink-0">
+                                {/* 2. Barcode Scan Input Bar (Fixed) */}
+                                <div className="p-2.5 bg-slate-50 dark:bg-slate-950/50 border-b border-slate-200/70 dark:border-slate-800 flex-shrink-0 z-10">
                                     <form onSubmit={handleBarcodeSubmit} className="relative flex items-center w-full">
                                         <Barcode size={15} className="absolute left-3 text-slate-400 z-10" />
                                         <input
@@ -681,109 +681,118 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                     </form>
                                 </div>
 
-                                {/* 3. Scrollable Cart Items List */}
-                                <div ref={cartItemsRef} className="flex-grow overflow-y-auto p-2.5 space-y-2 min-h-[140px] max-h-[300px] md:max-h-none custom-scrollbar">
-                                    {cart.length > 0 ? (
-                                        cart.filter(Boolean).map((item) => {
-                                            const productObj = products.find(p => p.id === item.id);
-                                            return (
-                                                <div key={item.key} className="group flex items-center justify-between p-2 bg-slate-50/80 dark:bg-slate-900/60 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 border border-slate-200/60 dark:border-slate-800 rounded-xl gap-2 transition-all shadow-2xs">
-                                                    
-                                                    {/* Product Image Thumbnail */}
-                                                    <div className="w-10 h-10 rounded-lg bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 overflow-hidden flex-shrink-0 flex items-center justify-center">
-                                                        {productObj && getProductImageUrl(productObj) ? (
-                                                            <img 
-                                                                src={getAssetUrl(`storage/${getProductImageUrl(productObj)}`)} 
-                                                                className="w-full h-full object-cover" 
-                                                                alt={item.name} 
-                                                            />
-                                                        ) : (
-                                                            <Shirt size={16} className="text-slate-400" />
-                                                        )}
-                                                    </div>
-
-                                                    {/* Product Details & Variant Badges */}
-                                                    <div className="flex-grow min-w-0">
-                                                        <h5 className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate leading-snug" title={item.name}>
-                                                            {item.name}
-                                                        </h5>
-                                                        <div className="flex items-center flex-wrap gap-1 mt-1">
-                                                            {item.size && (
-                                                                <span className="bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-md border border-slate-300/40 dark:border-slate-700">
-                                                                    Size: {item.size}
-                                                                </span>
-                                                            )}
-                                                            {item.color && (
-                                                                <span className="bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-md border border-slate-300/40 dark:border-slate-700">
-                                                                    {item.color}
-                                                                </span>
-                                                            )}
-                                                            <span className="text-[9px] font-mono text-slate-400 tracking-tight">
-                                                                SKU: {item.sku}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Qty Controls, Price & Remove */}
-                                                    <div className="flex items-center space-x-2 flex-shrink-0">
-                                                        {/* Quantity Modifier */}
-                                                        <div className="flex items-center border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 rounded-lg p-0.5 shadow-2xs">
-                                                            <button 
-                                                                type="button"
-                                                                onClick={() => handleQtyChange(item.key, -1)}
-                                                                className="w-5 h-5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-600 dark:text-slate-300 transition-colors"
-                                                                title="Decrease"
-                                                            >
-                                                                <Minus size={11} className="stroke-[2.5]" />
-                                                            </button>
-                                                            <span className="w-6 text-center text-xs font-black text-slate-900 dark:text-slate-100 font-mono select-none">
-                                                                {item.quantity}
-                                                            </span>
-                                                            <button 
-                                                                type="button"
-                                                                onClick={() => handleQtyChange(item.key, 1)}
-                                                                className="w-5 h-5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-600 dark:text-slate-300 disabled:opacity-30 transition-colors"
-                                                                disabled={item.quantity >= item.max_stock}
-                                                                title="Increase"
-                                                            >
-                                                                <Plus size={11} className="stroke-[2.5]" />
-                                                            </button>
-                                                        </div>
-
-                                                        {/* Item Line Total */}
-                                                        <span className="text-xs font-black text-slate-900 dark:text-white font-mono min-w-[55px] text-right">
-                                                            {currency}{(item.price * item.quantity).toLocaleString()}
-                                                        </span>
-
-                                                        {/* Delete Button */}
-                                                        <button 
-                                                            type="button"
-                                                            onClick={() => handleRemoveItem(item.key)}
-                                                            className="p-1 text-slate-400 hover:text-rose-600 dark:text-slate-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-all"
-                                                            title="Remove Item"
-                                                        >
-                                                            <Trash2 size={13} className="stroke-[2]" />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })
-                                    ) : (
-                                        <div className="flex flex-col justify-center items-center text-center p-6 text-slate-400 space-y-2 my-auto h-full">
-                                            <div className="w-12 h-12 rounded-full bg-blue-50 dark:bg-slate-800 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                                                <ShoppingCart size={22} />
-                                            </div>
-                                            <p className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">Cart is Empty</p>
-                                            <p className="text-[11px] text-slate-400 max-w-[200px]">Scan a product barcode or click items on the catalog grid to start billing.</p>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* 4. Checkout Console Panel (Customer + Summary + Payment) */}
-                                <div className="bg-slate-50/90 dark:bg-slate-950/80 border-t border-slate-200 dark:border-slate-800 p-3 space-y-2.5 flex-shrink-0">
+                                {/* 3. SCROLLABLE SIDEBAR BODY (Cart Items + Customer + Billing + Payment Options) */}
+                                <div className="flex-grow overflow-y-auto p-3 space-y-3 custom-scrollbar">
                                     
-                                    {/* A. Customer Selection */}
+                                    {/* Cart Items List */}
                                     <div className="space-y-1.5">
+                                        <div className="flex justify-between items-center px-1">
+                                            <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">Cart Items</span>
+                                            <span className="text-[10px] font-bold text-slate-500 font-mono">
+                                                Subtotal: {currency} {subtotal.toLocaleString()}
+                                            </span>
+                                        </div>
+
+                                        <div ref={cartItemsRef} className="space-y-2 max-h-[220px] md:max-h-[260px] overflow-y-auto pr-1 custom-scrollbar">
+                                            {cart.length > 0 ? (
+                                                cart.filter(Boolean).map((item) => {
+                                                    const productObj = products.find(p => p.id === item.id);
+                                                    return (
+                                                        <div key={item.key} className="group flex items-center justify-between p-2 bg-slate-50/80 dark:bg-slate-900/60 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 border border-slate-200/60 dark:border-slate-800 rounded-xl gap-2 transition-all shadow-2xs">
+                                                            
+                                                            {/* Product Image Thumbnail */}
+                                                            <div className="w-10 h-10 rounded-lg bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                                                                {productObj && getProductImageUrl(productObj) ? (
+                                                                    <img 
+                                                                        src={getAssetUrl(`storage/${getProductImageUrl(productObj)}`)} 
+                                                                        className="w-full h-full object-cover" 
+                                                                        alt={item.name} 
+                                                                    />
+                                                                ) : (
+                                                                    <Shirt size={16} className="text-slate-400" />
+                                                                )}
+                                                            </div>
+
+                                                            {/* Product Details & Variant Badges */}
+                                                            <div className="flex-grow min-w-0">
+                                                                <h5 className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate leading-snug" title={item.name}>
+                                                                    {item.name}
+                                                                </h5>
+                                                                <div className="flex items-center flex-wrap gap-1 mt-1">
+                                                                    {item.size && (
+                                                                        <span className="bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-md border border-slate-300/40 dark:border-slate-700">
+                                                                            Size: {item.size}
+                                                                        </span>
+                                                                    )}
+                                                                    {item.color && (
+                                                                        <span className="bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-md border border-slate-300/40 dark:border-slate-700">
+                                                                            {item.color}
+                                                                        </span>
+                                                                    )}
+                                                                    <span className="text-[9px] font-mono text-slate-400 tracking-tight">
+                                                                        SKU: {item.sku}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Qty Controls, Price & Remove */}
+                                                            <div className="flex items-center space-x-2 flex-shrink-0">
+                                                                {/* Quantity Modifier */}
+                                                                <div className="flex items-center border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 rounded-lg p-0.5 shadow-2xs">
+                                                                    <button 
+                                                                        type="button"
+                                                                        onClick={() => handleQtyChange(item.key, -1)}
+                                                                        className="w-5 h-5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-600 dark:text-slate-300 transition-colors"
+                                                                        title="Decrease"
+                                                                    >
+                                                                        <Minus size={11} className="stroke-[2.5]" />
+                                                                    </button>
+                                                                    <span className="w-6 text-center text-xs font-black text-slate-900 dark:text-slate-100 font-mono select-none">
+                                                                        {item.quantity}
+                                                                    </span>
+                                                                    <button 
+                                                                        type="button"
+                                                                        onClick={() => handleQtyChange(item.key, 1)}
+                                                                        className="w-5 h-5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-600 dark:text-slate-300 disabled:opacity-30 transition-colors"
+                                                                        disabled={item.quantity >= item.max_stock}
+                                                                        title="Increase"
+                                                                    >
+                                                                        <Plus size={11} className="stroke-[2.5]" />
+                                                                    </button>
+                                                                </div>
+
+                                                                {/* Item Line Total */}
+                                                                <span className="text-xs font-black text-slate-900 dark:text-white font-mono min-w-[55px] text-right">
+                                                                    {currency}{(item.price * item.quantity).toLocaleString()}
+                                                                </span>
+
+                                                                {/* Delete Button */}
+                                                                <button 
+                                                                    type="button"
+                                                                    onClick={() => handleRemoveItem(item.key)}
+                                                                    className="p-1 text-slate-400 hover:text-rose-600 dark:text-slate-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-all"
+                                                                    title="Remove Item"
+                                                                >
+                                                                    <Trash2 size={13} className="stroke-[2]" />
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })
+                                            ) : (
+                                                <div className="flex flex-col justify-center items-center text-center p-5 text-slate-400 space-y-2 bg-slate-50/50 dark:bg-slate-900/30 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
+                                                    <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-slate-800 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                                                        <ShoppingCart size={18} />
+                                                    </div>
+                                                    <p className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">Cart is Empty</p>
+                                                    <p className="text-[10px] text-slate-400 max-w-[190px]">Scan a barcode or click items to start billing.</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Customer Selection & Walk-in */}
+                                    <div className="space-y-1.5 pt-1 border-t border-slate-100 dark:border-slate-800">
                                         <div className="flex items-center justify-between gap-2">
                                             <div className="relative flex-grow">
                                                 <select
@@ -810,7 +819,6 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                             </button>
                                         </div>
 
-                                        {/* Walk-in Customer Guest Details */}
                                         {!selectedCustomerId && (
                                             <div className="grid grid-cols-2 gap-1.5">
                                                 <input
@@ -831,8 +839,8 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                         )}
                                     </div>
 
-                                    {/* B. Order Summary & Discounts */}
-                                    <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl p-2.5 space-y-1.5 text-xs">
+                                    {/* Order Summary & Discounts */}
+                                    <div className="bg-slate-50/80 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800 rounded-xl p-2.5 space-y-1.5 text-xs">
                                         
                                         {/* Subtotal */}
                                         <div className="flex justify-between items-center text-slate-600 dark:text-slate-400 font-medium">
@@ -874,7 +882,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                                             setDiscount(isNaN(num) ? 0 : Math.max(0, num));
                                                         }
                                                     }}
-                                                    className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg py-1 px-2 text-xs text-center text-slate-900 dark:text-slate-100 font-mono font-bold w-16 focus:ring-1 focus:ring-blue-500"
+                                                    className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg py-1 px-2 text-xs text-center text-slate-900 dark:text-slate-100 font-mono font-bold w-16 focus:ring-1 focus:ring-blue-500"
                                                     placeholder="0"
                                                 />
                                                 {discountDeduction > 0 && (
@@ -903,7 +911,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                         </div>
                                     </div>
 
-                                    {/* C. Payment Selector & Checkout Buttons */}
+                                    {/* Payment Selector & Cash/Ref Details */}
                                     <div className="space-y-2">
                                         
                                         {/* Payment Method Selector Grid */}
@@ -958,7 +966,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                             </div>
                                         )}
 
-                                        {/* Online Payment Reference Input */}
+                                        {/* Online Reference Input */}
                                         {paymentMethod === 'online' && (
                                             <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
                                                 <label className="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider mb-1">Transaction Ref / Slip #</label>
@@ -972,7 +980,7 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                             </div>
                                         )}
 
-                                        {/* Split Payment Details */}
+                                        {/* Split Details */}
                                         {paymentMethod === 'partial' && (
                                             <div className="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1.5">
                                                 <label className="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Split Payment Breakdown</label>
@@ -1010,19 +1018,23 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                                 </div>
                                             </div>
                                         )}
-
-                                        {/* Main Complete Sale Button */}
-                                        <button
-                                            type="button"
-                                            onClick={handlePOSCheckout}
-                                            disabled={checkoutLoading || cart.length === 0}
-                                            className="w-full bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-600 text-white text-xs sm:text-sm font-black py-3 rounded-xl transition-all shadow-lg hover:shadow-emerald-500/20 uppercase flex items-center justify-center space-x-2 select-none cursor-pointer"
-                                        >
-                                            <CheckCircle size={16} className="stroke-[2.5]" />
-                                            <span>{checkoutLoading ? 'Processing Checkout...' : 'Complete Sale & Print'}</span>
-                                        </button>
                                     </div>
+
                                 </div>
+
+                                {/* 4. ALWAYS-VISIBLE FIXED BOTTOM CHECKOUT BUTTON BAR */}
+                                <div className="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex-shrink-0 z-10 shadow-lg">
+                                    <button
+                                        type="button"
+                                        onClick={handlePOSCheckout}
+                                        disabled={checkoutLoading || cart.length === 0}
+                                        className="w-full bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 dark:disabled:text-slate-600 text-white text-xs sm:text-sm font-black py-3 rounded-xl transition-all shadow-lg hover:shadow-emerald-500/20 uppercase flex items-center justify-center space-x-2 select-none cursor-pointer"
+                                    >
+                                        <CheckCircle size={16} className="stroke-[2.5]" />
+                                        <span>{checkoutLoading ? 'Processing Checkout...' : 'Complete Sale & Print'}</span>
+                                    </button>
+                                </div>
+
                             </div>
 
                         </div>
