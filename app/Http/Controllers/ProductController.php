@@ -186,12 +186,13 @@ class ProductController extends Controller
             'is_new_arrival', 'image', 'status', 'created_at'
         ];
 
-        $query = Product::where('status', 'active')
-            ->where(function($q) {
+        $query = Product::where('status', 'active');
+        if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'show_on_web')) {
+            $query->where(function($q) {
                 $q->whereNull('show_on_web')->orWhere('show_on_web', true);
-            })
-            ->select($cardFields)
-            ->with(['category', 'variants']);
+            });
+        }
+        $query->select($cardFields)->with(['category', 'variants']);
 
         // Filter by category
         if ($request->filled('category')) {
@@ -297,13 +298,13 @@ class ProductController extends Controller
 
     public function show($slug)
     {
-        $product = Product::where('slug', $slug)
-            ->where('status', 'active')
-            ->where(function($q) {
+        $productQuery = Product::where('slug', $slug)->where('status', 'active');
+        if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'show_on_web')) {
+            $productQuery->where(function($q) {
                 $q->whereNull('show_on_web')->orWhere('show_on_web', true);
-            })
-            ->with(['category', 'variants', 'reviews.user', 'images'])
-            ->firstOrFail();
+            });
+        }
+        $product = $productQuery->with(['category', 'variants', 'reviews.user', 'images'])->firstOrFail();
 
         $cardFields = [
             'id', 'name', 'slug', 'sku', 'price', 'discount_price', 

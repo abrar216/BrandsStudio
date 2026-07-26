@@ -146,14 +146,21 @@ class AdminDashboardController extends Controller
 
         $this->autoSelfHealOversizedProducts();
 
-        $products = Product::select([
+        $columns = [
             'id', 'name', 'slug', 'sku', 'price', 'discount_price', 
             'cost_price', 'gst_rate', 'category_id', 'stock_quantity', 
             'is_featured', 'is_trending', 'is_best_seller', 'is_new_arrival', 
             'status', 'image', 'description', 'short_description', 
-            'show_on_web', 'show_on_pos',
             'created_at'
-        ])
+        ];
+        if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'show_on_web')) {
+            $columns[] = 'show_on_web';
+        }
+        if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'show_on_pos')) {
+            $columns[] = 'show_on_pos';
+        }
+
+        $products = Product::select($columns)
         ->with(['variants', 'category'])
         ->orderBy('created_at', 'desc')
         ->get();
@@ -346,9 +353,13 @@ class AdminDashboardController extends Controller
             return back()->withErrors(['image' => 'The product image is required.']);
         }
 
-        $data = $request->except(['image', 'images', 'variants']);
-        $data['show_on_web'] = $request->has('show_on_web') ? (bool)$request->show_on_web : false;
-        $data['show_on_pos'] = $request->has('show_on_pos') ? (bool)$request->show_on_pos : false;
+        $data = $request->except(['image', 'images', 'variants', 'show_on_web', 'show_on_pos']);
+        if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'show_on_web')) {
+            $data['show_on_web'] = $request->has('show_on_web') ? (bool)$request->show_on_web : false;
+        }
+        if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'show_on_pos')) {
+            $data['show_on_pos'] = $request->has('show_on_pos') ? (bool)$request->show_on_pos : false;
+        }
         if ($request->hasFile('image')) {
             if ($product->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($product->image)) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);
