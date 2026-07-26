@@ -92,99 +92,122 @@ class POSController extends Controller
         // 5. Gather Reports & Analytics (Only for Admins)
         $reports = null;
         if (auth()->user()->isAdmin()) {
-            $reports = [];
+            $reports = [
+                'total_revenue' => 0.00,
+                'total_refunded' => 0.00,
+                'daily_sales' => [],
+                'monthly_sales' => [],
+                'cashier_sales' => [],
+                'product_sales' => [],
+                'refund_report' => [],
+                'low_stock_products' => [],
+                'low_stock_variants' => [],
+            ];
 
-            // A. Revenue Overview
-            $reports['total_revenue'] = (float) Order::where('payment_status', 'paid')->sum('total');
-            $reports['total_refunded'] = (float) Order::where('payment_status', 'refunded')->sum('total');
+            try {
+                // A. Revenue Overview
+                $reports['total_revenue'] = (float) Order::where('payment_status', 'paid')->sum('total');
+                $reports['total_refunded'] = (float) Order::where('payment_status', 'refunded')->sum('total');
 
-            // B. Daily Sales (last 30 days)
-            $reports['daily_sales'] = Order::where('payment_status', 'paid')
-                ->where('created_at', '>=', now()->subDays(30))
-                ->select(
-                    DB::raw('CAST(created_at AS DATE) as date'),
-                    DB::raw('SUM(total) as revenue'),
-                    DB::raw('COUNT(id) as count')
-                )
-                ->groupBy(DB::raw('CAST(created_at AS DATE)'))
-                ->orderBy(DB::raw('CAST(created_at AS DATE)'), 'desc')
-                ->get();
+                // B. Daily Sales (last 30 days)
+                $reports['daily_sales'] = Order::where('payment_status', 'paid')
+                    ->where('created_at', '>=', now()->subDays(30))
+                    ->select(
+                        DB::raw('CAST(created_at AS DATE) as date'),
+                        DB::raw('SUM(total) as revenue'),
+                        DB::raw('COUNT(id) as count')
+                    )
+                    ->groupBy(DB::raw('CAST(created_at AS DATE)'))
+                    ->get();
 
-            // C. Monthly Sales
-            $driver = DB::connection()->getDriverName();
-            if ($driver === 'pgsql') {
-                $monthFormatted = "TO_CHAR(created_at, 'Mon YYYY')";
-            } elseif ($driver === 'sqlite') {
-                $monthFormatted = "case strftime('%m', created_at) when '01' then 'Jan' when '02' then 'Feb' when '03' then 'Mar' when '04' then 'Apr' when '05' then 'May' when '06' then 'Jun' when '07' then 'Jul' when '08' then 'Aug' when '09' then 'Sep' when '10' then 'Oct' when '11' then 'Nov' when '12' then 'Dec' end || ' ' || strftime('%Y', created_at)";
-            } else {
-                $monthFormatted = "DATE_FORMAT(created_at, '%b %Y')";
-            }
+                // C. Monthly Sales (PHP Collection format)
+                $paidOrders = Order::where('payment_status', 'paid')
+                    ->select(['id', 'total', 'created_at'])
+                    ->get();
 
-            $reports['monthly_sales'] = Order::where('payment_status', 'paid')
-                ->select(
-                    DB::raw("$monthFormatted as month"),
-                    DB::raw('SUM(total) as revenue'),
-                    DB::raw('COUNT(id) as count')
-                )
-                ->groupBy(DB::raw($monthFormatted))
-                ->orderBy(DB::raw('MIN(created_at)'), 'desc')
-                ->get();
+                $reports['monthly_sales'] = $paidOrders->groupBy(function($order) {
+                    return \Carbon\Carbon::parse($order->created_at)->format('M Y');
+                })->map(function($orders, $month) {
+                    return [
+                        'month' => $month,
+                        'revenue' => (float) $orders->sum('total'),
+                        'count' => $orders->count()
+                    ];
+                })->values();
 
-            // D. Cashier-wise Sales
-            $reports['cashier_sales'] = Order::where('payment_status', 'paid')
-                ->whereNotNull('cashier_id')
-                ->select(
-                    'cashier_id',
-                    DB::raw('SUM(total) as revenue'),
-                    DB::raw('COUNT(id) as count')
-                )
-                ->with('cashier')
-                ->groupBy('cashier_id')
-                ->get();
+                // D. Cashier-wise Sales (PHP Collection format)
+                $cashierOrders = Order::where('payment_status', 'paid')
+                    ->whereNotNull('cashier_id')
+                    ->select(['id', 'cashier_id', 'total'])
+                    ->with(['cashier' => function($q) {
+                        $q->select('id', 'name', 'email');
+                    }])
+                    ->get();
 
-            // E. Product-wise Sales
-            $reports['product_sales'] = OrderItem::select(
-                    'product_id',
-                    DB::raw('SUM(quantity) as quantity_sold'),
-                    DB::raw('SUM(total) as revenue')
-                )
-                ->groupBy('product_id')
-                ->with(['product' => function($q) {
-                    $q->select('id', 'name', 'sku', 'price');
-                }])
-                ->orderBy('quantity_sold', 'desc')
-                ->limit(30)
-                ->get();
+                $reports['cashier_sales'] = $cashierOrders->groupBy('cashier_id')
+                    ->map(function($orders) {
+                        $first = $orders->first();
+                        return [
+                            'cashier_id' => $first->cashier_id,
+                            'revenue' => (float) $orders->sum('total'),
+                            'count' => $orders->count(),
+                            'cashier' => $first->cashier
+                        ];
+                    })->values();
 
-            // F. Refund Report
-            $reports['refund_report'] = Order::where('payment_status', 'refunded')
-                ->select(['id', 'order_number', 'customer_name', 'total', 'cashier_id', 'created_at', 'updated_at'])
-                ->with([
-                    'items.product' => function($q) {
+                // E. Product-wise Sales (PHP Collection format)
+                $orderItems = OrderItem::select(['id', 'product_id', 'quantity', 'total'])
+                    ->with(['product' => function($q) {
                         $q->select('id', 'name', 'sku', 'price');
-                    }, 
-                    'cashier' => function($q) {
-                        $q->select('id', 'name');
-                    }
-                ])
-                ->orderBy('updated_at', 'desc')
-                ->limit(20)
-                ->get();
+                    }])
+                    ->get();
 
-            // G. Stock report (combines low stock products and variants)
-            $reports['low_stock_products'] = Product::where('status', 'active')
-                ->where('stock_quantity', '<', 10)
-                ->select('id', 'name', 'sku', 'price', 'stock_quantity', 'status', 'category_id')
-                ->with('category')
-                ->orderBy('stock_quantity', 'asc')
-                ->get();
+                $reports['product_sales'] = $orderItems->groupBy('product_id')
+                    ->map(function($items) {
+                        $first = $items->first();
+                        return [
+                            'product_id' => $first->product_id,
+                            'quantity_sold' => (int) $items->sum('quantity'),
+                            'revenue' => (float) $items->sum('total'),
+                            'product' => $first->product
+                        ];
+                    })
+                    ->sortByDesc('quantity_sold')
+                    ->take(30)
+                    ->values();
 
-            $reports['low_stock_variants'] = ProductVariant::where('stock_quantity', '<', 5)
-                ->with(['product' => function($q) {
-                    $q->select('id', 'name', 'sku');
-                }])
-                ->orderBy('stock_quantity', 'asc')
-                ->get();
+                // F. Refund Report
+                $reports['refund_report'] = Order::where('payment_status', 'refunded')
+                    ->select(['id', 'order_number', 'customer_name', 'total', 'cashier_id', 'created_at', 'updated_at'])
+                    ->with([
+                        'items.product' => function($q) {
+                            $q->select('id', 'name', 'sku', 'price');
+                        }, 
+                        'cashier' => function($q) {
+                            $q->select('id', 'name');
+                        }
+                    ])
+                    ->orderBy('updated_at', 'desc')
+                    ->limit(20)
+                    ->get();
+
+                // G. Stock report (combines low stock products and variants)
+                $reports['low_stock_products'] = Product::where('status', 'active')
+                    ->where('stock_quantity', '<', 10)
+                    ->select('id', 'name', 'sku', 'price', 'stock_quantity', 'status', 'category_id')
+                    ->with('category')
+                    ->orderBy('stock_quantity', 'asc')
+                    ->get();
+
+                $reports['low_stock_variants'] = ProductVariant::where('stock_quantity', '<', 5)
+                    ->with(['product' => function($q) {
+                        $q->select('id', 'name', 'sku');
+                    }])
+                    ->orderBy('stock_quantity', 'asc')
+                    ->get();
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('POS Reports Analytics Error: ' . $e->getMessage());
+            }
         }
 
         return Inertia::render('Admin/POS', [
