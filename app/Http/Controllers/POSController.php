@@ -24,7 +24,9 @@ class POSController extends Controller
         }
 
         // 1. Fetch active products with variants and categories
-        $productsQuery = Product::where('status', 'active');
+        $productsQuery = Product::where('status', 'active')
+            ->select(['id', 'name', 'slug', 'sku', 'price', 'discount_price', 'stock_quantity', 'category_id', 'image']);
+            
         if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'show_on_pos')) {
             $productsQuery->where(function($q) {
                 $q->whereNull('show_on_pos')->orWhere('show_on_pos', true);
@@ -33,6 +35,10 @@ class POSController extends Controller
         $products = $productsQuery->with(['variants', 'category'])
             ->get()
             ->map(function($product) {
+                $img = $product->image;
+                if ($img && str_starts_with($img, 'data:image/') && strlen($img) > 30000) {
+                    $img = Product::compressBase64String($img, 150, 0.4);
+                }
                 return [
                     'id' => $product->id,
                     'name' => $product->name,
@@ -42,6 +48,7 @@ class POSController extends Controller
                     'stock_quantity' => $product->stock_quantity,
                     'category_id' => $product->category_id,
                     'category_name' => $product->category ? $product->category->name : 'Uncategorized',
+                    'image' => $img,
                     'variants' => $product->variants->map(function($v) use ($product) {
                         return [
                             'id' => $v->id,
@@ -64,11 +71,22 @@ class POSController extends Controller
             ->orderBy('name', 'asc')
             ->get();
 
-        // 4. Fetch recent POS orders for the Ledger
+        // 4. Fetch recent POS orders for the Ledger (Selected columns only)
         $recentOrders = Order::where('customer_type', 'walk-in')
-            ->with(['items.product', 'items.variant', 'cashier'])
+            ->select(['id', 'order_number', 'customer_id', 'customer_name', 'customer_phone', 'customer_email', 'total', 'subtotal', 'discount', 'tax', 'cash_received', 'change_returned', 'payment_method', 'payment_status', 'cashier_id', 'created_at'])
+            ->with([
+                'items.product' => function($q) {
+                    $q->select(['id', 'name', 'sku', 'price']);
+                },
+                'items.variant' => function($q) {
+                    $q->select(['id', 'size', 'color', 'sku']);
+                },
+                'cashier' => function($q) {
+                    $q->select(['id', 'name', 'email']);
+                }
+            ])
             ->orderBy('created_at', 'desc')
-            ->limit(50)
+            ->limit(25)
             ->get();
 
         // 5. Gather Reports & Analytics (Only for Admins)
@@ -140,10 +158,17 @@ class POSController extends Controller
 
             // F. Refund Report
             $reports['refund_report'] = Order::where('payment_status', 'refunded')
-                ->with(['items.product' => function($q) {
-                    $q->select('id', 'name', 'sku', 'price');
-                }, 'cashier'])
+                ->select(['id', 'order_number', 'customer_name', 'total', 'cashier_id', 'created_at', 'updated_at'])
+                ->with([
+                    'items.product' => function($q) {
+                        $q->select('id', 'name', 'sku', 'price');
+                    }, 
+                    'cashier' => function($q) {
+                        $q->select('id', 'name');
+                    }
+                ])
                 ->orderBy('updated_at', 'desc')
+                ->limit(20)
                 ->get();
 
             // G. Stock report (combines low stock products and variants)
