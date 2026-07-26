@@ -16,7 +16,11 @@ import {
     AlertCircle,
     Info,
     RotateCcw,
-    Trash2
+    Trash2,
+    Globe,
+    Monitor,
+    Store,
+    ShoppingCart
 } from 'lucide-react';
 import { getAssetUrl, getProductImageUrl } from '../../Utils/asset';
 
@@ -121,6 +125,8 @@ export default function Products({ products, categories }) {
         is_trending: false,
         is_best_seller: false,
         is_new_arrival: false,
+        show_on_web: true,
+        show_on_pos: true,
         variants: [], // Array of { size, color, stock_quantity, price, cost_price }
         image: null,
         images: []
@@ -150,6 +156,8 @@ export default function Products({ products, categories }) {
         is_trending: false,
         is_best_seller: false,
         is_new_arrival: false,
+        show_on_web: true,
+        show_on_pos: true,
         status: 'active',
         image: null,
         images: [],
@@ -263,6 +271,8 @@ export default function Products({ products, categories }) {
             is_trending: Boolean(product.is_trending),
             is_best_seller: Boolean(product.is_best_seller),
             is_new_arrival: Boolean(product.is_new_arrival),
+            show_on_web: product.show_on_web ?? true,
+            show_on_pos: product.show_on_pos ?? true,
             status: product.status,
             image: null,
             images: [],
@@ -513,6 +523,24 @@ export default function Products({ products, categories }) {
                                                         {product.is_new_arrival === 1 && (
                                                             <span className="bg-teal-50 text-teal-650 text-teal-600 text-[10px] font-black px-1.5 py-0.5 rounded border border-teal-250/20 uppercase">
                                                                 New
+                                                            </span>
+                                                        )}
+                                                        {/* Sales Channel Visibility Pill */}
+                                                        {Boolean(product.show_on_web ?? true) && Boolean(product.show_on_pos ?? true) ? (
+                                                            <span className="bg-blue-50 text-blue-700 text-[10px] font-black px-1.5 py-0.5 rounded border border-blue-200 uppercase">
+                                                                Web & POS
+                                                            </span>
+                                                        ) : !Boolean(product.show_on_web ?? true) && Boolean(product.show_on_pos ?? true) ? (
+                                                            <span className="bg-amber-100 text-amber-900 text-[10px] font-black px-1.5 py-0.5 rounded border border-amber-300 uppercase">
+                                                                POS Only
+                                                            </span>
+                                                        ) : Boolean(product.show_on_web ?? true) && !Boolean(product.show_on_pos ?? true) ? (
+                                                            <span className="bg-indigo-100 text-indigo-900 text-[10px] font-black px-1.5 py-0.5 rounded border border-indigo-300 uppercase">
+                                                                Web Only
+                                                            </span>
+                                                        ) : (
+                                                            <span className="bg-rose-100 text-rose-800 text-[10px] font-black px-1.5 py-0.5 rounded border border-rose-300 uppercase">
+                                                                Hidden
                                                             </span>
                                                         )}
                                                     </div>
@@ -819,6 +847,61 @@ export default function Products({ products, categories }) {
                                     rows="3"
                                     className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500/20"
                                 ></textarea>
+                            </div>
+
+                            {/* Sales Channel Visibility Controls */}
+                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-250 space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5 font-sans">
+                                            <Globe size={14} className="text-blue-600" />
+                                            Sales Channel Visibility (Kahan Show Hoga?)
+                                        </h4>
+                                        <p className="text-[11px] text-slate-500 font-medium">Controls whether this product is displayed on website, POS terminal, or both.</p>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                                    {/* Web Store Checkbox */}
+                                    <label className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all ${
+                                        addData.show_on_web ? 'bg-blue-50/80 border-blue-300 text-blue-950 shadow-sm' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-100/50'
+                                    }`}>
+                                        <div className="flex items-center gap-3">
+                                            <input
+                                                type="checkbox"
+                                                checked={addData.show_on_web}
+                                                onChange={(e) => setAddData('show_on_web', e.target.checked)}
+                                                className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                                            />
+                                            <div>
+                                                <span className="text-xs font-bold block flex items-center gap-1.5">
+                                                    🌐 Show on Web Store
+                                                </span>
+                                                <span className="text-[10px] text-slate-500 block">Public E-Commerce Website Visitors</span>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    {/* POS Terminal Checkbox */}
+                                    <label className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all ${
+                                        addData.show_on_pos ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950 shadow-sm' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-100/50'
+                                    }`}>
+                                        <div className="flex items-center gap-3">
+                                            <input
+                                                type="checkbox"
+                                                checked={addData.show_on_pos}
+                                                onChange={(e) => setAddData('show_on_pos', e.target.checked)}
+                                                className="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500"
+                                            />
+                                            <div>
+                                                <span className="text-xs font-bold block flex items-center gap-1.5">
+                                                    🏷️ Show on POS Terminal
+                                                </span>
+                                                <span className="text-[10px] text-slate-500 block">In-Store Cashier POS System</span>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
                             </div>
 
                             {/* Options Flags */}
@@ -1226,6 +1309,61 @@ export default function Products({ products, categories }) {
                                     rows="3"
                                     className="w-full bg-white border border-slate-200 focus:border-blue-500 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500/20"
                                 ></textarea>
+                            </div>
+
+                            {/* Sales Channel Visibility Controls */}
+                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-250 space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5 font-sans">
+                                            <Globe size={14} className="text-blue-600" />
+                                            Sales Channel Visibility (Kahan Show Hoga?)
+                                        </h4>
+                                        <p className="text-[11px] text-slate-500 font-medium">Controls whether this product is displayed on website, POS terminal, or both.</p>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                                    {/* Web Store Checkbox */}
+                                    <label className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all ${
+                                        editData.show_on_web ? 'bg-blue-50/80 border-blue-300 text-blue-950 shadow-sm' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-100/50'
+                                    }`}>
+                                        <div className="flex items-center gap-3">
+                                            <input
+                                                type="checkbox"
+                                                checked={editData.show_on_web}
+                                                onChange={(e) => setEditData('show_on_web', e.target.checked)}
+                                                className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                                            />
+                                            <div>
+                                                <span className="text-xs font-bold block flex items-center gap-1.5">
+                                                    🌐 Show on Web Store
+                                                </span>
+                                                <span className="text-[10px] text-slate-500 block">Public E-Commerce Website Visitors</span>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    {/* POS Terminal Checkbox */}
+                                    <label className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all ${
+                                        editData.show_on_pos ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950 shadow-sm' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-100/50'
+                                    }`}>
+                                        <div className="flex items-center gap-3">
+                                            <input
+                                                type="checkbox"
+                                                checked={editData.show_on_pos}
+                                                onChange={(e) => setEditData('show_on_pos', e.target.checked)}
+                                                className="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500"
+                                            />
+                                            <div>
+                                                <span className="text-xs font-bold block flex items-center gap-1.5">
+                                                    🏷️ Show on POS Terminal
+                                                </span>
+                                                <span className="text-[10px] text-slate-500 block">In-Store Cashier POS System</span>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
                             </div>
 
                             {/* Option Flags */}

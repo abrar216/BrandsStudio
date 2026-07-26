@@ -25,6 +25,9 @@ class POSController extends Controller
 
         // 1. Fetch active products with variants and categories
         $products = Product::where('status', 'active')
+            ->where(function($q) {
+                $q->whereNull('show_on_pos')->orWhere('show_on_pos', true);
+            })
             ->with(['variants', 'category'])
             ->get()
             ->map(function($product) {

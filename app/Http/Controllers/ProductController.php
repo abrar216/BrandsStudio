@@ -186,7 +186,12 @@ class ProductController extends Controller
             'is_new_arrival', 'image', 'status', 'created_at'
         ];
 
-        $query = Product::where('status', 'active')->select($cardFields)->with(['category', 'variants']);
+        $query = Product::where('status', 'active')
+            ->where(function($q) {
+                $q->whereNull('show_on_web')->orWhere('show_on_web', true);
+            })
+            ->select($cardFields)
+            ->with(['category', 'variants']);
 
         // Filter by category
         if ($request->filled('category')) {
@@ -294,6 +299,9 @@ class ProductController extends Controller
     {
         $product = Product::where('slug', $slug)
             ->where('status', 'active')
+            ->where(function($q) {
+                $q->whereNull('show_on_web')->orWhere('show_on_web', true);
+            })
             ->with(['category', 'variants', 'reviews.user', 'images'])
             ->firstOrFail();
 

@@ -151,6 +151,7 @@ class AdminDashboardController extends Controller
             'cost_price', 'gst_rate', 'category_id', 'stock_quantity', 
             'is_featured', 'is_trending', 'is_best_seller', 'is_new_arrival', 
             'status', 'image', 'description', 'short_description', 
+            'show_on_web', 'show_on_pos',
             'created_at'
         ])
         ->with(['variants', 'category'])
@@ -231,6 +232,8 @@ class AdminDashboardController extends Controller
             'is_trending' => 'boolean',
             'is_best_seller' => 'boolean',
             'is_new_arrival' => 'boolean',
+            'show_on_web' => 'nullable|boolean',
+            'show_on_pos' => 'nullable|boolean',
             'variants' => 'nullable|array',
             'image' => 'required|image|max:5120',
             'images' => 'nullable|array',
@@ -264,6 +267,8 @@ class AdminDashboardController extends Controller
                 'is_trending' => $request->is_trending ?? false,
                 'is_best_seller' => $request->is_best_seller ?? false,
                 'is_new_arrival' => $request->is_new_arrival ?? false,
+                'show_on_web' => $request->has('show_on_web') ? (bool)$request->show_on_web : true,
+                'show_on_pos' => $request->has('show_on_pos') ? (bool)$request->show_on_pos : true,
                 'status' => 'active',
                 'image' => $imagePath,
                 'main_image' => $imagePath,
@@ -323,6 +328,8 @@ class AdminDashboardController extends Controller
             'is_trending' => 'boolean',
             'is_best_seller' => 'boolean',
             'is_new_arrival' => 'boolean',
+            'show_on_web' => 'nullable|boolean',
+            'show_on_pos' => 'nullable|boolean',
             'status' => 'required|string|in:active,inactive',
             'variants' => 'nullable|array',
             'image' => 'nullable|image|max:5120',
@@ -340,6 +347,8 @@ class AdminDashboardController extends Controller
         }
 
         $data = $request->except(['image', 'images', 'variants']);
+        $data['show_on_web'] = $request->has('show_on_web') ? (bool)$request->show_on_web : false;
+        $data['show_on_pos'] = $request->has('show_on_pos') ? (bool)$request->show_on_pos : false;
         if ($request->hasFile('image')) {
             if ($product->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($product->image)) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);

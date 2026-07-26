@@ -36,6 +36,8 @@ class Product extends Model
         'display_order',
         'cost_price',
         'gst_rate',
+        'show_on_web',
+        'show_on_pos',
     ];
 
     protected $casts = [
@@ -47,7 +49,19 @@ class Product extends Model
         'is_trending' => 'boolean',
         'is_best_seller' => 'boolean',
         'is_new_arrival' => 'boolean',
+        'show_on_web' => 'boolean',
+        'show_on_pos' => 'boolean',
     ];
+
+    public function getShowOnWebAttribute($value)
+    {
+        return is_null($value) ? true : (bool) $value;
+    }
+
+    public function getShowOnPosAttribute($value)
+    {
+        return is_null($value) ? true : (bool) $value;
+    }
 
     public function category()
     {
