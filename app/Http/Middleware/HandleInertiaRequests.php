@@ -30,6 +30,33 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $notifications = [];
+        $unreadCount = 0;
+        if ($request->user() && $request->user()->isAdmin()) {
+            try {
+                if (\Illuminate\Support\Facades\Schema::hasTable('notifications')) {
+                    $notifications = $request->user()->unreadNotifications()->take(5)->get();
+                    $unreadCount = $request->user()->unreadNotifications()->count();
+                }
+            } catch (\Throwable $e) {
+                $notifications = [];
+                $unreadCount = 0;
+            }
+        }
+
+        $menuCategories = [];
+        try {
+            $menuCategories = \App\Models\Category::select(['id', 'name', 'slug', 'parent_id'])
+                ->with(['children' => function($query) {
+                    $query->select(['id', 'name', 'slug', 'parent_id']);
+                }])
+                ->whereNull('parent_id')
+                ->orderBy('name', 'asc')
+                ->get();
+        } catch (\Throwable $e) {
+            $menuCategories = [];
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -42,17 +69,11 @@ class HandleInertiaRequests extends Middleware
                     'is_cashier' => $request->user()->isCashier(),
                     'is_staff' => $request->user()->isStaff(),
                 ] : null,
-                'notifications' => $request->user() && $request->user()->isAdmin() ? $request->user()->unreadNotifications()->take(5)->get() : [],
-                'unread_notifications_count' => $request->user() && $request->user()->isAdmin() ? $request->user()->unreadNotifications()->count() : 0,
+                'notifications' => $notifications,
+                'unread_notifications_count' => $unreadCount,
             ],
             'asset_url' => asset(''),
-            'menuCategories' => \App\Models\Category::select(['id', 'name', 'slug', 'parent_id'])
-                ->with(['children' => function($query) {
-                    $query->select(['id', 'name', 'slug', 'parent_id']);
-                }])
-                ->whereNull('parent_id')
-                ->orderBy('name', 'asc')
-                ->get(),
+            'menuCategories' => $menuCategories,
             'settings' => [
                 'site_name' => Setting::get('site_name', 'Brands Studio'),
                 'site_tagline' => Setting::get('site_tagline', 'Wear your signature.'),
