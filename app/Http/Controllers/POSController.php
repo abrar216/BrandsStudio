@@ -23,200 +23,212 @@ class POSController extends Controller
             return redirect()->route('welcome')->with('error', 'Unauthorized access to POS terminal.');
         }
 
-        // 1. Fetch active products with variants and categories
-        $productsQuery = Product::where('status', 'active')
-            ->select(['id', 'name', 'slug', 'sku', 'price', 'discount_price', 'stock_quantity', 'category_id', 'image']);
-            
-        if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'show_on_pos')) {
-            $productsQuery->where(function($q) {
-                $q->whereNull('show_on_pos')->orWhere('show_on_pos', true);
-            });
-        }
-        $products = $productsQuery->with(['variants', 'category'])
-            ->get()
-            ->map(function($product) {
-                $img = $product->image;
-                if ($img && str_starts_with($img, 'data:image/') && strlen($img) > 30000) {
-                    $img = Product::compressBase64String($img, 150, 0.4);
-                }
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'slug' => $product->slug,
-                    'sku' => $product->sku,
-                    'price' => $product->discount_price ?? $product->price,
-                    'stock_quantity' => $product->stock_quantity,
-                    'category_id' => $product->category_id,
-                    'category_name' => $product->category ? $product->category->name : 'Uncategorized',
-                    'image' => $img,
-                    'variants' => $product->variants->map(function($v) use ($product) {
-                        return [
-                            'id' => $v->id,
-                            'size' => $v->size,
-                            'color' => $v->color,
-                            'sku' => $v->sku,
-                            'price' => $v->price ?? ($product->discount_price ?? $product->price),
-                            'stock_quantity' => $v->stock_quantity,
-                        ];
-                    }),
-                ];
-            });
-
-        // 2. Fetch categories for filtering
-        $categories = Category::select(['id', 'name', 'slug', 'parent_id'])->get();
-
-        // 3. Fetch registered customers (users with role = customer)
-        $customers = User::where('role', 'customer')
-            ->select('id', 'name', 'phone', 'email')
-            ->orderBy('name', 'asc')
-            ->get();
-
-        // 4. Fetch recent POS orders for the Ledger (Selected columns only)
-        $recentOrders = Order::where('customer_type', 'walk-in')
-            ->select(['id', 'order_number', 'customer_id', 'customer_name', 'customer_phone', 'customer_email', 'total', 'subtotal', 'discount', 'tax', 'cash_received', 'change_returned', 'payment_method', 'payment_status', 'cashier_id', 'created_at'])
-            ->with([
-                'items.product' => function($q) {
-                    $q->select(['id', 'name', 'sku', 'price']);
-                },
-                'items.variant' => function($q) {
-                    $q->select(['id', 'size', 'color', 'sku']);
-                },
-                'cashier' => function($q) {
-                    $q->select(['id', 'name', 'email']);
-                }
-            ])
-            ->orderBy('created_at', 'desc')
-            ->limit(25)
-            ->get();
-
-        // 5. Gather Reports & Analytics (Only for Admins)
-        $reports = null;
-        if (auth()->user()->isAdmin()) {
-            $reports = [
-                'total_revenue' => 0.00,
-                'total_refunded' => 0.00,
-                'daily_sales' => [],
-                'monthly_sales' => [],
-                'cashier_sales' => [],
-                'product_sales' => [],
-                'refund_report' => [],
-                'low_stock_products' => [],
-                'low_stock_variants' => [],
-            ];
-
-            try {
-                // A. Revenue Overview
-                $reports['total_revenue'] = (float) Order::where('payment_status', 'paid')->sum('total');
-                $reports['total_refunded'] = (float) Order::where('payment_status', 'refunded')->sum('total');
-
-                // B. Daily Sales (last 30 days)
-                $reports['daily_sales'] = Order::where('payment_status', 'paid')
-                    ->where('created_at', '>=', now()->subDays(30))
-                    ->select(
-                        DB::raw('CAST(created_at AS DATE) as date'),
-                        DB::raw('SUM(total) as revenue'),
-                        DB::raw('COUNT(id) as count')
-                    )
-                    ->groupBy(DB::raw('CAST(created_at AS DATE)'))
-                    ->get();
-
-                // C. Monthly Sales (PHP Collection format)
-                $paidOrders = Order::where('payment_status', 'paid')
-                    ->select(['id', 'total', 'created_at'])
-                    ->get();
-
-                $reports['monthly_sales'] = $paidOrders->groupBy(function($order) {
-                    return \Carbon\Carbon::parse($order->created_at)->format('M Y');
-                })->map(function($orders, $month) {
+        try {
+            // 1. Fetch active products with variants and categories
+            $productsQuery = Product::where('status', 'active')
+                ->select(['id', 'name', 'slug', 'sku', 'price', 'discount_price', 'stock_quantity', 'category_id', 'image']);
+                
+            if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'show_on_pos')) {
+                $productsQuery->where(function($q) {
+                    $q->whereNull('show_on_pos')->orWhere('show_on_pos', true);
+                });
+            }
+            $products = $productsQuery->with(['variants', 'category'])
+                ->get()
+                ->map(function($product) {
+                    $img = $product->image;
+                    if ($img && str_starts_with($img, 'data:image/') && strlen($img) > 30000) {
+                        $img = Product::compressBase64String($img, 150, 0.4);
+                    }
                     return [
-                        'month' => $month,
-                        'revenue' => (float) $orders->sum('total'),
-                        'count' => $orders->count()
+                        'id' => $product->id,
+                        'name' => $product->name,
+                        'slug' => $product->slug,
+                        'sku' => $product->sku,
+                        'price' => $product->discount_price ?? $product->price,
+                        'stock_quantity' => $product->stock_quantity,
+                        'category_id' => $product->category_id,
+                        'category_name' => $product->category ? $product->category->name : 'Uncategorized',
+                        'image' => $img,
+                        'variants' => $product->variants->map(function($v) use ($product) {
+                            return [
+                                'id' => $v->id,
+                                'size' => $v->size,
+                                'color' => $v->color,
+                                'sku' => $v->sku,
+                                'price' => $v->price ?? ($product->discount_price ?? $product->price),
+                                'stock_quantity' => $v->stock_quantity,
+                            ];
+                        }),
                     ];
-                })->values();
+                });
 
-                // D. Cashier-wise Sales (PHP Collection format)
-                $cashierOrders = Order::where('payment_status', 'paid')
-                    ->whereNotNull('cashier_id')
-                    ->select(['id', 'cashier_id', 'total'])
-                    ->with(['cashier' => function($q) {
-                        $q->select('id', 'name', 'email');
-                    }])
-                    ->get();
+            // 2. Fetch categories for filtering
+            $categories = Category::select(['id', 'name', 'slug', 'parent_id'])->get();
 
-                $reports['cashier_sales'] = $cashierOrders->groupBy('cashier_id')
-                    ->map(function($orders) {
-                        $first = $orders->first();
+            // 3. Fetch registered customers (users with role = customer)
+            $customers = User::where('role', 'customer')
+                ->select('id', 'name', 'phone', 'email')
+                ->orderBy('name', 'asc')
+                ->get();
+
+            // 4. Fetch recent POS orders for the Ledger (Selected columns only)
+            $recentOrders = Order::where('customer_type', 'walk-in')
+                ->select(['id', 'order_number', 'customer_id', 'customer_name', 'customer_phone', 'customer_email', 'total', 'subtotal', 'discount', 'tax', 'cash_received', 'change_returned', 'payment_method', 'payment_status', 'cashier_id', 'created_at'])
+                ->with([
+                    'items.product' => function($q) {
+                        $q->select(['id', 'name', 'sku', 'price']);
+                    },
+                    'items.variant' => function($q) {
+                        $q->select(['id', 'size', 'color', 'sku']);
+                    },
+                    'cashier' => function($q) {
+                        $q->select(['id', 'name', 'email']);
+                    }
+                ])
+                ->orderBy('created_at', 'desc')
+                ->limit(25)
+                ->get();
+
+            // 5. Gather Reports & Analytics (Only for Admins)
+            $reports = null;
+            if (auth()->user()->isAdmin()) {
+                $reports = [
+                    'total_revenue' => 0.00,
+                    'total_refunded' => 0.00,
+                    'daily_sales' => [],
+                    'monthly_sales' => [],
+                    'cashier_sales' => [],
+                    'product_sales' => [],
+                    'refund_report' => [],
+                    'low_stock_products' => [],
+                    'low_stock_variants' => [],
+                ];
+
+                try {
+                    // A. Revenue Overview
+                    $reports['total_revenue'] = (float) Order::where('payment_status', 'paid')->sum('total');
+                    $reports['total_refunded'] = (float) Order::where('payment_status', 'refunded')->sum('total');
+
+                    // B. Daily Sales (last 30 days)
+                    $reports['daily_sales'] = Order::where('payment_status', 'paid')
+                        ->where('created_at', '>=', now()->subDays(30))
+                        ->select(
+                            DB::raw('CAST(created_at AS DATE) as date'),
+                            DB::raw('SUM(total) as revenue'),
+                            DB::raw('COUNT(id) as count')
+                        )
+                        ->groupBy(DB::raw('CAST(created_at AS DATE)'))
+                        ->get();
+
+                    // C. Monthly Sales (PHP Collection format)
+                    $paidOrders = Order::where('payment_status', 'paid')
+                        ->select(['id', 'total', 'created_at'])
+                        ->get();
+
+                    $reports['monthly_sales'] = $paidOrders->groupBy(function($order) {
+                        return \Carbon\Carbon::parse($order->created_at)->format('M Y');
+                    })->map(function($orders, $month) {
                         return [
-                            'cashier_id' => $first->cashier_id,
+                            'month' => $month,
                             'revenue' => (float) $orders->sum('total'),
-                            'count' => $orders->count(),
-                            'cashier' => $first->cashier
+                            'count' => $orders->count()
                         ];
                     })->values();
 
-                // E. Product-wise Sales (PHP Collection format)
-                $orderItems = OrderItem::select(['id', 'product_id', 'quantity', 'total'])
-                    ->with(['product' => function($q) {
-                        $q->select('id', 'name', 'sku', 'price');
-                    }])
-                    ->get();
+                    // D. Cashier-wise Sales (PHP Collection format)
+                    $cashierOrders = Order::where('payment_status', 'paid')
+                        ->whereNotNull('cashier_id')
+                        ->select(['id', 'cashier_id', 'total'])
+                        ->with(['cashier' => function($q) {
+                            $q->select('id', 'name', 'email');
+                        }])
+                        ->get();
 
-                $reports['product_sales'] = $orderItems->groupBy('product_id')
-                    ->map(function($items) {
-                        $first = $items->first();
-                        return [
-                            'product_id' => $first->product_id,
-                            'quantity_sold' => (int) $items->sum('quantity'),
-                            'revenue' => (float) $items->sum('total'),
-                            'product' => $first->product
-                        ];
-                    })
-                    ->sortByDesc('quantity_sold')
-                    ->take(30)
-                    ->values();
+                    $reports['cashier_sales'] = $cashierOrders->groupBy('cashier_id')
+                        ->map(function($orders) {
+                            $first = $orders->first();
+                            return [
+                                'cashier_id' => $first->cashier_id,
+                                'revenue' => (float) $orders->sum('total'),
+                                'count' => $orders->count(),
+                                'cashier' => $first->cashier
+                            ];
+                        })->values();
 
-                // F. Refund Report
-                $reports['refund_report'] = Order::where('payment_status', 'refunded')
-                    ->select(['id', 'order_number', 'customer_name', 'total', 'cashier_id', 'created_at', 'updated_at'])
-                    ->with([
-                        'items.product' => function($q) {
+                    // E. Product-wise Sales (PHP Collection format)
+                    $orderItems = OrderItem::select(['id', 'product_id', 'quantity', 'total'])
+                        ->with(['product' => function($q) {
                             $q->select('id', 'name', 'sku', 'price');
-                        }, 
-                        'cashier' => function($q) {
-                            $q->select('id', 'name');
-                        }
-                    ])
-                    ->orderBy('updated_at', 'desc')
-                    ->limit(20)
-                    ->get();
+                        }])
+                        ->get();
 
-                // G. Stock report (combines low stock products and variants)
-                $reports['low_stock_products'] = Product::where('status', 'active')
-                    ->where('stock_quantity', '<', 10)
-                    ->select('id', 'name', 'sku', 'price', 'stock_quantity', 'status', 'category_id')
-                    ->with('category')
-                    ->orderBy('stock_quantity', 'asc')
-                    ->get();
+                    $reports['product_sales'] = $orderItems->groupBy('product_id')
+                        ->map(function($items) {
+                            $first = $items->first();
+                            return [
+                                'product_id' => $first->product_id,
+                                'quantity_sold' => (int) $items->sum('quantity'),
+                                'revenue' => (float) $items->sum('total'),
+                                'product' => $first->product
+                            ];
+                        })
+                        ->sortByDesc('quantity_sold')
+                        ->take(30)
+                        ->values();
 
-                $reports['low_stock_variants'] = ProductVariant::where('stock_quantity', '<', 5)
-                    ->with(['product' => function($q) {
-                        $q->select('id', 'name', 'sku');
-                    }])
-                    ->orderBy('stock_quantity', 'asc')
-                    ->get();
-            } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::error('POS Reports Analytics Error: ' . $e->getMessage());
+                    // F. Refund Report
+                    $reports['refund_report'] = Order::where('payment_status', 'refunded')
+                        ->select(['id', 'order_number', 'customer_name', 'total', 'cashier_id', 'created_at', 'updated_at'])
+                        ->with([
+                            'items.product' => function($q) {
+                                $q->select('id', 'name', 'sku', 'price');
+                            }, 
+                            'cashier' => function($q) {
+                                $q->select('id', 'name');
+                            }
+                        ])
+                        ->orderBy('updated_at', 'desc')
+                        ->limit(20)
+                        ->get();
+
+                    // G. Stock report (combines low stock products and variants)
+                    $reports['low_stock_products'] = Product::where('status', 'active')
+                        ->where('stock_quantity', '<', 10)
+                        ->select('id', 'name', 'sku', 'price', 'stock_quantity', 'status', 'category_id')
+                        ->with('category')
+                        ->orderBy('stock_quantity', 'asc')
+                        ->get();
+
+                    $reports['low_stock_variants'] = ProductVariant::where('stock_quantity', '<', 5)
+                        ->with(['product' => function($q) {
+                            $q->select('id', 'name', 'sku');
+                        }])
+                        ->orderBy('stock_quantity', 'asc')
+                        ->get();
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::error('POS Reports Analytics Error: ' . $e->getMessage());
+                }
             }
-        }
 
-        return Inertia::render('Admin/POS', [
-            'products' => $products,
-            'categories' => $categories,
-            'customers' => $customers,
-            'recentOrders' => $recentOrders,
-            'reports' => $reports,
-        ]);
+            return Inertia::render('Admin/POS', [
+                'products' => $products,
+                'categories' => $categories,
+                'customers' => $customers,
+                'recentOrders' => $recentOrders,
+                'reports' => $reports,
+            ]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('POS Index Complete Error: ' . $e->getMessage());
+
+            return Inertia::render('Admin/POS', [
+                'products' => [],
+                'categories' => [],
+                'customers' => [],
+                'recentOrders' => [],
+                'reports' => null,
+            ]);
+        }
     }
 
     public function search(Request $request)

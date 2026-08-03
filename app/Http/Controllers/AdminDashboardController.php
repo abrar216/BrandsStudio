@@ -35,108 +35,132 @@ class AdminDashboardController extends Controller
     {
         $this->checkAccess();
 
-        // 1. Core aggregates
-        $totalSales = Order::where('payment_status', 'paid')
-            ->whereNotIn('status', ['returned', 'cancelled'])
-            ->sum('total');
-        $totalOrders = Order::count();
-        $totalExpenses = Expense::sum('amount');
+        try {
+            // 1. Core aggregates
+            $totalSales = (float) Order::where('payment_status', 'paid')
+                ->whereNotIn('status', ['returned', 'cancelled'])
+                ->sum('total');
+            $totalOrders = Order::count();
+            $totalExpenses = (float) Expense::sum('amount');
 
-        // Fetch all paid and active order items to calculate cost of goods sold (COGS)
-        // Select only id and cost_price to avoid loading massive base64 image strings
-        $orderItems = OrderItem::whereHas('order', function($q) {
-            $q->where('payment_status', 'paid')
-              ->whereNotIn('status', ['returned', 'cancelled']);
-        })->with([
-            'product' => function($q) {
-                $q->select('id', 'cost_price');
-            },
-            'variant' => function($q) {
-                $q->select('id', 'cost_price');
+            // Fetch all paid and active order items to calculate cost of goods sold (COGS)
+            $orderItems = OrderItem::whereHas('order', function($q) {
+                $q->where('payment_status', 'paid')
+                  ->whereNotIn('status', ['returned', 'cancelled']);
+            })->with([
+                'product' => function($q) {
+                    $q->select('id', 'cost_price');
+                },
+                'variant' => function($q) {
+                    $q->select('id', 'cost_price');
+                }
+            ])->get();
+
+            $totalCost = 0;
+            foreach ($orderItems as $item) {
+                $cost = 0;
+                if ($item->product_variant_id && $item->variant) {
+                    $cost = $item->variant->cost_price !== null ? $item->variant->cost_price : ($item->product->cost_price ?? 0);
+                } else if ($item->product) {
+                    $cost = $item->product->cost_price ?? 0;
+                }
+                $totalCost += $cost * $item->quantity;
             }
-        ])->get();
 
-        $totalCost = 0;
-        foreach ($orderItems as $item) {
-            $cost = 0;
-            if ($item->product_variant_id && $item->variant) {
-                $cost = $item->variant->cost_price !== null ? $item->variant->cost_price : ($item->product->cost_price ?? 0);
-            } else if ($item->product) {
-                $cost = $item->product->cost_price ?? 0;
-            }
-            $totalCost += $cost * $item->quantity;
+            // Net Profit = (Sales Revenue) - (Cost of Goods Sold) - (Total Expenses)
+            $netProfit = $totalSales - $totalCost - $totalExpenses;
+
+            // Calculate total products and inventory valuation directly via SQL SUM
+            $totalProducts = Product::where('status', 'active')->count();
+            $grossValuation = (float) Product::where('status', 'active')
+                ->sum(DB::raw('price * stock_quantity'));
+
+            // 2. Monthly sales data for chart using PHP Collection aggregation
+            $paidOrders = Order::where('payment_status', 'paid')
+                ->whereNotIn('status', ['returned', 'cancelled'])
+                ->select(['id', 'total', 'created_at'])
+                ->get();
+
+            $monthlySales = $paidOrders->groupBy(function($order) {
+                return \Carbon\Carbon::parse($order->created_at)->format('M Y');
+            })->map(function($orders, $month) {
+                return [
+                    'month' => $month,
+                    'sales' => (float) $orders->sum('total'),
+                ];
+            })->values();
+
+            // 3. Low stock alerts (stock < 10) - Select only required columns
+            $lowStockProducts = Product::where('status', 'active')
+                ->where('stock_quantity', '<', 10)
+                ->select('id', 'name', 'sku', 'price', 'stock_quantity', 'status')
+                ->limit(5)
+                ->get();
+
+            $lowStockVariants = ProductVariant::where('stock_quantity', '<', 5)
+                ->with(['product' => function($q) {
+                    $q->select('id', 'name', 'sku');
+                }])
+                ->limit(5)
+                ->get();
+
+            // 4. Recent orders
+            $recentOrders = Order::latest()->limit(5)->get();
+
+            // 5. Popular products using Collection aggregation
+            $orderItemsForTop = OrderItem::select(['id', 'product_id', 'quantity'])
+                ->with(['product' => function($q) {
+                    $q->select('id', 'name', 'sku', 'price');
+                }])
+                ->get();
+
+            $topProducts = $orderItemsForTop->groupBy('product_id')
+                ->map(function($items) {
+                    $first = $items->first();
+                    return [
+                        'product_id' => $first->product_id,
+                        'total_sold' => (int) $items->sum('quantity'),
+                        'product' => $first->product,
+                    ];
+                })
+                ->sortByDesc('total_sold')
+                ->take(5)
+                ->values();
+
+            return Inertia::render('Admin/Dashboard', [
+                'stats' => [
+                    'total_sales' => round($totalSales, 2),
+                    'total_orders' => $totalOrders,
+                    'total_expenses' => round($totalExpenses, 2),
+                    'net_profit' => round($netProfit, 2),
+                    'total_products' => $totalProducts,
+                    'total_valuation' => round($grossValuation, 2),
+                ],
+                'monthlySales' => $monthlySales,
+                'lowStockProducts' => $lowStockProducts,
+                'lowStockVariants' => $lowStockVariants,
+                'recentOrders' => $recentOrders,
+                'topProducts' => $topProducts,
+            ]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Admin Dashboard Index Exception: ' . $e->getMessage());
+
+            return Inertia::render('Admin/Dashboard', [
+                'stats' => [
+                    'total_sales' => 0,
+                    'total_orders' => 0,
+                    'total_expenses' => 0,
+                    'net_profit' => 0,
+                    'total_products' => 0,
+                    'total_valuation' => 0,
+                ],
+                'monthlySales' => [],
+                'lowStockProducts' => [],
+                'lowStockVariants' => [],
+                'recentOrders' => [],
+                'topProducts' => [],
+            ]);
         }
-
-        // Net Profit = (Sales Revenue) - (Cost of Goods Sold) - (Total Expenses)
-        $netProfit = $totalSales - $totalCost - $totalExpenses;
-
-        // Calculate total products and inventory valuation directly via SQL SUM
-        $totalProducts = Product::where('status', 'active')->count();
-        $grossValuation = Product::where('status', 'active')
-            ->sum(DB::raw('price * stock_quantity'));
-
-        // 2. Monthly sales data for chart
-        $driver = DB::connection()->getDriverName();
-        if ($driver === 'pgsql') {
-            $monthFormatted = "TO_CHAR(created_at, 'Mon YYYY')";
-        } elseif ($driver === 'sqlite') {
-            $monthFormatted = "case strftime('%m', created_at) when '01' then 'Jan' when '02' then 'Feb' when '03' then 'Mar' when '04' then 'Apr' when '05' then 'May' when '06' then 'Jun' when '07' then 'Jul' when '08' then 'Aug' when '09' then 'Sep' when '10' then 'Oct' when '11' then 'Nov' when '12' then 'Dec' end || ' ' || strftime('%Y', created_at)";
-        } else {
-            $monthFormatted = "DATE_FORMAT(created_at, '%b %Y')";
-        }
-
-        $monthlySales = Order::where('payment_status', 'paid')
-            ->whereNotIn('status', ['returned', 'cancelled'])
-            ->select(
-                DB::raw('SUM(total) as sales'),
-                DB::raw("$monthFormatted as month")
-            )
-            ->groupBy(DB::raw($monthFormatted))
-            ->orderBy(DB::raw('MIN(created_at)'), 'asc')
-            ->get();
-
-        // 3. Low stock alerts (stock < 10) - Select only required columns
-        $lowStockProducts = Product::where('status', 'active')
-            ->where('stock_quantity', '<', 10)
-            ->select('id', 'name', 'sku', 'price', 'stock_quantity', 'status')
-            ->limit(5)
-            ->get();
-
-        $lowStockVariants = ProductVariant::where('stock_quantity', '<', 5)
-            ->with(['product' => function($q) {
-                $q->select('id', 'name', 'sku');
-            }])
-            ->limit(5)
-            ->get();
-
-        // 4. Recent orders
-        $recentOrders = Order::latest()->limit(5)->get();
-
-        // 5. Popular products - Select only required columns
-        $topProducts = OrderItem::select('product_id', DB::raw('SUM(quantity) as total_sold'))
-            ->groupBy('product_id')
-            ->orderBy('total_sold', 'desc')
-            ->with(['product' => function($q) {
-                $q->select('id', 'name', 'sku', 'price');
-            }])
-            ->limit(5)
-            ->get();
-
-        return Inertia::render('Admin/Dashboard', [
-            'stats' => [
-                'total_sales' => round($totalSales, 2),
-                'total_orders' => $totalOrders,
-                'total_expenses' => round($totalExpenses, 2),
-                'net_profit' => round($netProfit, 2),
-                'total_products' => $totalProducts,
-                'total_valuation' => round($grossValuation, 2),
-            ],
-            'monthlySales' => $monthlySales,
-            'lowStockProducts' => $lowStockProducts,
-            'lowStockVariants' => $lowStockVariants,
-            'recentOrders' => $recentOrders,
-            'topProducts' => $topProducts,
-        ]);
     }
 
     // Products Management
@@ -144,41 +168,53 @@ class AdminDashboardController extends Controller
     {
         $this->checkAccess();
 
-        $this->autoSelfHealOversizedProducts();
+        try {
+            $this->autoSelfHealOversizedProducts();
 
-        $columns = [
-            'id', 'name', 'slug', 'sku', 'price', 'discount_price', 
-            'cost_price', 'gst_rate', 'category_id', 'stock_quantity', 
-            'is_featured', 'is_trending', 'is_best_seller', 'is_new_arrival', 
-            'status', 'image', 'description', 'short_description', 
-            'created_at'
-        ];
-        if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'show_on_web')) {
-            $columns[] = 'show_on_web';
+            $columns = [
+                'id', 'name', 'slug', 'sku', 'price', 'discount_price', 
+                'cost_price', 'gst_rate', 'category_id', 'stock_quantity', 
+                'is_featured', 'is_trending', 'is_best_seller', 'is_new_arrival', 
+                'status', 'image', 'description', 'short_description', 
+                'created_at'
+            ];
+            if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'show_on_web')) {
+                $columns[] = 'show_on_web';
+            }
+            if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'show_on_pos')) {
+                $columns[] = 'show_on_pos';
+            }
+
+            $products = Product::select($columns)
+                ->with(['variants', 'category'])
+                ->orderBy('created_at', 'desc')
+                ->get();
+            $categories = Category::select(['id', 'name', 'slug', 'parent_id'])->get();
+
+            return Inertia::render('Admin/Products', [
+                'products' => $products,
+                'categories' => $categories,
+            ]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Admin Products Exception: ' . $e->getMessage());
+
+            return Inertia::render('Admin/Products', [
+                'products' => [],
+                'categories' => [],
+            ]);
         }
-        if (\Illuminate\Support\Facades\Schema::hasColumn('products', 'show_on_pos')) {
-            $columns[] = 'show_on_pos';
-        }
-
-        $products = Product::select($columns)
-        ->with(['variants', 'category'])
-        ->orderBy('created_at', 'desc')
-        ->get();
-        $categories = Category::select(['id', 'name', 'slug', 'parent_id'])->get();
-
-        return Inertia::render('Admin/Products', [
-            'products' => $products,
-            'categories' => $categories,
-        ]);
     }
 
     private function autoSelfHealOversizedProducts()
     {
         try {
+            $driver = DB::connection()->getDriverName();
+            $galleryCol = $driver === 'pgsql' ? DB::raw('CAST(gallery_images AS TEXT)') : 'gallery_images';
+
             $rows = DB::table('products')
-                ->where(function($q) {
+                ->where(function($q) use ($galleryCol) {
                     $q->where('image', 'LIKE', 'data:image%')
-                      ->orWhere('gallery_images', 'LIKE', '%data:image%');
+                      ->orWhere($galleryCol, 'LIKE', '%data:image%');
                 })
                 ->get();
 
@@ -216,7 +252,7 @@ class AdminDashboardController extends Controller
                 }
             }
         } catch (\Exception $e) {
-            // Ignore DB locks
+            // Ignore DB locks or driver errors
         }
     }
 
