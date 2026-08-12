@@ -727,7 +727,8 @@ export default function POS({ products, categories, customers, recentOrders, rep
                                             placeholder="Scan barcode / Enter SKU..."
                                             value={barcodeInput}
                                             onChange={(e) => setBarcodeInput(e.target.value)}
-                                            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-2 pl-9 pr-3 text-xs w-full text-slate-800 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono shadow-inner transition-all"
+                                            style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                                            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-2 pl-9 pr-3 text-xs w-full text-slate-800 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono shadow-inner transition-all truncate"
                                         />
                                         <button type="submit" className="hidden">Scan</button>
                                     </form>
